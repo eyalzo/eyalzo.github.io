@@ -34,9 +34,11 @@
 </head>
 <body>
    <h2>Gilat AI - מסמכי המ.מ.מ</h2>
-   <label for="query">השאילתא:</label>
-   <input type="text" id="query" placeholder="הקלידו את השאילתא כאן בשפה חופשית...">
-   <button onclick="sendQuery()">שיגור</button>
+   <form onsubmit="sendQuery(); return false;">
+       <label for="query">השאילתא:</label>
+       <input type="text" id="query" placeholder="הקלידו את השאילתא כאן בשפה חופשית...">
+       <button type="submit">שיגור</button>
+   </form>
 
    <h3>סיכום:</h3>
    <textarea id="result" readonly></textarea>
