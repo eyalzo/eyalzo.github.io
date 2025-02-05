@@ -1,137 +1,139 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gilat AI - מסמכי המ.מ.מ</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        textarea, input, button { display: block; width: 100%; margin-top: 10px; }
-        textarea { height: 100px; }
-        .output { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border: 1px solid #ccc; }
-        .search-result {
-            margin: 15px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .search-result em {
-            background-color: yellow;
-            font-style: normal;
-        }
-        .metadata {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 10px;
-        }
-        .document-title {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        .document-title:hover {
-            text-decoration: underline;
-        }
-    </style>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Gilat AI - מסמכי המ.מ.מ</title>
+   <style>
+       body { font-family: Arial, sans-serif; padding: 20px; }
+       textarea, input, button { display: block; width: 100%; margin-top: 10px; }
+       textarea { height: 100px; }
+       .search-result {
+           margin: 15px 0;
+           padding: 15px;
+           border: 1px solid #ddd;
+           border-radius: 5px;
+       }
+       .search-result em {
+           background-color: yellow;
+           font-style: normal;
+       }
+       .metadata {
+           font-size: 0.9em;
+           color: #666;
+           margin-top: 10px;
+       }
+       .document-title {
+           color: #0066cc;
+           text-decoration: none;
+       }
+       .document-title:hover {
+           text-decoration: underline;
+       }
+   </style>
 </head>
 <body>
-    <h2>Gilat AI - מסמכי המ.מ.מ</h2>
-    <label for="query">השאילתא:</label>
-    <input type="text" id="query" placeholder="הקלידו את השאילתא כאן בשפה חופשית...">
-    <button onclick="sendQuery()">שיגור</button>
+   <h2>Gilat AI - מסמכי המ.מ.מ</h2>
+   <label for="query">השאילתא:</label>
+   <input type="text" id="query" placeholder="הקלידו את השאילתא כאן בשפה חופשית...">
+   <button onclick="sendQuery()">שיגור</button>
 
-    <h3>סיכום:</h3>
-    <textarea id="result" readonly></textarea>
+   <h3>סיכום:</h3>
+   <textarea id="result" readonly></textarea>
 
-    <h3>תוצאות חיפוש:</h3>
-    <div id="search-results"></div>
+   <h3>תוצאות חיפוש:</h3>
+   <div id="search-results"></div>
 
-    <h3 dir="ltr">API Request/Response:</h3>
-    <div class="output" id="api-log" style="direction: ltr; font-family: monospace;"></div>
+   <script>
+       async function sendQuery() {
+           const apiKey = "zqt_UbTzfOzMCbhz1vW_SvKIG6xW_yu27nKFjXVcsg";
+           const corpusKey = "mmm_docs5";
+           const queryText = document.getElementById("query").value;
+           const url = `https://api.vectara.io/v2/corpora/${corpusKey}/query`;
 
-    <script>
-        async function sendQuery() {
-            const apiKey = "zqt_UbTzfOzMCbhz1vW_SvKIG6xW_yu27nKFjXVcsg";
-            const corpusKey = "mmm_docs5";
-            const queryText = document.getElementById("query").value;
-            const url = `https://api.vectara.io/v2/corpora/${corpusKey}/query`;
+           const requestData = {
+               query: queryText,
+               search: {
+                   custom_dimensions: {},
+                   metadata_filter: "",
+                   lexical_interpolation: 0.025,
+                   semantics: "default",
+                   offset: 0,
+                   limit: 10,
+                   context_configuration: {
+                       characters_before: 30,
+                       characters_after: 30,
+                       sentences_before: 3,
+                       sentences_after: 3,
+                       start_tag: "<em>",
+                       end_tag: "</em>"
+                   },
+                   reranker: {
+                       type: "customer_reranker",
+                       reranker_name: "Rerank_Multilingual_v1"
+                   }
+               },
+               generation: {
+                   generation_preset_name: "vectara-summary-ext-v1.2.0",
+                   max_used_search_results: 5,
+                   max_response_characters: 300,
+                   response_language: "heb",
+                   enable_factual_consistency_score: false
+               },
+               stream_response: false,
+               save_history: false
+           };
 
-            const requestData = {
-                query: queryText,
-                search: {
-                    custom_dimensions: {},
-                    metadata_filter: "",
-                    lexical_interpolation: 0.025,
-                    semantics: "default",
-                    offset: 0,
-                    limit: 10,
-                    context_configuration: {
-                        characters_before: 30,
-                        characters_after: 30,
-                        sentences_before: 3,
-                        sentences_after: 3,
-                        start_tag: "<em>",
-                        end_tag: "</em>"
-                    },
-                    reranker: {
-                        type: "customer_reranker",
-                        reranker_name: "Rerank_Multilingual_v1"
-                    }
-                },
-                generation: {
-                    generation_preset_name: "vectara-summary-ext-v1.2.0",
-                    max_used_search_results: 5,
-                    max_response_characters: 300,
-                    response_language: "heb",
-                    enable_factual_consistency_score: false
-                },
-                stream_response: false,
-                save_history: false
-            };
+           document.getElementById("search-results").innerHTML = "מחפש...";
 
-            document.getElementById("api-log").innerText = "בתהליך...";
-            document.getElementById("search-results").innerHTML = "";
+           try {
+               const response = await fetch(url, {
+                   method: "POST",
+                   headers: {
+                       "Content-Type": "application/json",
+                       "Accept": "application/json",
+                       "x-api-key": apiKey
+                   },
+                   body: JSON.stringify(requestData)
+               });
 
-            try {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "x-api-key": apiKey
-                    },
-                    body: JSON.stringify(requestData)
-                });
+               const data = await response.json();
+               document.getElementById("result").value = data.summary || "No summary available.";
+               
+               // Display search results
+               const searchResultsDiv = document.getElementById("search-results");
+               searchResultsDiv.innerHTML = ""; // Clear "searching" message
+               
+               data.search_results.forEach((result, index) => {
+                   const resultDiv = document.createElement("div");
+                   resultDiv.className = "search-result";
+                   
+                   const documentUrl = result.document_metadata.url + '#page=' + result.part_metadata.page;
+                   const authors = [result.document_metadata.author];
+                   
+                   if (result.document_metadata.teamleader) {
+                       authors.push(`ראש צוות: ${result.document_metadata.teamleader}`);
+                   }
+                   if (result.document_metadata.additional_authors) {
+                       authors.push(result.document_metadata.additional_authors);
+                   }
+                   
+                   const content = `
+                       <div class="text">${result.text}</div>
+                       <div class="metadata">
+                           <strong>מסמך:</strong> <a href="${documentUrl}" target="_blank" class="document-title">${result.document_metadata.title}</a><br>
+                           <strong>תאריך:</strong> ${result.document_metadata.date}<br>
+                           <strong>מחבר/ת:</strong> ${authors.join(', ')}
+                       </div>
+                   `;
+                   resultDiv.innerHTML = content;
+                   searchResultsDiv.appendChild(resultDiv);
+               });
 
-                const data = await response.json();
-                document.getElementById("result").value = data.summary || "No summary available.";
-                
-                // Display search results
-                const searchResultsDiv = document.getElementById("search-results");
-                data.search_results.forEach((result, index) => {
-                    const resultDiv = document.createElement("div");
-                    resultDiv.className = "search-result";
-                    
-                    const documentUrl = result.document_metadata.url + '#page=' + result.part_metadata.page;
-                    
-                    const content = `
-                        <div class="text">${result.text}</div>
-                        <div class="metadata">
-                            <strong>מסמך:</strong> <a href="${documentUrl}" target="_blank" class="document-title">${result.document_metadata.title}</a><br>
-                            <strong>תאריך:</strong> ${result.document_metadata.date}<br>
-                            <strong>מחבר/ת:</strong> ${result.document_metadata.author}
-                        </div>
-                    `;
-                    resultDiv.innerHTML = content;
-                    searchResultsDiv.appendChild(resultDiv);
-                });
-
-                document.getElementById("api-log").innerText = "Request:\n" + 
-                    JSON.stringify(requestData, null, 2) + "\n\nResponse:\n" + 
-                    JSON.stringify(data, null, 2);
-            } catch (error) {
-                document.getElementById("api-log").innerText = "Error: " + error.message;
-            }
-        }
-    </script>
+           } catch (error) {
+               document.getElementById("search-results").innerText = "שגיאה: " + error.message;
+           }
+       }
+   </script>
 </body>
 </html>
