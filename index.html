@@ -48,8 +48,8 @@
 
    <script>
        async function sendQuery() {
-           const apiKey = "zqt_UbTzfOzMCbhz1vW_SvKIG6xW_yu27nKFjXVcsg";
-           const corpusKey = "mmm_docs5";
+           const apiKey = "zqt_k4HYKaTVTqvKedeQI6ELWIYh6D58t8G07xdGxg";
+           const corpusKey = "mmm_docs6";
            const queryText = document.getElementById("query").value;
            const url = `https://api.vectara.io/v2/corpora/${corpusKey}/query`;
 
@@ -77,8 +77,8 @@
                },
                generation: {
                    generation_preset_name: "vectara-summary-ext-v1.2.0",
-                   max_used_search_results: 5,
-                   max_response_characters: 300,
+                   max_used_search_results: 10,
+                   max_response_characters: 1000,
                    response_language: "heb",
                    enable_factual_consistency_score: false
                },
