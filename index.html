@@ -53,38 +53,39 @@
            const queryText = document.getElementById("query").value;
            const url = `https://api.vectara.io/v2/corpora/${corpusKey}/query`;
 
-           const requestData = {
+            const requestData = {
                query: queryText,
                search: {
-                   custom_dimensions: {},
-                   metadata_filter: "",
-                   lexical_interpolation: 0.025,
-                   semantics: "default",
-                   offset: 0,
-                   limit: 10,
-                   context_configuration: {
-                       characters_before: 30,
-                       characters_after: 30,
-                       sentences_before: 3,
-                       sentences_after: 3,
+                        metadata_filter: "",
+                        lexical_interpolation: 0.005,
+                        custom_dimensions: {},
+                    offset: 0,
+                    limit: 10,
+                    context_configuration: {
+                       sentences_before: 2,
+                       sentences_after: 2,
                        start_tag: "<em>",
                        end_tag: "</em>"
-                   },
-                   reranker: {
+                    },
+                    reranker: {
                        type: "customer_reranker",
                        reranker_name: "Rerank_Multilingual_v1"
-                   }
-               },
-               generation: {
-                   generation_preset_name: "vectara-summary-ext-v1.2.0",
-                   max_used_search_results: 10,
-                   max_response_characters: 1000,
-                   response_language: "heb",
-                   enable_factual_consistency_score: false
-               },
-               stream_response: false,
-               save_history: false
-           };
+                    }
+                },
+                generation: {
+                   generation_preset_name: "mockingbird-1.0-2024-07-16",
+                   max_used_search_results: 5,
+                   response_language: "eng",
+                   enable_factual_consistency_score: false,
+                   citations: {
+                        style: "html",
+                        url_pattern: "{doc.id}#page={section.page}",
+                        text_pattern: "as seen in {doc.title}"
+                    }
+                },
+                stream_response: false,
+                save_history: false
+            };
 
            document.getElementById("search-results").innerHTML = "מחפש...";
 
