@@ -7,42 +7,41 @@
    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
    <style>
        :root {
-           --primary-color: #0056b3; /* כחול ממלכתי */
-           --secondary-color: #f0f4f8;
-           --accent-color: #ffcc00;
-           --text-color: #333;
-           --shadow: 0 4px 6px rgba(0,0,0,0.1);
+           --primary-color: #0056b3;
+           --bg-color: #f4f7f6;
+           --container-bg: #ffffff;
        }
 
        body {
            font-family: 'Heebo', sans-serif;
-           background-color: var(--secondary-color);
-           color: var(--text-color);
+           background-color: var(--bg-color);
+           color: #333;
            margin: 0;
            padding: 20px;
-           line-height: 1.6;
+           display: flex;
+           justify-content: center;
        }
 
        .container {
+           width: 100%;
            max-width: 800px;
-           margin: 0 auto;
-           background: white;
+           background-color: var(--container-bg);
            padding: 30px;
            border-radius: 12px;
-           box-shadow: var(--shadow);
+           box-shadow: 0 4px 15px rgba(0,0,0,0.1);
        }
 
        h2 {
            color: var(--primary-color);
            text-align: center;
-           margin-bottom: 30px;
-           font-weight: 700;
+           margin-top: 0;
        }
 
        label {
            font-weight: bold;
-           margin-bottom: 8px;
+           margin-top: 20px;
            display: block;
+           margin-bottom: 5px;
        }
 
        input[type="text"] {
@@ -50,27 +49,20 @@
            padding: 12px;
            border: 1px solid #ddd;
            border-radius: 8px;
-           box-sizing: border-box;
+           box-sizing: border-box; /* חשוב כדי שה-padding לא יחרוג */
            font-size: 16px;
-           transition: border-color 0.3s;
-       }
-
-       input[type="text"]:focus {
-           border-color: var(--primary-color);
-           outline: none;
        }
 
        button {
+           width: 100%;
+           padding: 12px;
            background-color: var(--primary-color);
            color: white;
            border: none;
-           padding: 12px 24px;
            border-radius: 8px;
-           font-size: 16px;
+           font-size: 18px;
            cursor: pointer;
-           width: 100%;
            margin-top: 15px;
-           font-weight: bold;
            transition: background 0.3s;
        }
 
@@ -78,61 +70,60 @@
            background-color: #004494;
        }
 
-       .section-title {
-           border-bottom: 2px solid var(--primary-color);
-           padding-bottom: 5px;
+       button:disabled {
+           background-color: #ccc;
+           cursor: not-allowed;
+       }
+
+       /* אזור התוצאות */
+       #results-area {
            margin-top: 30px;
-           margin-bottom: 15px;
+           border-top: 1px solid #eee;
+           padding-top: 20px;
+       }
+
+       h3 {
            color: var(--primary-color);
+           border-bottom: 2px solid #eee;
+           padding-bottom: 10px;
+           margin-bottom: 15px;
        }
 
        textarea {
            width: 100%;
-           height: 120px;
+           height: 150px;
            padding: 10px;
            border: 1px solid #ddd;
            border-radius: 8px;
-           background-color: #fafafa;
            resize: vertical;
            font-family: 'Heebo', sans-serif;
+           background-color: #fafafa;
+           box-sizing: border-box;
        }
 
-       /* עיצוב כרטיסיית תוצאה */
+       /* כרטיסיות חיפוש */
        .search-result {
-           background: white;
-           margin-bottom: 15px;
-           padding: 20px;
-           border-radius: 8px;
+           background: #fff;
+           border: 1px solid #e1e4e8;
            border-right: 4px solid var(--primary-color);
-           box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-           transition: transform 0.2s;
+           padding: 15px;
+           margin-bottom: 15px;
+           border-radius: 6px;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
        }
 
-       .search-result:hover {
-           transform: translateY(-2px);
-           box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-       }
-
-       .search-result em {
-           background-color: rgba(255, 204, 0, 0.4); /* הדגשה עדינה יותר */
-           font-style: normal;
-           font-weight: bold;
-           padding: 0 2px;
-           border-radius: 2px;
-       }
-
-       .metadata {
+       .search-result .metadata {
            font-size: 0.85em;
            color: #666;
-           margin-top: 12px;
-           padding-top: 10px;
+           margin-top: 10px;
            border-top: 1px dashed #eee;
+           padding-top: 5px;
        }
 
        .document-title {
+           font-weight: bold;
            color: var(--primary-color);
            text-decoration: none;
-           font-weight: bold;
            font-size: 1.1em;
        }
 
@@ -142,14 +133,14 @@
 
        /* אנימציית טעינה */
        .loader {
-           border: 4px solid #f3f3f3;
-           border-top: 4px solid var(--primary-color);
+           border: 5px solid #f3f3f3;
+           border-top: 5px solid var(--primary-color);
            border-radius: 50%;
-           width: 30px;
-           height: 30px;
+           width: 40px;
+           height: 40px;
            animation: spin 1s linear infinite;
            margin: 20px auto;
-           display: none;
+           display: none; /* מוסתר כברירת מחדל */
        }
 
        @keyframes spin {
@@ -161,28 +152,27 @@
 <body>
 
    <div class="container">
-       <h2>🏛️ Gilat AI - מסמכי המ.מ.מ</h2>
+       <h2>🏛️ Gilat AI - חיפוש במסמכי המ.מ.מ</h2>
 
        <form onsubmit="sendQuery(); return false;">
-           <label for="query">מה תרצו לחפש היום?</label>
-           <input type="text" id="query" placeholder="למשל: מהן ההשפעות של בינה מלאכותית על שוק העבודה?">
+           <label for="query">מה תרצו לחפש?</label>
+           <input type="text" id="query" placeholder="למשל: השפעות ה-AI על שוק העבודה..." required>
            <button type="submit" id="submitBtn">חפש במסמכים</button>
        </form>
 
        <div id="loader" class="loader"></div>
 
        <div id="results-area" style="display:none;">
-           <h3 class="section-title">✨ סיכום תשובה (AI):</h3>
+           <h3>✨ סיכום תשובה (AI):</h3>
            <textarea id="result" readonly placeholder="הסיכום יופיע כאן..."></textarea>
 
-           <h3 class="section-title">📚 מקורות רלוונטיים:</h3>
+           <h3>📚 מקורות רלוונטיים:</h3>
            <div id="search-results"></div>
        </div>
    </div>
 
    <script>
        async function sendQuery() {
-           // שים לב: יש לעדכן את המפתח כאן
            const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
            const corpusKey = "mmm_docs5";
 
@@ -190,34 +180,35 @@
            const loader = document.getElementById("loader");
            const resultsArea = document.getElementById("results-area");
            const submitBtn = document.getElementById("submitBtn");
+           const resultTextarea = document.getElementById("result");
+           const searchResultsDiv = document.getElementById("search-results");
 
-           if (!queryText.trim()) {
-               alert("אנא הכנס שאילתא");
-               return;
-           }
+           if (!queryText.trim()) return;
 
-           // UI Updates for loading state
+           // איפוס ממשק לפני חיפוש
            loader.style.display = "block";
            resultsArea.style.display = "none";
            submitBtn.disabled = true;
            submitBtn.innerText = "מעבד נתונים...";
+           resultTextarea.value = "";
+           searchResultsDiv.innerHTML = "";
 
-           // *** תיקון קריטי: שימוש ב-Backticks עבור Template Literal ***
+           // כתובת ה-API של Vectara v2
            const url = `https://api.vectara.io/v2/corpora/${corpusKey}/query`;
 
-            const requestData = {
+           // גוף הבקשה המתוקן (ללא הפרמטר הבעייתי)
+           const requestData = {
                query: queryText,
                search: {
                     metadata_filter: "",
                     lexical_interpolation: 0.005,
-                    custom_dimensions: {},
                     offset: 0,
                     limit: 10,
                     context_configuration: {
                        sentences_before: 2,
                        sentences_after: 2,
-                       start_tag: "<em>",
-                       end_tag: "</em>"
+                       start_tag: "<b>",
+                       end_tag: "</b>"
                     },
                     reranker: {
                        type: "customer_reranker",
@@ -227,18 +218,17 @@
                 generation: {
                    generation_preset_name: "mockingbird-1.0-2024-07-16",
                    max_used_search_results: 5,
-                   // שינוי לעברית כדי שהסיכום יצא בשפת היעד
                    response_language: "heb",
                    enable_factual_consistency_score: false,
                    citations: {
                         style: "html",
                         url_pattern: "{doc.id}#page={section.page}",
-                        text_pattern: "as seen in {doc.title}"
+                        text_pattern: "{doc.title}"
                     }
                 },
                 stream_response: false,
                 save_history: false
-            };
+           };
 
            try {
                const response = await fetch(url, {
@@ -252,56 +242,57 @@
                });
 
                if (!response.ok) {
-                   const errorData = await response.json();
-                   throw new Error(errorData.message || `HTTP Error: ${response.status}`);
+                   const errorText = await response.text();
+                   throw new Error(`שגיאת שרת: ${response.status} - ${errorText}`);
                }
 
                const data = await response.json();
 
                // הצגת הסיכום
-               document.getElementById("result").value = data.summary || "לא התקבל סיכום.";
+               resultTextarea.value = data.summary || "לא התקבל סיכום או שלא נמצא מידע רלוונטי.";
 
-               // הצגת תוצאות החיפוש
-               const searchResultsDiv = document.getElementById("search-results");
-               searchResultsDiv.innerHTML = "";
-
+               // הצגת התוצאות
                if (data.search_results && data.search_results.length > 0) {
                    data.search_results.forEach((result) => {
                        const resultDiv = document.createElement("div");
                        resultDiv.className = "search-result";
 
-                       // *** תיקון קריטי: בניית המחרוזות עם Backticks ***
-                       const documentUrl = result.document_metadata.url ?
-                           `${result.document_metadata.url}#page=${result.part_metadata.page}` : '#';
+                       // יצירת קישור למסמך (במידה ויש URL)
+                       const docUrl = result.document_metadata.url
+                           ? `${result.document_metadata.url}#page=${result.part_metadata.page}`
+                           : '#';
 
+                       // טיפול במחברים
                        let authors = [];
                        if (result.document_metadata.author) authors.push(result.document_metadata.author);
                        if (result.document_metadata.teamleader) authors.push(`ר"צ: ${result.document_metadata.teamleader}`);
+                       const authorsText = authors.length ? authors.join(', ') : 'לא צוין';
 
-                       // יצירת ה-HTML
-                       const content = `
+                       // בניית ה-HTML של התוצאה
+                       resultDiv.innerHTML = `
                            <div class="metadata">
-                               <a href="${documentUrl}" target="_blank" class="document-title">📄 ${result.document_metadata.title || 'מסמך ללא כותרת'}</a>
+                               <a href="${docUrl}" target="_blank" class="document-title">📄 ${result.document_metadata.title || 'מסמך ללא כותרת'}</a>
                            </div>
-                           <div class="text" style="margin-top:10px;">${result.text}</div>
+                           <div style="margin-top:10px; line-height:1.5;">${result.text}</div>
                            <div class="metadata">
-                               <strong>תאריך:</strong> ${result.document_metadata.date || 'לא ידוע'} |
-                               <strong>מחברים:</strong> ${authors.length ? authors.join(', ') : 'לא צוין'}
+                               <strong>תאריך:</strong> ${result.document_metadata.date || '-'} |
+                               <strong>מחברים:</strong> ${authorsText} |
+                               <strong>ציון התאמה:</strong> ${(result.score * 100).toFixed(0)}%
                            </div>
                        `;
 
-                       resultDiv.innerHTML = content;
                        searchResultsDiv.appendChild(resultDiv);
                    });
                } else {
                    searchResultsDiv.innerHTML = "<p>לא נמצאו תוצאות רלוונטיות.</p>";
                }
 
+               // הצגת האזור
                resultsArea.style.display = "block";
 
            } catch (error) {
-               alert("שגיאה בחיפוש:\n" + error.message);
-               console.error("Error:", error);
+               console.error("Error details:", error);
+               alert("התרחשה שגיאה במהלך החיפוש:\n" + error.message);
            } finally {
                loader.style.display = "none";
                submitBtn.disabled = false;
