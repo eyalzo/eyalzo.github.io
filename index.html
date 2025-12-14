@@ -3,6 +3,11 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+   <meta http-equiv="Pragma" content="no-cache">
+   <meta http-equiv="Expires" content="0">
+
    <title>Gilat AI - חיפוש בממ"מ</title>
    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
    <style>
@@ -10,6 +15,7 @@
            --primary-color: #0056b3;
            --bg-color: #f4f7f6;
            --container-bg: #ffffff;
+           --accent-color: #e3f2fd;
        }
 
        body {
@@ -20,6 +26,7 @@
            padding: 20px;
            display: flex;
            justify-content: center;
+           min-height: 100vh;
        }
 
        .container {
@@ -29,34 +36,78 @@
            padding: 30px;
            border-radius: 12px;
            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+           height: fit-content;
        }
 
        h2 { color: var(--primary-color); text-align: center; margin-top: 0; }
 
-       label { font-weight: bold; margin-top: 20px; display: block; margin-bottom: 5px; }
+       /* אזור החיפוש */
+       .search-box-wrapper {
+           position: relative;
+           margin-top: 20px;
+       }
+
+       label { font-weight: bold; display: block; margin-bottom: 8px; }
 
        input[type="text"] {
-           width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+           width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px;
            box-sizing: border-box; font-size: 16px;
            text-align: right;
+           transition: border 0.3s;
        }
+       input[type="text"]:focus { outline: none; border-color: var(--primary-color); }
 
        button {
            width: 100%; padding: 12px; background-color: var(--primary-color);
            color: white; border: none; border-radius: 8px; font-size: 18px;
            cursor: pointer; margin-top: 15px; transition: background 0.3s;
+           font-weight: bold;
        }
        button:hover { background-color: #004494; }
        button:disabled { background-color: #ccc; cursor: not-allowed; }
 
+       /* אזור היסטוריה */
+       #history-area {
+           margin-top: 15px;
+           display: flex;
+           gap: 10px;
+           flex-wrap: wrap;
+       }
+
+       .history-tag {
+           background-color: var(--accent-color);
+           color: var(--primary-color);
+           padding: 6px 12px;
+           border-radius: 20px;
+           font-size: 0.9em;
+           cursor: pointer;
+           border: 1px solid transparent;
+           transition: all 0.2s;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+       }
+
+       .history-tag:hover {
+           background-color: #bbdefb;
+           border-color: var(--primary-color);
+       }
+
+       .history-code {
+           background: rgba(255,255,255,0.6);
+           padding: 2px 6px;
+           border-radius: 10px;
+           font-size: 0.8em;
+           font-weight: bold;
+       }
+
        /* תוצאות */
        #results-area { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
 
-       /* תיבת הסיכום */
        .summary-box {
            background-color: #f0f8ff;
            border: 1px solid #cce5ff;
-           padding: 15px;
+           padding: 20px;
            border-radius: 8px;
            line-height: 1.8;
            font-size: 1.05em;
@@ -66,7 +117,6 @@
            direction: rtl;
        }
 
-       /* ציטוטים [1] */
        .citation-link {
            color: var(--primary-color);
            font-weight: bold;
@@ -81,92 +131,49 @@
        /* כרטיסיית תוצאה */
        .search-result {
            background: #fff; border: 1px solid #e1e4e8; border-right: 4px solid var(--primary-color);
-           padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-           transition: background-color 0.3s;
-
-           /* תיקון קריטי ליישור */
-           text-align: right;
-           direction: rtl;
+           padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+           text-align: right; direction: rtl;
+           transition: transform 0.2s;
        }
 
-       .highlight-result { animation: flash-bg 1.5s ease-out; }
+       .highlight-result { animation: flash-bg 2s ease-out; }
        @keyframes flash-bg { 0% { background-color: #fff9c4; } 100% { background-color: #fff; } }
 
-       /* תיקון לכותרת המסמך בתוצאות */
-       .result-header {
-           display: flex;
-           align-items: flex-start; /* יישור לחלק העליון */
-           gap: 10px;
-           margin-bottom: 10px;
-       }
+       .result-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
 
        .document-title {
-           font-weight: bold;
-           color: var(--primary-color);
-           text-decoration: none;
-           font-size: 1.2em;
-           display: inline-block;
-           direction: rtl; /* חשוב לכותרות באנגלית */
-           text-align: right;
+           font-weight: bold; color: var(--primary-color); text-decoration: none; font-size: 1.2em;
+           display: inline-block; direction: rtl; text-align: right;
        }
        .document-title:hover { text-decoration: underline; }
 
        .result-number {
-           background: #eee;
-           padding: 2px 8px;
-           border-radius: 4px;
-           font-weight:bold;
-           font-size:0.9em;
-           color: #555;
-           flex-shrink: 0; /* מונע מהמספר להתכווץ */
+           background: #eee; padding: 4px 10px; border-radius: 6px;
+           font-weight:bold; font-size:0.9em; color: #555; flex-shrink: 0;
        }
 
-       /* תיקון לטקסט המעורב */
        .snippet-text {
-           margin-top: 10px;
-           line-height: 1.6;
-           font-size: 0.95em;
-           color: #333;
-
-           /* זה הטריק שמסדר עברית ואנגלית ביחד */
-           text-align: right;
-           direction: rtl;
-           unicode-bidi: embed;
+           margin-top: 10px; line-height: 1.6; font-size: 1em; color: #333;
+           text-align: right; direction: rtl; unicode-bidi: embed;
        }
 
        .metadata-footer {
-           font-size: 0.9em;
-           color: #555;
-           margin-top: 15px;
-           border-top: 1px dashed #eee;
-           padding-top: 10px;
-           display: flex;
-           justify-content: space-between; /* מפזר לצדדים: תאריך מימין, כפתור משמאל */
-           align-items: center;
-           flex-wrap: wrap;
-           gap: 10px;
+           font-size: 0.9em; color: #666; margin-top: 15px; border-top: 1px dashed #eee;
+           padding-top: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
        }
 
        .pdf-btn {
-           display: inline-flex;
-           align-items: center;
-           background-color: #ffebee;
-           color: #d32f2f;
-           border: 1px solid #ffcdd2;
-           padding: 4px 12px;
-           border-radius: 4px;
-           text-decoration: none;
-           font-weight: bold;
-           font-size: 0.9em;
-           transition: all 0.2s;
+           display: inline-flex; align-items: center; background-color: #ffebee; color: #d32f2f;
+           border: 1px solid #ffcdd2; padding: 6px 14px; border-radius: 6px; text-decoration: none;
+           font-weight: bold; font-size: 0.9em; transition: all 0.2s;
        }
        .pdf-btn:hover { background-color: #d32f2f; color: white; border-color: #b71c1c; }
-       .pdf-btn svg { width: 18px; height: 18px; margin-left: 6px; fill: currentColor; }
+       .pdf-btn svg { width: 18px; height: 18px; margin-left: 8px; fill: currentColor; }
 
        .loader {
            border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color);
-           border-radius: 50%; width: 40px; height: 40px;
-           animation: spin 1s linear infinite; margin: 20px auto; display: none;
+           border-radius: 50%; width: 50px; height: 50px;
+           animation: spin 1s linear infinite; margin: 30px auto; display: none;
        }
        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
    </style>
@@ -176,9 +183,12 @@
    <div class="container">
        <h2>🏛️ Gilat AI - חיפוש מתקדם בממ"מ</h2>
 
-       <form onsubmit="sendQuery(); return false;">
+       <form onsubmit="handleFormSubmit(); return false;">
            <label for="query">השאילתא שלך:</label>
-           <input type="text" id="query" placeholder="לדוגמה: מה המדינה עושה כדי להיות בחזית המיחשוב הקוונטי" required>
+           <input type="text" id="query" placeholder="הקלד נושא לחיפוש..." required>
+
+           <div id="history-area"></div>
+
            <button type="submit" id="submitBtn">חפש</button>
        </form>
 
@@ -194,11 +204,94 @@
    </div>
 
    <script>
-       async function sendQuery() {
+       const HISTORY_KEY = 'gilat_ai_history';
+
+       // --- אתחול הדף ---
+       window.onload = function() {
+           loadHistory();
+
+           // בדיקה אם יש פרמטר query ב-URL
+           const urlParams = new URLSearchParams(window.location.search);
+           const queryParam = urlParams.get('query');
+
+           if (queryParam) {
+               document.getElementById("query").value = queryParam;
+               sendQuery(queryParam, false); // false = לא לדחוף שוב להיסטוריה של הדפדפן
+           }
+       };
+
+       function handleFormSubmit() {
+           const query = document.getElementById("query").value;
+           if(query) {
+               // עדכון ה-URL כדי שיהיה ניתן לשיתוף
+               const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?query=' + encodeURIComponent(query);
+               window.history.pushState({path:newUrl},'',newUrl);
+
+               sendQuery(query, true);
+           }
+       }
+
+       // --- ניהול היסטוריה ---
+       function generateShortCode(str) {
+           // יצירת קוד מספרי קצר (Hash פשוט)
+           let hash = 0;
+           for (let i = 0; i < str.length; i++) {
+               const char = str.charCodeAt(i);
+               hash = ((hash << 5) - hash) + char;
+               hash = hash & hash; // Convert to 32bit integer
+           }
+           return Math.abs(hash % 10000); // 4 ספרות
+       }
+
+       function saveToHistory(text) {
+           let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+           const code = generateShortCode(text);
+
+           // הסרת כפילויות (אם כבר קיים, נמחק ונשים בהתחלה)
+           history = history.filter(item => item.text !== text);
+
+           // הוספה להתחלה
+           history.unshift({ text: text, code: code });
+
+           // שמירה של 20 אחרונים בלבד
+           if (history.length > 20) history.pop();
+
+           localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+           loadHistory();
+       }
+
+       function loadHistory() {
+           const historyArea = document.getElementById('history-area');
+           const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+
+           historyArea.innerHTML = '';
+
+           // הצגת 3 האחרונים
+           const recentItems = history.slice(0, 3);
+
+           if (recentItems.length > 0) {
+               historyArea.innerHTML = '<span style="font-size:0.9em; margin-left:10px; align-self:center;">אחרונים:</span>';
+               recentItems.forEach(item => {
+                   const tag = document.createElement('div');
+                   tag.className = 'history-tag';
+                   tag.onclick = () => {
+                       document.getElementById('query').value = item.text;
+                       handleFormSubmit();
+                   };
+                   tag.innerHTML = `
+                       ${item.text}
+                       <span class="history-code" title="קוד שאילתא">#${item.code}</span>
+                   `;
+                   historyArea.appendChild(tag);
+               });
+           }
+       }
+
+       // --- שליחת השאילתא ---
+       async function sendQuery(queryText, shouldSaveHistory) {
            const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
            const corpusKey = "mmm_docs5";
 
-           const queryText = document.getElementById("query").value;
            const loader = document.getElementById("loader");
            const resultsArea = document.getElementById("results-area");
            const submitBtn = document.getElementById("submitBtn");
@@ -206,6 +299,11 @@
            const searchResultsDiv = document.getElementById("search-results");
 
            if (!queryText.trim()) return;
+
+           // שמירה בהיסטוריה המקומית
+           if (shouldSaveHistory) {
+               saveToHistory(queryText);
+           }
 
            // UI Reset
            loader.style.display = "block";
