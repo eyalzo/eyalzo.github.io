@@ -24,8 +24,10 @@
            /* צבעים לתגיות */
            --tag-subject-bg: #e1f5fe;
            --tag-subject-text: #0277bd;
+           
            --tag-keyword-bg: #f5f5f5;
            --tag-keyword-text: #616161;
+           --tag-keyword-hover: #e0e0e0;
        }
 
        body {
@@ -105,7 +107,7 @@
        }
        .doc-title:hover { text-decoration: underline; }
 
-       /* --- Tags Styling (Subject & Keywords) --- */
+       /* --- Tags Styling --- */
        .doc-tags {
            margin-bottom: 12px;
            display: flex;
@@ -119,19 +121,29 @@
            padding: 3px 10px;
            border-radius: 4px;
            display: inline-block;
-           unicode-bidi: embed; /* חשוב לטקסט מעורב */
+           unicode-bidi: embed;
+           text-decoration: none; /* הסרת קו תחתון מקישורים */
+           transition: all 0.2s;
        }
 
        .tag-subject {
            background-color: var(--tag-subject-bg);
            color: var(--tag-subject-text);
            font-weight: bold;
+           cursor: default; /* כרגע לא לחיץ */
        }
 
+       /* מילות מפתח כקישורים */
        .tag-keyword {
            background-color: var(--tag-keyword-bg);
            color: var(--tag-keyword-text);
-           border: 1px solid #eee;
+           border: 1px solid #ddd;
+           cursor: pointer;
+       }
+       .tag-keyword:hover {
+           background-color: var(--tag-keyword-hover);
+           border-color: #ccc;
+           color: #333;
        }
 
        /* --- Snippet & Meta --- */
@@ -300,8 +312,6 @@
                            author: meta.author || authorName,
                            teamleader: meta.teamleader || null,
                            snippet: res.text || "",
-                           
-                           // חילוץ נושא ומילות מפתח (תמיכה ב-Capitalization שונה)
                            subject: meta.Subject || meta.subject || null,
                            keywords: meta.Keywords || meta.keywords || null
                        });
@@ -319,33 +329,34 @@
                    docsArray.forEach(doc => {
                        const fullUrl = doc.url !== "#" ? `${doc.url}#page=1` : "#";
                        
-                       // הרכבת המטא-דאטה התחתון
+                       // מטא דאטה
                        let metaParts = [];
                        if (doc.date) metaParts.push(`<strong>תאריך:</strong> ${doc.date}`);
                        if (doc.author) metaParts.push(`<strong>מחבר/ת:</strong> ${doc.author}`);
                        if (doc.teamleader) metaParts.push(`<strong>ר"צ:</strong> ${doc.teamleader}`);
                        const metaHtml = metaParts.join('<span class="meta-separator">|</span>');
 
-                       // יצירת תגיות נושא ומילות מפתח
+                       // עיבוד תגיות וקישורים
                        let tagsHtml = '';
                        
-                       // תגית נושא (כחול)
+                       // נושא (Subject)
                        if (doc.subject) {
                            tagsHtml += `<span class="tag-badge tag-subject">${doc.subject}</span>`;
                        }
                        
-                       // תגיות מילות מפתח (אפור)
+                       // מילות מפתח (Keywords) - מופרדות בנקודה-פסיק
                        if (doc.keywords) {
-                           // בדיקה אם זה מחרוזת מופרדת בפסיקים
-                           const keys = doc.keywords.split(',');
+                           // שינוי: פיצול לפי נקודה-פסיק כבקשתך
+                           const keys = doc.keywords.split(';');
                            keys.forEach(k => {
-                               if(k.trim()) {
-                                   tagsHtml += `<span class="tag-badge tag-keyword">${k.trim()}</span>`;
+                               const cleanKey = k.trim();
+                               if(cleanKey) {
+                                   // יצירת קישור לדף Topics
+                                   tagsHtml += `<a href="topics.html?topic=${encodeURIComponent(cleanKey)}" class="tag-badge tag-keyword">${cleanKey}</a>`;
                                }
                            });
                        }
                        
-                       // עטיפה ב-div אם יש תגיות
                        const tagsContainer = tagsHtml ? `<div class="doc-tags">${tagsHtml}</div>` : '';
 
                        const div = document.createElement('div');

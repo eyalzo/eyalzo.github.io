@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Gilat AI - אינדקס נושאים</title>
+   
+   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
+   
+   <style>
+       :root {
+           --primary-color: #0056b3;
+           --bg-color: #f4f7f6;
+           --card-bg: #ffffff;
+           --text-color: #333;
+           --border-color: #e0e0e0;
+           --hover-bg: #e3f2fd;
+           --meta-color: #555;
+           
+           /* צבעים לתגיות */
+           --topic-card-bg: #fff;
+           --topic-card-border: #ddd;
+           --topic-card-hover: #e3f2fd;
+       }
+
+       body {
+           font-family: 'Heebo', sans-serif;
+           background-color: var(--bg-color);
+           color: var(--text-color);
+           margin: 0;
+           padding: 20px;
+           direction: rtl; text-align: right;
+       }
+
+       .container { max-width: 1000px; margin: 0 auto; }
+
+       /* Header */
+       header {
+           display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+       }
+       h1 { color: var(--primary-color); margin: 0; }
+       
+       .nav-links { display: flex; gap: 10px; }
+       .nav-btn {
+           text-decoration: none; background-color: var(--primary-color); color: white;
+           padding: 8px 16px; border-radius: 6px; font-weight: bold; transition: background 0.2s;
+           font-size: 0.9em;
+       }
+       .nav-btn:hover { background-color: #004494; }
+       .nav-btn.secondary { background-color: #546e7a; }
+       .nav-btn.secondary:hover { background-color: #37474f; }
+
+       /* Loader */
+       .loader {
+           border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
+           border-radius: 50%; width: 40px; height: 40px;
+           animation: spin 1s linear infinite; margin: 50px auto;
+       }
+       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+       /* --- Topics Grid (Index View) --- */
+       .topics-grid {
+           display: flex; flex-wrap: wrap; gap: 10px;
+       }
+
+       .topic-card {
+           background: var(--topic-card-bg);
+           border: 1px solid var(--topic-card-border);
+           border-radius: 20px; /* מראה עגול יותר לנושאים */
+           padding: 8px 16px;
+           text-decoration: none;
+           color: var(--text-color);
+           transition: all 0.2s;
+           font-size: 0.95em;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+       }
+       
+       .topic-card:hover {
+           transform: translateY(-2px);
+           border-color: var(--primary-color);
+           background-color: var(--topic-card-hover);
+           color: var(--primary-color);
+           box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+       }
+
+       .topic-count {
+           background: #eee;
+           color: #666;
+           font-size: 0.8em;
+           padding: 2px 6px;
+           border-radius: 10px;
+       }
+
+       /* --- Documents List (Detail View) --- */
+       .topic-header {
+           background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: right;
+       }
+       .topic-header h2 { margin: 0; color: var(--primary-color); }
+       .topic-header p { margin: 5px 0 0; color: #666; }
+
+       .doc-item {
+           background: white; border-right: 4px solid var(--primary-color);
+           padding: 20px; margin-bottom: 15px; border-radius: 8px;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s;
+           text-align: right; direction: rtl;
+       }
+       .doc-item:hover { transform: translateX(-5px); }
+
+       .doc-title {
+           font-size: 1.25em; font-weight: bold; text-decoration: none;
+           color: var(--primary-color); display: block; margin-bottom: 8px;
+       }
+       .doc-title:hover { text-decoration: underline; }
+
+       .doc-snippet {
+           font-size: 0.95em; color: #444; line-height: 1.6; margin-bottom: 15px;
+           background-color: #fafafa; padding: 10px; border-radius: 6px;
+           unicode-bidi: embed;
+           display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+       }
+
+       .doc-meta {
+           font-size: 0.9em; color: var(--meta-color);
+           display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+           border-top: 1px dashed #eee; padding-top: 10px;
+       }
+
+       .meta-separator { margin: 0 5px; color: #ccc; }
+
+       .pdf-btn {
+           display: inline-flex; align-items: center; background-color: #ffebee; color: #d32f2f;
+           border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 4px; text-decoration: none;
+           font-weight: bold; font-size: 0.85em; margin-right: auto; 
+           transition: all 0.2s;
+       }
+       .pdf-btn:hover { background-color: #d32f2f; color: white; border-color: #b71c1c; }
+       .pdf-btn svg { width: 16px; height: 16px; margin-left: 5px; fill: currentColor; }
+       
+       .empty-msg { text-align: center; color: #666; margin-top: 30px; font-size: 1.2em; }
+   </style>
+</head>
+<body>
+
+   <div class="container">
+       <header>
+           <h1>🏷️ אינדקס נושאים</h1>
+           <div class="nav-links">
+               <a href="index.html" class="nav-btn secondary">חיפוש</a>
+               <a href="authors.html" class="nav-btn secondary">מחברים</a>
+               <a href="stats.html" class="nav-btn secondary">סטטיסטיקות</a>
+               <a href="topics.html" class="nav-btn" id="all-topics-btn" style="display:none;">← חזרה לרשימה</a>
+           </div>
+       </header>
+
+       <div id="loader" class="loader"></div>
+
+       <div id="topics-list-view" style="display:none;">
+           <div class="topics-grid" id="topics-container"></div>
+       </div>
+
+       <div id="topic-detail-view" style="display:none;">
+           <div class="topic-header">
+               <h2 id="detail-topic-name"></h2>
+               <p>מסמכים הקשורים לנושא זה (ממויין לפי תאריך)</p>
+           </div>
+           <div id="documents-container"></div>
+       </div>
+
+   </div>
+
+   <script>
+       const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
+       const corpusKey = "mmm_docs5";
+       const headers = {
+           "x-api-key": apiKey,
+           "Accept": "application/json",
+           "Content-Type": "application/json"
+       };
+
+       window.onload = function() {
+           const urlParams = new URLSearchParams(window.location.search);
+           const topicParam = urlParams.get('topic');
+
+           if (topicParam) {
+               document.getElementById('all-topics-btn').style.display = 'inline-block';
+               loadTopicDocuments(topicParam);
+           } else {
+               loadTopicsList();
+           }
+       };
+
+       // --- 1. רשימת נושאים (פירוק ואגרגציה) ---
+       async function loadTopicsList() {
+           const loader = document.getElementById('loader');
+           const view = document.getElementById('topics-list-view');
+           const container = document.getElementById('topics-container');
+
+           try {
+               const response = await fetch(`https://api.vectara.io/v2/corpora/${corpusKey}/filter_attribute_stats`, { headers });
+               const data = await response.json();
+               
+               const stats = data.filter_attribute_stats || [];
+               
+               // איסוף נתונים משני שדות: Keywords ו-Subject
+               const topicsMap = new Map();
+
+               // פונקציית עזר להוספה למפה
+               const addTopic = (rawString, count) => {
+                   if (!rawString) return;
+                   // פיצול לפי נקודה-פסיק
+                   const parts = rawString.split(';');
+                   parts.forEach(part => {
+                       const clean = part.trim();
+                       if (clean.length > 1) { // סינון רעש
+                           const current = topicsMap.get(clean) || 0;
+                           topicsMap.set(clean, current + count);
+                       }
+                   });
+               };
+
+               // עיבוד Keywords
+               const kwStats = stats.find(s => s.name === 'doc.keywords' || s.name === 'doc.Keywords');
+               if (kwStats && kwStats.values) {
+                   kwStats.values.forEach(v => addTopic(v.value, v.count));
+               }
+
+               // עיבוד Subject (לרוב זה ערך בודד, אבל נוסיף אותו גם)
+               const subjStats = stats.find(s => s.name === 'doc.subject' || s.name === 'doc.Subject');
+               if (subjStats && subjStats.values) {
+                   subjStats.values.forEach(v => addTopic(v.value, v.count));
+               }
+
+               if (topicsMap.size === 0) {
+                   container.innerHTML = "<p class='empty-msg'>לא נמצאו נושאים או מילות מפתח.</p>";
+                   loader.style.display = 'none';
+                   view.style.display = 'block';
+                   return;
+               }
+
+               // המרה למערך ומיון
+               const sortedTopics = Array.from(topicsMap.entries()).map(([name, count]) => ({ name, count }));
+               // מיון לפי א-ב
+               sortedTopics.sort((a, b) => a.name.localeCompare(b.name, 'he'));
+
+               // רינדור
+               sortedTopics.forEach(topic => {
+                   const card = document.createElement('a');
+                   card.className = 'topic-card';
+                   card.href = `topics.html?topic=${encodeURIComponent(topic.name)}`;
+                   card.innerHTML = `
+                       <span>${topic.name}</span>
+                       <span class="topic-count">${topic.count}</span>
+                   `;
+                   container.appendChild(card);
+               });
+
+               loader.style.display = 'none';
+               view.style.display = 'block';
+
+           } catch (e) {
+               console.error(e);
+               container.innerHTML = "<p class='empty-msg'>שגיאה בטעינת הנתונים.</p>";
+               loader.style.display = 'none';
+               view.style.display = 'block';
+           }
+       }
+
+       // --- 2. מסמכים לפי נושא ---
+       async function loadTopicDocuments(topicName) {
+           const loader = document.getElementById('loader');
+           const view = document.getElementById('topic-detail-view');
+           const container = document.getElementById('documents-container');
+           const titleEl = document.getElementById('detail-topic-name');
+
+           titleEl.innerText = topicName;
+
+           try {
+               // Escape לגרש
+               const safeTopic = topicName.replace(/'/g, "\\'");
+               
+               // פילטר: מחפש את המחרוזת בתוך Keywords או בתוך Subject
+               // משתמשים ב-ilike לחיפוש גמיש (Case Insensitive) והכלה
+               const filterString = `doc.keywords ilike '%${safeTopic}%' OR doc.subject ilike '%${safeTopic}%'`;
+
+               const requestData = {
+                   query: "", 
+                   search: {
+                       corpora: [{ 
+                           corpus_key: corpusKey,
+                           metadata_filter: filterString
+                       }],
+                       offset: 0,
+                       limit: 100 // מספיק לרוב הנושאים
+                   }
+               };
+
+               const response = await fetch("https://api.vectara.io/v2/query", {
+                   method: "POST",
+                   headers: headers,
+                   body: JSON.stringify(requestData)
+               });
+
+               const data = await response.json();
+               const results = data.search_results || [];
+
+               // Deduplication
+               const uniqueDocs = new Map();
+
+               results.forEach(res => {
+                   const docId = res.document_id;</title>
+</head>
+<body>
+
+</body>
+</html>

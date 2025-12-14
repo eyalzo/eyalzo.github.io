@@ -35,15 +35,22 @@
 
        .container { max-width: 1000px; margin: 0 auto; }
 
+       /* Header & Nav */
        header {
            display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
        }
        h1 { color: var(--primary-color); margin: 0; }
+       
+       .nav-links { display: flex; gap: 10px; }
        .nav-btn {
            text-decoration: none; background-color: var(--primary-color); color: white;
            padding: 8px 16px; border-radius: 6px; font-weight: bold; transition: background 0.2s;
+           font-size: 0.9em;
        }
        .nav-btn:hover { background-color: #004494; }
+       
+       .nav-btn.secondary { background-color: #546e7a; }
+       .nav-btn.secondary:hover { background-color: #37474f; }
 
        .card {
            background-color: var(--card-bg); border-radius: 12px; padding: 25px;
@@ -61,13 +68,11 @@
        .summary-item .value { font-size: 2.5em; font-weight: bold; color: var(--primary-color); }
        .summary-item .label { color: #666; font-size: 1em; }
        
-       /* Info Box - Fixed Alignment */
+       /* Info Box */
        .info-box {
            background-color: var(--info-bg); border: 1px solid var(--info-border);
            border-radius: 8px; padding: 15px; margin-bottom: 25px;
            display: flex; gap: 15px; align-items: flex-start;
-           
-           /* תיקון יישור */
            direction: rtl; text-align: right;
        }
        .info-icon { font-size: 1.5em; margin-left: 10px; }
@@ -97,7 +102,6 @@
            font-size: 1.3em; color: #333; margin-bottom: 10px; font-weight: bold;
            unicode-bidi: embed; text-align: right; direction: rtl;
        }
-       .field-subtitle { font-size: 0.9em; color: #666; margin-bottom: 20px; }
        .field-name-ltr { direction: ltr; display: inline-block; color: var(--primary-color); }
 
        .charts-grid {
@@ -133,7 +137,10 @@
    <div class="container">
        <header>
            <h1>📊 Gilat AI - תמונת מצב</h1>
-           <a href="index.html" class="nav-btn">← חזרה לחיפוש</a>
+           <div class="nav-links">
+               <a href="index.html" class="nav-btn">← חיפוש</a>
+               <a href="authors.html" class="nav-btn secondary">אינדקס מחברים</a>
+           </div>
        </header>
 
        <div id="loader" class="loader"></div>
@@ -162,6 +169,7 @@
                    <p>
                        מערכת החיפוש מפרקת כל מסמך לחלקים קטנים (פסקאות או משפטים).
                        לכן, הגרפים למטה מציגים את <strong>נפח התוכן</strong> (מספר המקטעים) המשויך לכל קטגוריה, ולא את מספר המסמכים הבודדים.
+                       זוהי אינדיקציה לכמות המידע הזמין במערכת עבור כל נושא או מחבר.
                    </p>
                </div>
            </div>
@@ -198,14 +206,13 @@
            const errorArea = document.getElementById('error-area');
 
            try {
-               // --- 1. סטטיסטיקות (Filter Attributes) ---
+               // 1. טעינת סטטיסטיקות
                const statsRes = await fetch(`https://api.vectara.io/v2/corpora/${corpusKey}/filter_attribute_stats`, { headers });
                if (!statsRes.ok) throw new Error("שגיאה בטעינת סטטיסטיקות");
                const statsData = await statsRes.json();
                const statItems = statsData.filter_attribute_stats || [];
 
-               // --- 2. ספירת מסמכים (שיטה משופרת דרך Search) ---
-               // חיפוש ריק עם limit=0 נותן בדרך כלל את ה-Total Results האמין ביותר
+               // 2. חישוב סך המסמכים
                const searchRes = await fetch("https://api.vectara.io/v2/query", {
                    method: "POST",
                    headers: headers,
@@ -222,19 +229,15 @@
                let realDocCount = "לא זמין";
                if (searchRes.ok) {
                    const searchData = await searchRes.json();
-                   // בודקים במקומות אפשריים ב-V2 response
-                   if (searchData.search && searchData.search.total_results !== undefined) {
-                        realDocCount = searchData.search.total_results.toLocaleString();
-                   } else if (searchData.pagination && searchData.pagination.total !== undefined) {
-                        realDocCount = searchData.pagination.total.toLocaleString();
-                   } else if (searchData.search_results_metadata && searchData.search_results_metadata.total_results) {
-                        // fallback structure
+                   if (searchData.search_results_metadata && searchData.search_results_metadata.total_results) {
                         realDocCount = searchData.search_results_metadata.total_results.toLocaleString();
+                   } else if (searchData.search && searchData.search.total_results !== undefined) {
+                        realDocCount = searchData.search.total_results.toLocaleString();
                    }
                }
                document.getElementById('total-docs').innerText = realDocCount;
 
-               // --- 3. סך המקטעים (Total Parts) ---
+               // 3. חישוב סך המקטעים
                let totalParts = 0;
                const langStat = statItems.find(s => s.name === 'part.lang');
                if (langStat && langStat.values) {
@@ -242,7 +245,7 @@
                }
                document.getElementById('total-parts').innerText = totalParts > 0 ? totalParts.toLocaleString() : "לא זמין";
 
-               // --- 4. בניית ה-UI ---
+               // 4. בניית UI
                const fieldsListContainer = document.getElementById('fields-list');
                const chartsArea = document.getElementById('dynamic-charts-area');
                
@@ -254,12 +257,11 @@
                    return;
                }
 
-               // מיון: קודם מעניינים, אח"כ השאר
+               // מיון
                statItems.sort((a, b) => {
                    const aVals = a.values || [];
                    const bVals = b.values || [];
                    
-                   // אם זה תאריך, נחשב ייחודיות לפי שנה ולא לפי ערך גולמי
                    const aUnique = a.name.includes('date') ? countUniqueYears(aVals) : aVals.length;
                    const bUnique = b.name.includes('date') ? countUniqueYears(bVals) : bVals.length;
                    
@@ -276,7 +278,6 @@
                statItems.forEach(stat => {
                    let values = stat.values || [];
                    
-                   // --- טיפול מיוחד לתאריכים: המרה לשנים ---
                    if (stat.name.includes('date')) {
                        values = groupByYear(values);
                    }
@@ -292,7 +293,7 @@
                        chip.href = `#field-${cleanId(stat.name)}`;
                        chip.title = `הצג גרף (${uniqueCount} קבוצות שונות)`;
                        
-                       createFieldSection(chartsArea, stat, values);
+                       createFieldSection(chartsArea, stat.name, values);
                        hasAnyChart = true;
                    } else {
                        chip.className = 'field-chip inactive';
@@ -317,7 +318,6 @@
            }
        }
 
-       // --- לוגיקה לקיבוץ שנים ---
        function countUniqueYears(values) {
            const years = new Set();
            values.forEach(v => {
@@ -330,21 +330,15 @@
 
        function groupByYear(originalValues) {
            const yearMap = {};
-           
            originalValues.forEach(item => {
                let year = "Unknown";
                if (typeof item.value === 'string' && item.value.length >= 4) {
-                   // לוקחים 4 ספרות ראשונות (בהנחה שזה YYYY...)
                    year = item.value.substring(0, 4);
-                   // בדיקת תקינות בסיסית שזה מספר
                    if (isNaN(year)) year = "Unknown";
                }
-               
                if (!yearMap[year]) yearMap[year] = 0;
                yearMap[year] += item.count;
            });
-
-           // המרה חזרה למערך
            return Object.keys(yearMap).map(year => {
                return { value: year, count: yearMap[year] };
            });
@@ -352,10 +346,7 @@
 
        function cleanId(str) { return str.replace(/[^a-zA-Z0-9]/g, '_'); }
 
-       function createFieldSection(container, stat, values) {
-           const fieldName = stat.name;
-           
-           // מיון יורד
+       function createFieldSection(container, name, values) {
            values.sort((a, b) => b.count - a.count);
 
            const top10 = values.slice(0, 10);
@@ -374,11 +365,9 @@
 
            const sectionDiv = document.createElement('div');
            sectionDiv.className = 'field-section';
-           sectionDiv.id = `field-${cleanId(fieldName)}`;
+           sectionDiv.id = `field-${cleanId(name)}`;
            
-           // כותרת מיוחדת אם זה תאריך
-           const displayTitle = fieldName.includes('date') ? 
-               `${fieldName} (מקובץ לפי שנים)` : fieldName;
+           const displayTitle = name.includes('date') ? `${name} (מקובץ לפי שנים)` : name;
 
            sectionDiv.innerHTML = `
                <div class="field-title">
@@ -387,15 +376,15 @@
                
                <div class="charts-grid">
                    <div class="chart-wrapper">
-                       <canvas id="chart_${cleanId(fieldName)}"></canvas>
+                       <canvas id="chart_${cleanId(name)}"></canvas>
                    </div>
-                   <div id="bars_${cleanId(fieldName)}"></div>
+                   <div id="bars_${cleanId(name)}"></div>
                </div>
            `;
            
            container.appendChild(sectionDiv);
 
-           const ctx = document.getElementById(`chart_${cleanId(fieldName)}`).getContext('2d');
+           const ctx = document.getElementById(`chart_${cleanId(name)}`).getContext('2d');
            new Chart(ctx, {
                type: 'doughnut',
                data: {
@@ -417,12 +406,22 @@
                        legend: {
                            position: 'right',
                            labels: { font: { family: 'Heebo' }, boxWidth: 12 }
+                       },
+                       tooltip: {
+                           callbacks: {
+                               label: function(context) {
+                                   let label = context.label || '';
+                                   if (label) { label += ': '; }
+                                   label += context.raw.toLocaleString() + ' מקטעים';
+                                   return label;
+                               }
+                           }
                        }
                    }
                }
            });
 
-           renderBars(`bars_${cleanId(fieldName)}`, top10);
+           renderBars(`bars_${cleanId(name)}`, top10);
        }
 
        function formatLabel(val) {
