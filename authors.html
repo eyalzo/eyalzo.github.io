@@ -101,9 +101,13 @@
        }
        .doc-title:hover { text-decoration: underline; }
 
+       /* תגיות בשורה נפרדת */
        .doc-tags {
-           margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+           display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+           margin-top: 10px; margin-bottom: 12px; /* ריווח מלמעלה ומלמטה */
+           width: 100%;
        }
+       
        .tag-badge {
            font-size: 0.85em; padding: 3px 10px; border-radius: 4px; display: inline-block;
            unicode-bidi: embed; text-decoration: none; transition: all 0.2s;
@@ -204,7 +208,6 @@
                const response = await fetch(`https://api.vectara.io/v2/corpora/${corpusKey}/filter_attribute_stats`, { headers });
                const data = await response.json();
                
-               // חזרה לשימוש בשדה הישן והטוב author
                const authorStats = data.filter_attribute_stats.find(s => s.name === 'doc.author');
                
                if (!authorStats || !authorStats.values || authorStats.values.length === 0) {
@@ -236,7 +239,7 @@
            }
        }
 
-       // --- 2. מסמכים של מחבר: חזרה לפילטר רגיל ---
+       // --- 2. מסמכים של מחבר ---
        async function loadAuthorDocuments(authorName) {
            const loader = document.getElementById('loader');
            const view = document.getElementById('author-detail-view');
@@ -247,12 +250,9 @@
 
            try {
                const safeName = authorName.replace(/'/g, "\\'");
-               
-               // שימוש באופרטור שווה (=) כי מדובר בשדה מחרוזת רגיל (לא רשימה) כרגע
+               // שימוש בשדה הישן בינתיים
                const filterString = `doc.author = '${safeName}'`;
                
-               console.log("Filter used:", filterString);
-
                const requestData = {
                    query: "", 
                    search: {
@@ -284,7 +284,6 @@
                        uniqueDocs.set(docId, {
                            id: docId,
                            title: meta.title || "ללא כותרת",
-                           // משתמשים ב-ez_date לתצוגה אם יש, כי הסקריפט כן מעדכן אותו
                            date: meta.ez_date || meta.date || "לא צוין",
                            url: meta.url || "#",
                            author: meta.author || authorName,
@@ -335,12 +334,17 @@
                        
                        const tagsContainer = tagsHtml ? `<div class="doc-tags">${tagsHtml}</div>` : '';
 
+                       // בדיקת אורך התקציר (מעל 100 תווים)
+                       const snippetHtml = (doc.snippet && doc.snippet.length >= 100) 
+                           ? `<div class="doc-snippet">${doc.snippet}</div>` 
+                           : '';
+
                        const div = document.createElement('div');
                        div.className = 'doc-item';
                        div.innerHTML = `
                            <a href="${fullUrl}" target="_blank" class="doc-title">${doc.title}</a>
                            ${tagsContainer}
-                           ${doc.snippet ? `<div class="doc-snippet">${doc.snippet}</div>` : ''}
+                           ${snippetHtml}
                            <div class="doc-meta">
                                ${metaHtml}
                                ${doc.url !== "#" ? `<a href="${fullUrl}" target="_blank" class="pdf-btn">${pdfIcon} פתח מסמך</a>` : ''}
