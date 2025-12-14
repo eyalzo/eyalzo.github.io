@@ -3,7 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Gilat AI - מסמכי המ.מ.מ</title>
+   <title>Gilat AI - חיפוש בממ"מ</title>
    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
    <style>
        :root {
@@ -24,210 +24,150 @@
 
        .container {
            width: 100%;
-           max-width: 800px;
+           max-width: 900px;
            background-color: var(--container-bg);
            padding: 30px;
            border-radius: 12px;
            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
        }
 
-       h2 {
-           color: var(--primary-color);
-           text-align: center;
-           margin-top: 0;
-       }
+       h2 { color: var(--primary-color); text-align: center; margin-top: 0; }
 
-       label {
-           font-weight: bold;
-           margin-top: 20px;
-           display: block;
-           margin-bottom: 5px;
-       }
+       label { font-weight: bold; margin-top: 20px; display: block; margin-bottom: 5px; }
 
        input[type="text"] {
-           width: 100%;
-           padding: 12px;
-           border: 1px solid #ddd;
-           border-radius: 8px;
-           box-sizing: border-box; /* חשוב כדי שה-padding לא יחרוג */
-           font-size: 16px;
+           width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+           box-sizing: border-box; font-size: 16px;
        }
 
        button {
-           width: 100%;
-           padding: 12px;
-           background-color: var(--primary-color);
-           color: white;
-           border: none;
-           border-radius: 8px;
-           font-size: 18px;
-           cursor: pointer;
-           margin-top: 15px;
-           transition: background 0.3s;
+           width: 100%; padding: 12px; background-color: var(--primary-color);
+           color: white; border: none; border-radius: 8px; font-size: 18px;
+           cursor: pointer; margin-top: 15px; transition: background 0.3s;
        }
+       button:hover { background-color: #004494; }
+       button:disabled { background-color: #ccc; cursor: not-allowed; }
 
-       button:hover {
-           background-color: #004494;
-       }
+       /* תוצאות */
+       #results-area { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
 
-       button:disabled {
-           background-color: #ccc;
-           cursor: not-allowed;
-       }
-
-       /* אזור התוצאות */
-       #results-area {
-           margin-top: 30px;
-           border-top: 1px solid #eee;
-           padding-top: 20px;
-       }
-
-       h3 {
-           color: var(--primary-color);
-           border-bottom: 2px solid #eee;
-           padding-bottom: 10px;
-           margin-bottom: 15px;
-       }
-
-       textarea {
-           width: 100%;
-           height: 150px;
-           padding: 10px;
-           border: 1px solid #ddd;
-           border-radius: 8px;
-           resize: vertical;
-           font-family: 'Heebo', sans-serif;
-           background-color: #fafafa;
-           box-sizing: border-box;
-       }
-
-       /* כרטיסיות חיפוש */
-       .search-result {
-           background: #fff;
-           border: 1px solid #e1e4e8;
-           border-right: 4px solid var(--primary-color);
+       /* תיבת הסיכום */
+       .summary-box {
+           background-color: #f0f8ff;
+           border: 1px solid #cce5ff;
            padding: 15px;
-           margin-bottom: 15px;
-           border-radius: 6px;
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+           border-radius: 8px;
+           white-space: pre-wrap; /* שומר על ירידות שורה */
+           line-height: 1.6;
+           font-size: 1.05em;
+           color: #000;
        }
 
-       .search-result .metadata {
-           font-size: 0.85em;
-           color: #666;
-           margin-top: 10px;
-           border-top: 1px dashed #eee;
-           padding-top: 5px;
+       .search-result {
+           background: #fff; border: 1px solid #e1e4e8; border-right: 4px solid var(--primary-color);
+           padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
        }
 
-       .document-title {
-           font-weight: bold;
-           color: var(--primary-color);
-           text-decoration: none;
-           font-size: 1.1em;
-       }
+       .metadata { font-size: 0.85em; color: #666; margin-top: 10px; border-top: 1px dashed #eee; padding-top: 5px; }
+       .document-title { font-weight: bold; color: var(--primary-color); text-decoration: none; font-size: 1.1em; }
+       .document-title:hover { text-decoration: underline; }
 
-       .document-title:hover {
-           text-decoration: underline;
-       }
-
-       /* אנימציית טעינה */
        .loader {
-           border: 5px solid #f3f3f3;
-           border-top: 5px solid var(--primary-color);
-           border-radius: 50%;
-           width: 40px;
-           height: 40px;
-           animation: spin 1s linear infinite;
-           margin: 20px auto;
-           display: none; /* מוסתר כברירת מחדל */
+           border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color);
+           border-radius: 50%; width: 40px; height: 40px;
+           animation: spin 1s linear infinite; margin: 20px auto; display: none;
        }
-
-       @keyframes spin {
-           0% { transform: rotate(0deg); }
-           100% { transform: rotate(360deg); }
-       }
+       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
    </style>
 </head>
 <body>
 
    <div class="container">
-       <h2>🏛️ Gilat AI - חיפוש במסמכי המ.מ.מ</h2>
+       <h2>🏛️ Gilat AI - חיפוש מתקדם בממ"מ</h2>
 
        <form onsubmit="sendQuery(); return false;">
-           <label for="query">מה תרצו לחפש?</label>
-           <input type="text" id="query" placeholder="למשל: השפעות ה-AI על שוק העבודה..." required>
-           <button type="submit" id="submitBtn">חפש במסמכים</button>
+           <label for="query">השאילתא שלך:</label>
+           <input type="text" id="query" placeholder="לדוגמה: מה המדינה עושה כדי להיות בחזית המיחשוב הקוונטי" required>
+           <button type="submit" id="submitBtn">חפש</button>
        </form>
 
        <div id="loader" class="loader"></div>
 
        <div id="results-area" style="display:none;">
-           <h3>✨ סיכום תשובה (AI):</h3>
-           <textarea id="result" readonly placeholder="הסיכום יופיע כאן..."></textarea>
+           <h3>✨ תשובת ה-AI:</h3>
+           <div id="summary-text" class="summary-box"></div>
 
-           <h3>📚 מקורות רלוונטיים:</h3>
+           <h3>📚 מסמכים רלוונטיים:</h3>
            <div id="search-results"></div>
        </div>
    </div>
 
    <script>
        async function sendQuery() {
+           // הגדרות מפתח
            const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
            const corpusKey = "mmm_docs5";
 
+           // אלמנטים ב-DOM
            const queryText = document.getElementById("query").value;
            const loader = document.getElementById("loader");
            const resultsArea = document.getElementById("results-area");
            const submitBtn = document.getElementById("submitBtn");
-           const resultTextarea = document.getElementById("result");
+           const summaryDiv = document.getElementById("summary-text");
            const searchResultsDiv = document.getElementById("search-results");
 
            if (!queryText.trim()) return;
 
-           // איפוס ממשק לפני חיפוש
+           // איפוס UI
            loader.style.display = "block";
            resultsArea.style.display = "none";
            submitBtn.disabled = true;
            submitBtn.innerText = "מעבד נתונים...";
-           resultTextarea.value = "";
+           summaryDiv.innerText = "";
            searchResultsDiv.innerHTML = "";
 
-           // כתובת ה-API של Vectara v2
-           const url = `https://api.vectara.io/v2/corpora/${corpusKey}/query`;
+           // כתובת ה-Endpoint הכללית (כמו בדוגמה שלך)
+           const url = "https://api.vectara.io/v2/query";
 
-           // גוף הבקשה המתוקן (ללא הפרמטר הבעייתי)
+           // בניית הגוף בדיוק לפי הדוגמה שעובדת
+           // שיניתי את stream_response ל-false כדי לפשט את הטיפול בתשובה ב-HTML פשוט
            const requestData = {
                query: queryText,
                search: {
-                    metadata_filter: "",
-                    lexical_interpolation: 0.005,
-                    offset: 0,
-                    limit: 10,
-                    context_configuration: {
+                   corpora: [
+                       {
+                           corpus_key: corpusKey,
+                           metadata_filter: "",
+                           lexical_interpolation: 0.005,
+                           custom_dimensions: {}
+                       }
+                   ],
+                   offset: 0,
+                   limit: 10,
+                   context_configuration: {
                        sentences_before: 2,
                        sentences_after: 2,
                        start_tag: "<b>",
                        end_tag: "</b>"
-                    },
-                    reranker: {
+                   },
+                   reranker: {
                        type: "customer_reranker",
-                       reranker_name: "Rerank_Multilingual_v1"
-                    }
-                },
-                generation: {
-                   generation_preset_name: "mockingbird-1.0-2024-07-16",
-                   max_used_search_results: 5,
+                       reranker_id: "rnk_272725719" // המזהה מהדוגמה שלך
+                   }
+               },
+               stream_response: false,
+               generation: {
+                   generation_preset_name: "vectara-summary-table-md-query-ext-jan-2025-gpt-4o",
+                   max_used_search_results: 10,
+                   // הטמעת הטמפלייט המלא מהדוגמה שלך שמכיל את ההנחיות לעברית
+                   prompt_template: "[\n  {\"role\": \"system\", \"content\": \"You are a search bot that forms a coherent answer to a user query based on search results that are provided to you.\" },\n  {\"role\": \"user\", \"content\": \" [INSTRUCTIONS]\n    Search results may include tables in a markdown format. When answering a question using a table be careful about which rows and columns contain the answer and include all relevant information from the relevant rows and columns that the query is asking about.\n    Do not cobble facts together from multiple search results, instead summarize the main facts into a consistent and easy to understand response.\n    Do not base your response on information or knowledge that is not in the search results.\n    Make sure your response is answering the query asked. If the query is related to an entity (such as a person or place), make sure you use search results related to that entity.\n    For queries where only a short answer is required, you can give a brief response.\n    Consider that each search result is a partial segment from a bigger text, and may be incomplete.\n    Your output should always be in a single language - the $vectaraLangName language. Check spelling and grammar for the $vectaraLangName language.\n    Search results for the query *** $vectaraQuery***, are listed below, some are text, some MAY be tables in the format described above.\n    #foreach ($qResult in $vectaraQueryResultsDeduped)\n      [$esc.java($foreach.index + 1)]\n      #if($qResult.hasTable())\n        Table Title: $qResult.getTable().title() || Table Description: $qResult.getTable().description() || Table Data:\n        $qResult.getTable().markdown()\n      #else\n        $qResult.getText()\n      #end\n    #end\n    Generate a coherent response (but no more than $vectaraOutChars characters) to the query *** $vectaraQuery *** by summarizing the search results provided. Give a slight preference to search results that appear earlier in the list.\n    Only cite relevant search results in your answer following these specific instructions: $vectaraCitationInstructions\n    Respond always in the Hebrew language, and only in that language.\"}\n]",
                    response_language: "heb",
-                   enable_factual_consistency_score: false,
-                   citations: {
-                        style: "html",
-                        url_pattern: "{doc.id}#page={section.page}",
-                        text_pattern: "{doc.title}"
-                    }
-                },
-                stream_response: false,
-                save_history: false
+                   model_parameters: {
+                       llm_name: "gpt-4o"
+                   },
+                   enable_factual_consistency_score: true
+               },
+               save_history: true
            };
 
            try {
@@ -236,39 +176,43 @@
                    headers: {
                        "Content-Type": "application/json",
                        "Accept": "application/json",
-                       "x-api-key": apiKey
+                       "x-api-key": apiKey,
+                       "customer-id": "1493651330" // הוספתי לפי הדוגמה שלך ליתר ביטחון
                    },
                    body: JSON.stringify(requestData)
                });
 
                if (!response.ok) {
-                   const errorText = await response.text();
-                   throw new Error(`שגיאת שרת: ${response.status} - ${errorText}`);
+                   const errorData = await response.json();
+                   throw new Error(JSON.stringify(errorData));
                }
 
                const data = await response.json();
 
-               // הצגת הסיכום
-               resultTextarea.value = data.summary || "לא התקבל סיכום או שלא נמצא מידע רלוונטי.";
+               // 1. הצגת הסיכום
+               if (data.summary) {
+                   summaryDiv.innerText = data.summary;
+               } else {
+                   summaryDiv.innerText = "לא התקבל סיכום. נסה לנסח את השאלה מחדש.";
+               }
 
-               // הצגת התוצאות
+               // 2. הצגת תוצאות החיפוש
                if (data.search_results && data.search_results.length > 0) {
                    data.search_results.forEach((result) => {
                        const resultDiv = document.createElement("div");
                        resultDiv.className = "search-result";
 
-                       // יצירת קישור למסמך (במידה ויש URL)
+                       // חילוץ לינק
                        const docUrl = result.document_metadata.url
                            ? `${result.document_metadata.url}#page=${result.part_metadata.page}`
                            : '#';
 
-                       // טיפול במחברים
+                       // חילוץ מחברים
                        let authors = [];
                        if (result.document_metadata.author) authors.push(result.document_metadata.author);
                        if (result.document_metadata.teamleader) authors.push(`ר"צ: ${result.document_metadata.teamleader}`);
                        const authorsText = authors.length ? authors.join(', ') : 'לא צוין';
 
-                       // בניית ה-HTML של התוצאה
                        resultDiv.innerHTML = `
                            <div class="metadata">
                                <a href="${docUrl}" target="_blank" class="document-title">📄 ${result.document_metadata.title || 'מסמך ללא כותרת'}</a>
@@ -277,26 +221,24 @@
                            <div class="metadata">
                                <strong>תאריך:</strong> ${result.document_metadata.date || '-'} |
                                <strong>מחברים:</strong> ${authorsText} |
-                               <strong>ציון התאמה:</strong> ${(result.score * 100).toFixed(0)}%
+                               <strong>דיוק:</strong> ${(result.score * 100).toFixed(0)}%
                            </div>
                        `;
-
                        searchResultsDiv.appendChild(resultDiv);
                    });
                } else {
-                   searchResultsDiv.innerHTML = "<p>לא נמצאו תוצאות רלוונטיות.</p>";
+                   searchResultsDiv.innerHTML = "<p>לא נמצאו מסמכים רלוונטיים.</p>";
                }
 
-               // הצגת האזור
                resultsArea.style.display = "block";
 
            } catch (error) {
-               console.error("Error details:", error);
-               alert("התרחשה שגיאה במהלך החיפוש:\n" + error.message);
+               console.error("Error:", error);
+               alert("שגיאה:\n" + error.message);
            } finally {
                loader.style.display = "none";
                submitBtn.disabled = false;
-               submitBtn.innerText = "חפש במסמכים";
+               submitBtn.innerText = "חפש";
            }
        }
    </script>
