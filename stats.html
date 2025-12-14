@@ -49,8 +49,12 @@
        }
        .nav-btn:hover { background-color: #004494; }
        
+       /* כפתור משני (אפור/כחול) */
        .nav-btn.secondary { background-color: #546e7a; }
        .nav-btn.secondary:hover { background-color: #37474f; }
+       
+       /* כפתור נוכחי (מודגש/שונה) */
+       .nav-btn.active { background-color: #0056b3; pointer-events: none; opacity: 1; }
 
        .card {
            background-color: var(--card-bg); border-radius: 12px; padding: 25px;
@@ -117,6 +121,17 @@
            width: 140px; flex-shrink: 0; font-weight: 500; white-space: nowrap;
            overflow: hidden; text-overflow: ellipsis; direction: ltr; text-align: right;
        }
+       
+       /* קישור מיוחד למחבר בתוך הסטטיסטיקה */
+       .author-link {
+           color: #0056b3;
+           text-decoration: none;
+           font-weight: bold;
+       }
+       .author-link:hover {
+           text-decoration: underline;
+       }
+
        .dist-bar-container {
            flex-grow: 1; background: #eee; height: 10px; border-radius: 5px; margin: 0 10px; overflow: hidden;
        }
@@ -138,8 +153,10 @@
        <header>
            <h1>📊 Gilat AI - תמונת מצב</h1>
            <div class="nav-links">
-               <a href="index.html" class="nav-btn">← חיפוש</a>
-               <a href="authors.html" class="nav-btn secondary">אינדקס מחברים</a>
+               <a href="index.html" class="nav-btn secondary">חיפוש</a>
+               <a href="authors.html" class="nav-btn secondary">מחברים</a>
+               <a href="topics.html" class="nav-btn secondary">נושאים</a>
+               <a href="stats.html" class="nav-btn active">סטטיסטיקות</a>
            </div>
        </header>
 
@@ -167,9 +184,8 @@
                <div class="info-content">
                    <h4>שימו לב: הנתונים בגרפים מתייחסים ל"מקטעים" (Parts)</h4>
                    <p>
-                       מערכת החיפוש מפרקת כל מסמך לחלקים קטנים (פסקאות או משפטים).
+                       מערכת החיפוש מפרקת כל מסמך לחלקים קטנים.
                        לכן, הגרפים למטה מציגים את <strong>נפח התוכן</strong> (מספר המקטעים) המשויך לכל קטגוריה, ולא את מספר המסמכים הבודדים.
-                       זוהי אינדיקציה לכמות המידע הזמין במערכת עבור כל נושא או מחבר.
                    </p>
                </div>
            </div>
@@ -421,7 +437,8 @@
                }
            });
 
-           renderBars(`bars_${cleanId(name)}`, top10);
+           // העברת שם השדה לפונקציה כדי לבדוק אם צריך ליצור קישור
+           renderBars(`bars_${cleanId(name)}`, top10, name);
        }
 
        function formatLabel(val) {
@@ -432,17 +449,26 @@
            return val;
        }
 
-       function renderBars(containerId, values) {
+       function renderBars(containerId, values, fieldName) {
            const container = document.getElementById(containerId);
            if (!values || values.length === 0) return;
            const maxCount = values[0].count; 
+           
            values.forEach(item => {
                const widthPct = (item.count / maxCount) * 100;
-               const label = formatLabel(item.value);
+               let labelHtml = formatLabel(item.value);
+               
+               // לוגיקה ליצירת קישור אם השדה הוא doc.author
+               if (fieldName === 'doc.author') {
+                   // קידוד השם כדי שיתאים לכתובת URL
+                   const safeAuthor = encodeURIComponent(item.value);
+                   labelHtml = `<a href="authors.html?author=${safeAuthor}" class="author-link" title="צפה במסמכי המחבר">${item.value}</a>`;
+               }
+
                const row = document.createElement('div');
                row.className = 'dist-row';
                row.innerHTML = `
-                   <div class="dist-label" title="${label}">${label}</div>
+                   <div class="dist-label">${labelHtml}</div>
                    <div class="dist-bar-container">
                        <div class="dist-bar" style="width: ${widthPct}%"></div>
                    </div>
