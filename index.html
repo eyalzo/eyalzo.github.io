@@ -38,6 +38,7 @@
        input[type="text"] {
            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
            box-sizing: border-box; font-size: 16px;
+           text-align: right;
        }
 
        button {
@@ -57,20 +58,110 @@
            border: 1px solid #cce5ff;
            padding: 15px;
            border-radius: 8px;
-           white-space: pre-wrap; /* שומר על ירידות שורה */
-           line-height: 1.6;
+           line-height: 1.8;
            font-size: 1.05em;
            color: #000;
+           white-space: pre-wrap;
+           text-align: right;
+           direction: rtl;
        }
 
+       /* ציטוטים [1] */
+       .citation-link {
+           color: var(--primary-color);
+           font-weight: bold;
+           text-decoration: none;
+           background-color: #e6f2ff;
+           padding: 0 4px;
+           border-radius: 4px;
+           margin: 0 2px;
+           cursor: pointer;
+       }
+
+       /* כרטיסיית תוצאה */
        .search-result {
            background: #fff; border: 1px solid #e1e4e8; border-right: 4px solid var(--primary-color);
            padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+           transition: background-color 0.3s;
+
+           /* תיקון קריטי ליישור */
+           text-align: right;
+           direction: rtl;
        }
 
-       .metadata { font-size: 0.85em; color: #666; margin-top: 10px; border-top: 1px dashed #eee; padding-top: 5px; }
-       .document-title { font-weight: bold; color: var(--primary-color); text-decoration: none; font-size: 1.1em; }
+       .highlight-result { animation: flash-bg 1.5s ease-out; }
+       @keyframes flash-bg { 0% { background-color: #fff9c4; } 100% { background-color: #fff; } }
+
+       /* תיקון לכותרת המסמך בתוצאות */
+       .result-header {
+           display: flex;
+           align-items: flex-start; /* יישור לחלק העליון */
+           gap: 10px;
+           margin-bottom: 10px;
+       }
+
+       .document-title {
+           font-weight: bold;
+           color: var(--primary-color);
+           text-decoration: none;
+           font-size: 1.2em;
+           display: inline-block;
+           direction: rtl; /* חשוב לכותרות באנגלית */
+           text-align: right;
+       }
        .document-title:hover { text-decoration: underline; }
+
+       .result-number {
+           background: #eee;
+           padding: 2px 8px;
+           border-radius: 4px;
+           font-weight:bold;
+           font-size:0.9em;
+           color: #555;
+           flex-shrink: 0; /* מונע מהמספר להתכווץ */
+       }
+
+       /* תיקון לטקסט המעורב */
+       .snippet-text {
+           margin-top: 10px;
+           line-height: 1.6;
+           font-size: 0.95em;
+           color: #333;
+
+           /* זה הטריק שמסדר עברית ואנגלית ביחד */
+           text-align: right;
+           direction: rtl;
+           unicode-bidi: embed;
+       }
+
+       .metadata-footer {
+           font-size: 0.9em;
+           color: #555;
+           margin-top: 15px;
+           border-top: 1px dashed #eee;
+           padding-top: 10px;
+           display: flex;
+           justify-content: space-between; /* מפזר לצדדים: תאריך מימין, כפתור משמאל */
+           align-items: center;
+           flex-wrap: wrap;
+           gap: 10px;
+       }
+
+       .pdf-btn {
+           display: inline-flex;
+           align-items: center;
+           background-color: #ffebee;
+           color: #d32f2f;
+           border: 1px solid #ffcdd2;
+           padding: 4px 12px;
+           border-radius: 4px;
+           text-decoration: none;
+           font-weight: bold;
+           font-size: 0.9em;
+           transition: all 0.2s;
+       }
+       .pdf-btn:hover { background-color: #d32f2f; color: white; border-color: #b71c1c; }
+       .pdf-btn svg { width: 18px; height: 18px; margin-left: 6px; fill: currentColor; }
 
        .loader {
            border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color);
@@ -104,11 +195,9 @@
 
    <script>
        async function sendQuery() {
-           // הגדרות מפתח
            const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
            const corpusKey = "mmm_docs5";
 
-           // אלמנטים ב-DOM
            const queryText = document.getElementById("query").value;
            const loader = document.getElementById("loader");
            const resultsArea = document.getElementById("results-area");
@@ -118,53 +207,32 @@
 
            if (!queryText.trim()) return;
 
-           // איפוס UI
+           // UI Reset
            loader.style.display = "block";
            resultsArea.style.display = "none";
            submitBtn.disabled = true;
            submitBtn.innerText = "מעבד נתונים...";
-           summaryDiv.innerText = "";
+           summaryDiv.innerHTML = "";
            searchResultsDiv.innerHTML = "";
 
-           // כתובת ה-Endpoint הכללית (כמו בדוגמה שלך)
            const url = "https://api.vectara.io/v2/query";
 
-           // בניית הגוף בדיוק לפי הדוגמה שעובדת
-           // שיניתי את stream_response ל-false כדי לפשט את הטיפול בתשובה ב-HTML פשוט
            const requestData = {
                query: queryText,
                search: {
-                   corpora: [
-                       {
-                           corpus_key: corpusKey,
-                           metadata_filter: "",
-                           lexical_interpolation: 0.005,
-                           custom_dimensions: {}
-                       }
-                   ],
+                   corpora: [{ corpus_key: corpusKey, metadata_filter: "", lexical_interpolation: 0.005, custom_dimensions: {} }],
                    offset: 0,
                    limit: 10,
-                   context_configuration: {
-                       sentences_before: 2,
-                       sentences_after: 2,
-                       start_tag: "<b>",
-                       end_tag: "</b>"
-                   },
-                   reranker: {
-                       type: "customer_reranker",
-                       reranker_id: "rnk_272725719" // המזהה מהדוגמה שלך
-                   }
+                   context_configuration: { sentences_before: 2, sentences_after: 2, start_tag: "<b>", end_tag: "</b>" },
+                   reranker: { type: "customer_reranker", reranker_id: "rnk_272725719" }
                },
                stream_response: false,
                generation: {
                    generation_preset_name: "vectara-summary-table-md-query-ext-jan-2025-gpt-4o",
                    max_used_search_results: 10,
-                   // הטמעת הטמפלייט המלא מהדוגמה שלך שמכיל את ההנחיות לעברית
                    prompt_template: "[\n  {\"role\": \"system\", \"content\": \"You are a search bot that forms a coherent answer to a user query based on search results that are provided to you.\" },\n  {\"role\": \"user\", \"content\": \" [INSTRUCTIONS]\n    Search results may include tables in a markdown format. When answering a question using a table be careful about which rows and columns contain the answer and include all relevant information from the relevant rows and columns that the query is asking about.\n    Do not cobble facts together from multiple search results, instead summarize the main facts into a consistent and easy to understand response.\n    Do not base your response on information or knowledge that is not in the search results.\n    Make sure your response is answering the query asked. If the query is related to an entity (such as a person or place), make sure you use search results related to that entity.\n    For queries where only a short answer is required, you can give a brief response.\n    Consider that each search result is a partial segment from a bigger text, and may be incomplete.\n    Your output should always be in a single language - the $vectaraLangName language. Check spelling and grammar for the $vectaraLangName language.\n    Search results for the query *** $vectaraQuery***, are listed below, some are text, some MAY be tables in the format described above.\n    #foreach ($qResult in $vectaraQueryResultsDeduped)\n      [$esc.java($foreach.index + 1)]\n      #if($qResult.hasTable())\n        Table Title: $qResult.getTable().title() || Table Description: $qResult.getTable().description() || Table Data:\n        $qResult.getTable().markdown()\n      #else\n        $qResult.getText()\n      #end\n    #end\n    Generate a coherent response (but no more than $vectaraOutChars characters) to the query *** $vectaraQuery *** by summarizing the search results provided. Give a slight preference to search results that appear earlier in the list.\n    Only cite relevant search results in your answer following these specific instructions: $vectaraCitationInstructions\n    Respond always in the Hebrew language, and only in that language.\"}\n]",
                    response_language: "heb",
-                   model_parameters: {
-                       llm_name: "gpt-4o"
-                   },
+                   model_parameters: { llm_name: "gpt-4o" },
                    enable_factual_consistency_score: true
                },
                save_history: true
@@ -177,7 +245,7 @@
                        "Content-Type": "application/json",
                        "Accept": "application/json",
                        "x-api-key": apiKey,
-                       "customer-id": "1493651330" // הוספתי לפי הדוגמה שלך ליתר ביטחון
+                       "customer-id": "1493651330"
                    },
                    body: JSON.stringify(requestData)
                });
@@ -189,39 +257,52 @@
 
                const data = await response.json();
 
-               // 1. הצגת הסיכום
+               // Summary Handling
                if (data.summary) {
-                   summaryDiv.innerText = data.summary;
+                   const processedSummary = data.summary.replace(/\[(\d+)\]/g, (match, number) => {
+                       return `<a href="#result-${number}" class="citation-link" onclick="highlightResult(${number})">[${number}]</a>`;
+                   });
+                   summaryDiv.innerHTML = processedSummary;
                } else {
-                   summaryDiv.innerText = "לא התקבל סיכום. נסה לנסח את השאלה מחדש.";
+                   summaryDiv.innerText = "לא התקבל סיכום.";
                }
 
-               // 2. הצגת תוצאות החיפוש
+               // Search Results Handling
                if (data.search_results && data.search_results.length > 0) {
-                   data.search_results.forEach((result) => {
+                   data.search_results.forEach((result, index) => {
                        const resultDiv = document.createElement("div");
                        resultDiv.className = "search-result";
+                       const resultNum = index + 1;
+                       resultDiv.id = `result-${resultNum}`;
 
-                       // חילוץ לינק
-                       const docUrl = result.document_metadata.url
-                           ? `${result.document_metadata.url}#page=${result.part_metadata.page}`
-                           : '#';
+                       // URL logic
+                       const rawUrl = result.document_metadata.url || '#';
+                       const docUrl = rawUrl.includes('#') ? rawUrl : `${rawUrl}#page=${result.part_metadata.page}`;
 
-                       // חילוץ מחברים
+                       // Authors
                        let authors = [];
                        if (result.document_metadata.author) authors.push(result.document_metadata.author);
                        if (result.document_metadata.teamleader) authors.push(`ר"צ: ${result.document_metadata.teamleader}`);
                        const authorsText = authors.length ? authors.join(', ') : 'לא צוין';
 
+                       const pdfIcon = `<svg viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>`;
+
                        resultDiv.innerHTML = `
-                           <div class="metadata">
+                           <div class="result-header">
+                               <span class="result-number">#${resultNum}</span>
                                <a href="${docUrl}" target="_blank" class="document-title">📄 ${result.document_metadata.title || 'מסמך ללא כותרת'}</a>
                            </div>
-                           <div style="margin-top:10px; line-height:1.5;">${result.text}</div>
-                           <div class="metadata">
-                               <strong>תאריך:</strong> ${result.document_metadata.date || '-'} |
-                               <strong>מחברים:</strong> ${authorsText} |
-                               <strong>דיוק:</strong> ${(result.score * 100).toFixed(0)}%
+
+                           <div class="snippet-text">${result.text}</div>
+
+                           <div class="metadata-footer">
+                               <div style="flex-grow: 1;">
+                                   <strong>תאריך:</strong> ${result.document_metadata.date || '-'} |
+                                   <strong>מחברים:</strong> ${authorsText}
+                               </div>
+                               <a href="${docUrl}" target="_blank" class="pdf-btn" title="פתח את המסמך המלא">
+                                   ${pdfIcon} פתח מסמך
+                               </a>
                            </div>
                        `;
                        searchResultsDiv.appendChild(resultDiv);
@@ -239,6 +320,16 @@
                loader.style.display = "none";
                submitBtn.disabled = false;
                submitBtn.innerText = "חפש";
+           }
+       }
+
+       function highlightResult(num) {
+           const element = document.getElementById(`result-${num}`);
+           if (element) {
+               element.classList.remove('highlight-result');
+               void element.offsetWidth;
+               element.classList.add('highlight-result');
+               element.scrollIntoView({ behavior: 'smooth', block: 'center' });
            }
        }
    </script>
