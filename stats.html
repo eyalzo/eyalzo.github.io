@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Gilat AI - סטטיסטיקות קורפוס</title>
+   
+   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+   <style>
+       :root {
+           --primary-color: #0056b3;
+           --bg-color: #f4f7f6;
+           --card-bg: #ffffff;
+           --text-color: #333;
+           --border-color: #e0e0e0;
+           --chip-bg: #e3f2fd;
+           --chip-text: #0d47a1;
+           --info-bg: #e8f4fd;
+           --info-border: #b3e5fc;
+       }
+
+       body {
+           font-family: 'Heebo', sans-serif;
+           background-color: var(--bg-color);
+           color: var(--text-color);
+           margin: 0;
+           padding: 20px;
+       }
+
+       .container { max-width: 1000px; margin: 0 auto; }
+
+       header {
+           display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+       }
+       h1 { color: var(--primary-color); margin: 0; }
+       .nav-btn {
+           text-decoration: none; background-color: var(--primary-color); color: white;
+           padding: 8px 16px; border-radius: 6px; font-weight: bold; transition: background 0.2s;
+       }
+       .nav-btn:hover { background-color: #004494; }
+
+       .card {
+           background-color: var(--card-bg); border-radius: 12px; padding: 25px;
+           box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 25px;
+       }
+       .card h2 {
+           margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;
+           margin-bottom: 20px; font-size: 1.4em; color: var(--primary-color); text-align: right;
+       }
+
+       /* --- Summary Area --- */
+       .summary-grid {
+           display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: center;
+       }
+       .summary-item .value { font-size: 2.5em; font-weight: bold; color: var(--primary-color); }
+       .summary-item .label { color: #666; font-size: 1em; }
+       
+       /* Info Box - Fixed Alignment */
+       .info-box {
+           background-color: var(--info-bg); border: 1px solid var(--info-border);
+           border-radius: 8px; padding: 15px; margin-bottom: 25px;
+           display: flex; gap: 15px; align-items: flex-start;
+           
+           /* תיקון יישור */
+           direction: rtl; text-align: right;
+       }
+       .info-icon { font-size: 1.5em; margin-left: 10px; }
+       .info-content h4 { margin: 0 0 5px 0; color: #0277bd; }
+       .info-content p { margin: 0; font-size: 0.95em; line-height: 1.5; color: #444; }
+
+       /* Chips */
+       .fields-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+       .field-chip {
+           padding: 8px 16px; border-radius: 20px; font-size: 0.95em; font-weight: 500;
+           text-decoration: none; transition: all 0.2s; border: 1px solid transparent;
+           unicode-bidi: embed; direction: ltr; 
+       }
+       .field-chip.active { background-color: var(--chip-bg); color: var(--chip-text); }
+       .field-chip.active:hover {
+           background-color: var(--primary-color); color: white; cursor: pointer;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+       }
+       .field-chip.inactive { background-color: #f5f5f5; color: #bbb; cursor: default; border-color: #eee; }
+
+       /* Charts */
+       .field-section {
+           margin-bottom: 50px; padding-top: 20px; border-top: 1px dashed #eee;
+           scroll-margin-top: 20px;
+       }
+       .field-title {
+           font-size: 1.3em; color: #333; margin-bottom: 10px; font-weight: bold;
+           unicode-bidi: embed; text-align: right; direction: rtl;
+       }
+       .field-subtitle { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+       .field-name-ltr { direction: ltr; display: inline-block; color: var(--primary-color); }
+
+       .charts-grid {
+           display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;
+       }
+       @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+
+       .chart-wrapper { position: relative; height: 300px; width: 100%; }
+
+       /* Bars */
+       .dist-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.9em; }
+       .dist-label { 
+           width: 140px; flex-shrink: 0; font-weight: 500; white-space: nowrap;
+           overflow: hidden; text-overflow: ellipsis; direction: ltr; text-align: right;
+       }
+       .dist-bar-container {
+           flex-grow: 1; background: #eee; height: 10px; border-radius: 5px; margin: 0 10px; overflow: hidden;
+       }
+       .dist-bar { height: 100%; background-color: var(--primary-color); border-radius: 5px; }
+       .dist-count { width: 70px; text-align: left; color: #666; font-size: 0.85em; }
+
+       .loader {
+           border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
+           border-radius: 50%; width: 40px; height: 40px;
+           animation: spin 1s linear infinite; margin: 50px auto;
+       }
+       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+       .error-msg { color: #d32f2f; text-align: center; background: #ffebee; padding: 15px; border-radius: 8px; margin-top: 20px; }
+   </style>
+</head>
+<body>
+
+   <div class="container">
+       <header>
+           <h1>📊 Gilat AI - תמונת מצב</h1>
+           <a href="index.html" class="nav-btn">← חזרה לחיפוש</a>
+       </header>
+
+       <div id="loader" class="loader"></div>
+       <div id="error-area" style="display:none;" class="error-msg"></div>
+
+       <div id="dashboard" style="display:none;">
+           
+           <div class="card">
+               <h2>סיכום נתונים</h2>
+               <div class="summary-grid">
+                   <div class="summary-item">
+                       <div class="value" id="total-docs">...</div>
+                       <div class="label">📄 סה"כ מסמכים</div>
+                   </div>
+                   <div class="summary-item">
+                       <div class="value" id="total-parts">...</div>
+                       <div class="label">🧩 סה"כ מקטעים (Parts)</div>
+                   </div>
+               </div>
+           </div>
+
+           <div class="info-box">
+               <div class="info-icon">💡</div>
+               <div class="info-content">
+                   <h4>שימו לב: הנתונים בגרפים מתייחסים ל"מקטעים" (Parts)</h4>
+                   <p>
+                       מערכת החיפוש מפרקת כל מסמך לחלקים קטנים (פסקאות או משפטים).
+                       לכן, הגרפים למטה מציגים את <strong>נפח התוכן</strong> (מספר המקטעים) המשויך לכל קטגוריה, ולא את מספר המסמכים הבודדים.
+                   </p>
+               </div>
+           </div>
+
+           <div class="card">
+               <h2>אינדקס מטא-דאטה</h2>
+               <div id="fields-list" class="fields-grid"></div>
+               <p style="font-size:0.8em; color:#999; margin-top:10px;">
+                   * שדות באפור מכילים ערך יחיד ואינם מוצגים בגרפים
+               </p>
+           </div>
+
+           <div class="card" id="details-container">
+               <h2>התפלגות לפי נפח מקטעים</h2>
+               <div id="dynamic-charts-area"></div>
+           </div>
+       </div>
+   </div>
+
+   <script>
+       const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
+       const corpusKey = "mmm_docs5";
+       const headers = {
+           "x-api-key": apiKey,
+           "Accept": "application/json",
+           "Content-Type": "application/json"
+       };
+
+       window.onload = loadStats;
+
+       async function loadStats() {
+           const loader = document.getElementById('loader');
+           const dashboard = document.getElementById('dashboard');
+           const errorArea = document.getElementById('error-area');
+
+           try {
+               // --- 1. סטטיסטיקות (Filter Attributes) ---
+               const statsRes = await fetch(`https://api.vectara.io/v2/corpora/${corpusKey}/filter_attribute_stats`, { headers });
+               if (!statsRes.ok) throw new Error("שגיאה בטעינת סטטיסטיקות");
+               const statsData = await statsRes.json();
+               const statItems = statsData.filter_attribute_stats || [];
+
+               // --- 2. ספירת מסמכים (שיטה משופרת דרך Search) ---
+               // חיפוש ריק עם limit=0 נותן בדרך כלל את ה-Total Results האמין ביותר
+               const searchRes = await fetch("https://api.vectara.io/v2/query", {
+                   method: "POST",
+                   headers: headers,
+                   body: JSON.stringify({
+                       query: "",
+                       search: {
+                           corpora: [{ corpus_key: corpusKey }],
+                           offset: 0,
+                           limit: 0 
+                       }
+                   })
+               });
+
+               let realDocCount = "לא זמין";
+               if (searchRes.ok) {
+                   const searchData = await searchRes.json();
+                   // בודקים במקומות אפשריים ב-V2 response
+                   if (searchData.search && searchData.search.total_results !== undefined) {
+                        realDocCount = searchData.search.total_results.toLocaleString();
+                   } else if (searchData.pagination && searchData.pagination.total !== undefined) {
+                        realDocCount = searchData.pagination.total.toLocaleString();
+                   } else if (searchData.search_results_metadata && searchData.search_results_metadata.total_results) {
+                        // fallback structure
+                        realDocCount = searchData.search_results_metadata.total_results.toLocaleString();
+                   }
+               }
+               document.getElementById('total-docs').innerText = realDocCount;
+
+               // --- 3. סך המקטעים (Total Parts) ---
+               let totalParts = 0;
+               const langStat = statItems.find(s => s.name === 'part.lang');
+               if (langStat && langStat.values) {
+                   totalParts = langStat.values.reduce((sum, item) => sum + item.count, 0);
+               }
+               document.getElementById('total-parts').innerText = totalParts > 0 ? totalParts.toLocaleString() : "לא זמין";
+
+               // --- 4. בניית ה-UI ---
+               const fieldsListContainer = document.getElementById('fields-list');
+               const chartsArea = document.getElementById('dynamic-charts-area');
+               
+               if (statItems.length === 0) {
+                   fieldsListContainer.innerHTML = "לא נמצאו נתוני מטא-דאטה.";
+                   chartsArea.innerHTML = "<p>אין נתונים להצגה.</p>";
+                   loader.style.display = 'none';
+                   dashboard.style.display = 'block';
+                   return;
+               }
+
+               // מיון: קודם מעניינים, אח"כ השאר
+               statItems.sort((a, b) => {
+                   const aVals = a.values || [];
+                   const bVals = b.values || [];
+                   
+                   // אם זה תאריך, נחשב ייחודיות לפי שנה ולא לפי ערך גולמי
+                   const aUnique = a.name.includes('date') ? countUniqueYears(aVals) : aVals.length;
+                   const bUnique = b.name.includes('date') ? countUniqueYears(bVals) : bVals.length;
+                   
+                   const aInteresting = aUnique >= 2;
+                   const bInteresting = bUnique >= 2;
+
+                   if (aInteresting && !bInteresting) return -1;
+                   if (!aInteresting && bInteresting) return 1;
+                   return a.name.localeCompare(b.name);
+               });
+
+               let hasAnyChart = false;
+
+               statItems.forEach(stat => {
+                   let values = stat.values || [];
+                   
+                   // --- טיפול מיוחד לתאריכים: המרה לשנים ---
+                   if (stat.name.includes('date')) {
+                       values = groupByYear(values);
+                   }
+                   
+                   const uniqueCount = values.length;
+                   const isInteresting = uniqueCount >= 2;
+
+                   const chip = document.createElement('a');
+                   chip.innerText = stat.name;
+                   
+                   if (isInteresting) {
+                       chip.className = 'field-chip active';
+                       chip.href = `#field-${cleanId(stat.name)}`;
+                       chip.title = `הצג גרף (${uniqueCount} קבוצות שונות)`;
+                       
+                       createFieldSection(chartsArea, stat, values);
+                       hasAnyChart = true;
+                   } else {
+                       chip.className = 'field-chip inactive';
+                       chip.title = "ערך יחיד (אין התפלגות)";
+                   }
+                   
+                   fieldsListContainer.appendChild(chip);
+               });
+
+               if (!hasAnyChart) {
+                   chartsArea.innerHTML = "<p style='text-align:center; color:#666;'>לא נמצאו שדות עם שונות מספקת (2 ערכים ומעלה) להצגת גרפים.</p>";
+               }
+
+               loader.style.display = 'none';
+               dashboard.style.display = 'block';
+
+           } catch (e) {
+               console.error(e);
+               loader.style.display = 'none';
+               errorArea.style.display = 'block';
+               errorArea.innerText = "שגיאה בטעינת נתונים: " + e.message;
+           }
+       }
+
+       // --- לוגיקה לקיבוץ שנים ---
+       function countUniqueYears(values) {
+           const years = new Set();
+           values.forEach(v => {
+               if (typeof v.value === 'string' && v.value.length >= 4) {
+                   years.add(v.value.substring(0, 4));
+               }
+           });
+           return years.size;
+       }
+
+       function groupByYear(originalValues) {
+           const yearMap = {};
+           
+           originalValues.forEach(item => {
+               let year = "Unknown";
+               if (typeof item.value === 'string' && item.value.length >= 4) {
+                   // לוקחים 4 ספרות ראשונות (בהנחה שזה YYYY...)
+                   year = item.value.substring(0, 4);
+                   // בדיקת תקינות בסיסית שזה מספר
+                   if (isNaN(year)) year = "Unknown";
+               }
+               
+               if (!yearMap[year]) yearMap[year] = 0;
+               yearMap[year] += item.count;
+           });
+
+           // המרה חזרה למערך
+           return Object.keys(yearMap).map(year => {
+               return { value: year, count: yearMap[year] };
+           });
+       }
+
+       function cleanId(str) { return str.replace(/[^a-zA-Z0-9]/g, '_'); }
+
+       function createFieldSection(container, stat, values) {
+           const fieldName = stat.name;
+           
+           // מיון יורד
+           values.sort((a, b) => b.count - a.count);
+
+           const top10 = values.slice(0, 10);
+           const others = values.slice(10);
+           
+           let othersCount = 0;
+           others.forEach(v => othersCount += v.count);
+
+           const chartLabels = top10.map(v => formatLabel(v.value));
+           const chartData = top10.map(v => v.count);
+           
+           if (othersCount > 0) {
+               chartLabels.push('כל השאר');
+               chartData.push(othersCount);
+           }
+
+           const sectionDiv = document.createElement('div');
+           sectionDiv.className = 'field-section';
+           sectionDiv.id = `field-${cleanId(fieldName)}`;
+           
+           // כותרת מיוחדת אם זה תאריך
+           const displayTitle = fieldName.includes('date') ? 
+               `${fieldName} (מקובץ לפי שנים)` : fieldName;
+
+           sectionDiv.innerHTML = `
+               <div class="field-title">
+                   📌 התפלגות מקטעים לפי: <span class="field-name-ltr">${displayTitle}</span>
+               </div>
+               
+               <div class="charts-grid">
+                   <div class="chart-wrapper">
+                       <canvas id="chart_${cleanId(fieldName)}"></canvas>
+                   </div>
+                   <div id="bars_${cleanId(fieldName)}"></div>
+               </div>
+           `;
+           
+           container.appendChild(sectionDiv);
+
+           const ctx = document.getElementById(`chart_${cleanId(fieldName)}`).getContext('2d');
+           new Chart(ctx, {
+               type: 'doughnut',
+               data: {
+                   labels: chartLabels,
+                   datasets: [{
+                       data: chartData,
+                       backgroundColor: [
+                           '#0d47a1', '#1565c0', '#1976d2', '#1e88e5', '#2196f3', 
+                           '#42a5f5', '#64b5f6', '#90caf9', '#bbdefb', '#e3f2fd',
+                           '#cfd8dc'
+                       ],
+                       borderWidth: 1
+                   }]
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: {
+                           position: 'right',
+                           labels: { font: { family: 'Heebo' }, boxWidth: 12 }
+                       }
+                   }
+               }
+           });
+
+           renderBars(`bars_${cleanId(fieldName)}`, top10);
+       }
+
+       function formatLabel(val) {
+           if (val === true) return 'True';
+           if (val === false) return 'False';
+           if (val === 'heb') return 'heb (עברית)';
+           if (val === 'eng') return 'eng (אנגלית)';
+           return val;
+       }
+
+       function renderBars(containerId, values) {
+           const container = document.getElementById(containerId);
+           if (!values || values.length === 0) return;
+           const maxCount = values[0].count; 
+           values.forEach(item => {
+               const widthPct = (item.count / maxCount) * 100;
+               const label = formatLabel(item.value);
+               const row = document.createElement('div');
+               row.className = 'dist-row';
+               row.innerHTML = `
+                   <div class="dist-label" title="${label}">${label}</div>
+                   <div class="dist-bar-container">
+                       <div class="dist-bar" style="width: ${widthPct}%"></div>
+                   </div>
+                   <div class="dist-count">${item.count.toLocaleString()}</div>
+               `;
+               container.appendChild(row);
+           });
+       }
+   </script>
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>
