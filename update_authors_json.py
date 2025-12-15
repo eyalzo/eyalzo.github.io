@@ -7,10 +7,10 @@ from datetime import datetime, timedelta
 # הגדרות
 API_KEY = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA"
 CORPUS_ID = "mmm_docs5"
+DATA_VERSION = "2.0"  # גרסת הנתונים הנוכחי
 
 
 def list_all_docs(api_key, corpus_key):
-    """ שולף את כל המסמכים מהקורפוס """
     url_list = f"https://api.vectara.io/v2/corpora/{corpus_key}/documents"
     headers = {'Accept': 'application/json', 'x-api-key': api_key}
 
@@ -69,12 +69,7 @@ def extract_year(doc_meta):
 
 
 def process_authors(documents):
-    """
-    עיבוד נתונים: ספירה רגילה + ספירה משוקללת
-    """
-    # מבנה: { "Name": { count: 0, weighted_count: 0.0, years: set(), latest_date: ... } }
     authors_temp = {}
-
     today = datetime.now()
     cutoff_date = today - timedelta(days=365)
 
@@ -82,8 +77,6 @@ def process_authors(documents):
 
     for doc in documents:
         meta = doc.get('metadata', {})
-
-        # חילוץ רשימת שמות
         people_val = meta.get('ez_people')
         people_list = []
         if isinstance(people_val, list):
@@ -97,16 +90,11 @@ def process_authors(documents):
             except:
                 people_list = [people_val]
 
-        # ניקוי שמות ריקים
         people_list = [str(p).strip() for p in people_list if str(p).strip()]
-
         num_authors = len(people_list)
-        if num_authors == 0:
-            continue
+        if num_authors == 0: continue
 
-        # חישוב משקל למסמך זה (אם יש 2 מחברים, כל אחד מקבל 0.5)
         weight_per_person = 1.0 / num_authors
-
         doc_year = extract_year(meta)
         doc_date_str = meta.get('ez_date')
         doc_date_obj = parse_date(doc_date_str)
@@ -114,34 +102,26 @@ def process_authors(documents):
         for person in people_list:
             if person not in authors_temp:
                 authors_temp[person] = {
-                    "count": 0,
-                    "weighted_count": 0.0,
-                    "years": set(),
-                    "latest_date": None
+                    "count": 0, "weighted_count": 0.0,
+                    "years": set(), "latest_date": None
                 }
 
-            # עדכונים
             authors_temp[person]["count"] += 1
             authors_temp[person]["weighted_count"] += weight_per_person
-
-            if doc_year:
-                authors_temp[person]["years"].add(doc_year)
+            if doc_year: authors_temp[person]["years"].add(doc_year)
 
             curr_date = authors_temp[person]["latest_date"]
             if doc_date_obj:
                 if curr_date is None or doc_date_obj > curr_date:
                     authors_temp[person]["latest_date"] = doc_date_obj
 
-    # בניית הרשימה הסופית
     final_list = []
-
     for name, data in authors_temp.items():
         count = data["count"]
-        weighted_count = round(data["weighted_count"], 1)  # עיגול ספרה אחת
+        weighted_count = round(data["weighted_count"], 1)
         years_set = data["years"]
         latest_date = data["latest_date"]
 
-        # טווח שנים
         years_range_str = ""
         span_years = 1
         if years_set:
@@ -153,7 +133,6 @@ def process_authors(documents):
             else:
                 years_range_str = f"{min_y}-{max_y}"
 
-        # חישוב ממוצע שנתי (לפי המשוקלל בלבד!)
         if not years_set: span_years = 1
         avg_per_year = round(weighted_count / span_years, 1)
 
@@ -170,7 +149,6 @@ def process_authors(documents):
             "is_active": is_active
         })
 
-    # מיון אלפביתי
     sorted_authors = sorted(final_list, key=lambda x: x['value'])
     return sorted_authors
 
@@ -181,7 +159,8 @@ def main():
     authors_data = process_authors(docs)
 
     final_json = {
-        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "updated_at": datetime.now().strftime("%d/%m/%Y %H:%M"),  # פורמט ישראלי
+        "data_version": DATA_VERSION,
         "total_docs": len(docs),
         "authors": authors_data
     }
