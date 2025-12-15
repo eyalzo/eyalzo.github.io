@@ -1,0 +1,856 @@
+{
+  "updated_at": "2025-12-15 20:31:28",
+  "total_docs": 6217,
+  "authors": [
+    {
+      "value": "אביחיל סגל",
+      "count": 1,
+      "years_range": "2025"
+    },
+    {
+      "value": "אביטל אפל",
+      "count": 53,
+      "years_range": "2000-2004"
+    },
+    {
+      "value": "אביטל מגן",
+      "count": 12,
+      "years_range": "2022-2025"
+    },
+    {
+      "value": "אבנר מולכו",
+      "count": 1,
+      "years_range": "2000"
+    },
+    {
+      "value": "אדוארד קורצנשטיין",
+      "count": 27,
+      "years_range": "2005-2007"
+    },
+    {
+      "value": "אדם קרן",
+      "count": 9,
+      "years_range": "2003-2004"
+    },
+    {
+      "value": "אהוד בקר",
+      "count": 65,
+      "years_range": "2015-2025"
+    },
+    {
+      "value": "אהרן בלנק",
+      "count": 62,
+      "years_range": "2016-2025"
+    },
+    {
+      "value": "אודי שפיגל",
+      "count": 23,
+      "years_range": "2000-2003"
+    },
+    {
+      "value": "אופיר בן אסולי",
+      "count": 10,
+      "years_range": "2002-2003"
+    },
+    {
+      "value": "אורי טל ספירו",
+      "count": 154,
+      "years_range": "2005-2025"
+    },
+    {
+      "value": "אורי פנסירר",
+      "count": 8,
+      "years_range": "2011-2013"
+    },
+    {
+      "value": "אוריאנה אלמסי",
+      "count": 77,
+      "years_range": "2011-2025"
+    },
+    {
+      "value": "אורלי אלמגור לוטן",
+      "count": 119,
+      "years_range": "2005-2024"
+    },
+    {
+      "value": "אורלי פישמן",
+      "count": 37,
+      "years_range": "2004-2007"
+    },
+    {
+      "value": "אחמד חטיב",
+      "count": 22,
+      "years_range": "2007-2020"
+    },
+    {
+      "value": "איילת ברק מדינה",
+      "count": 33,
+      "years_range": "2000-2003"
+    },
+    {
+      "value": "איל קופמן",
+      "count": 53,
+      "years_range": "2009-2015"
+    },
+    {
+      "value": "אילה אליהו",
+      "count": 71,
+      "years_range": "2016-2025"
+    },
+    {
+      "value": "אילן ביטון",
+      "count": 32,
+      "years_range": "2009-2012"
+    },
+    {
+      "value": "אילנית בר",
+      "count": 122,
+      "years_range": "2010-2025"
+    },
+    {
+      "value": "איתי פידלמן",
+      "count": 52,
+      "years_range": "2008-2021"
+    },
+    {
+      "value": "איתמר מילרד",
+      "count": 77,
+      "years_range": "2012-2017"
+    },
+    {
+      "value": "אלה הלר",
+      "count": 12,
+      "years_range": "2001-2006"
+    },
+    {
+      "value": "אלון רובינשטיין",
+      "count": 6,
+      "years_range": "2004-2005"
+    },
+    {
+      "value": "אלינה אליה בוליגין",
+      "count": 6,
+      "years_range": "2024"
+    },
+    {
+      "value": "אלינור לאון-ימין",
+      "count": 6,
+      "years_range": "2004-2007"
+    },
+    {
+      "value": "אליסיה אודנהיימר",
+      "count": 5,
+      "years_range": "2005"
+    },
+    {
+      "value": "אליעזר שוורץ",
+      "count": 166,
+      "years_range": "2005-2023"
+    },
+    {
+      "value": "אלירן זרד",
+      "count": 41,
+      "years_range": "2018-2025"
+    },
+    {
+      "value": "אלעד ואן גלדר",
+      "count": 34,
+      "years_range": "2000-2004"
+    },
+    {
+      "value": "אמיר לופוביץ",
+      "count": 34,
+      "years_range": "2001-2004"
+    },
+    {
+      "value": "אמיר פרגר",
+      "count": 12,
+      "years_range": "2019-2021"
+    },
+    {
+      "value": "אמיר פרימור",
+      "count": 3,
+      "years_range": "2003"
+    },
+    {
+      "value": "אנדריאה סנדרוביץ",
+      "count": 13,
+      "years_range": "2002"
+    },
+    {
+      "value": "אסנת אלגום מזרחי",
+      "count": 41,
+      "years_range": "2019-2025"
+    },
+    {
+      "value": "אסף וינינגר",
+      "count": 180,
+      "years_range": "2010-2025"
+    },
+    {
+      "value": "אפרת קאול גרנות",
+      "count": 23,
+      "years_range": "2003-2004"
+    },
+    {
+      "value": "אתי ווייסבלאי",
+      "count": 250,
+      "years_range": "2005-2025"
+    },
+    {
+      "value": "בדיקה יוסף",
+      "count": 1,
+      "years_range": ""
+    },
+    {
+      "value": "בדיקה משה",
+      "count": 1,
+      "years_range": ""
+    },
+    {
+      "value": "ברוך לוי",
+      "count": 45,
+      "years_range": "2002-2005"
+    },
+    {
+      "value": "בת חן רוטנברג",
+      "count": 64,
+      "years_range": "2018-2025"
+    },
+    {
+      "value": "ג'רי אלמו קפיטל",
+      "count": 34,
+      "years_range": "2019-2025"
+    },
+    {
+      "value": "גבריאל בוקובזה",
+      "count": 6,
+      "years_range": "2022-2023"
+    },
+    {
+      "value": "גדעון בן דרור",
+      "count": 1,
+      "years_range": "2001"
+    },
+    {
+      "value": "גדעון זעירא",
+      "count": 52,
+      "years_range": "2013-2025"
+    },
+    {
+      "value": "גיא בר-נס",
+      "count": 1,
+      "years_range": "2001"
+    },
+    {
+      "value": "גיל לאופר",
+      "count": 19,
+      "years_range": "2003-2006"
+    },
+    {
+      "value": "גילאת בניאד",
+      "count": 13,
+      "years_range": "2011-2021"
+    },
+    {
+      "value": "גלעד נוה",
+      "count": 60,
+      "years_range": "2009-2022"
+    },
+    {
+      "value": "גלעד נתן",
+      "count": 143,
+      "years_range": "2005-2013"
+    },
+    {
+      "value": "דורון אהרון",
+      "count": 17,
+      "years_range": "2001-2004"
+    },
+    {
+      "value": "דורית קציר",
+      "count": 3,
+      "years_range": "2000-2001"
+    },
+    {
+      "value": "דותן רוסו",
+      "count": 9,
+      "years_range": "2001"
+    },
+    {
+      "value": "דינה צדוק",
+      "count": 149,
+      "years_range": "2004-2025"
+    },
+    {
+      "value": "דן להב",
+      "count": 50,
+      "years_range": "2001-2006"
+    },
+    {
+      "value": "דנה נויפלד",
+      "count": 10,
+      "years_range": "2002-2005"
+    },
+    {
+      "value": "דפנה בן פורת",
+      "count": 58,
+      "years_range": "2002-2005"
+    },
+    {
+      "value": "דפנה סחייק",
+      "count": 17,
+      "years_range": "2002-2005"
+    },
+    {
+      "value": "דפנה סידיס-כהן",
+      "count": 38,
+      "years_range": "2008-2010"
+    },
+    {
+      "value": "הודיה קין",
+      "count": 21,
+      "years_range": "2002-2009"
+    },
+    {
+      "value": "ויקטור פתאל",
+      "count": 74,
+      "years_range": "2013-2021"
+    },
+    {
+      "value": "ורד ישולה",
+      "count": 11,
+      "years_range": "2000-2002"
+    },
+    {
+      "value": "חדוה קפלינסקי",
+      "count": 33,
+      "years_range": "2018-2025"
+    },
+    {
+      "value": "טליה קלצקי",
+      "count": 1,
+      "years_range": "2019"
+    },
+    {
+      "value": "יהודה טרואן",
+      "count": 66,
+      "years_range": "2004-2025"
+    },
+    {
+      "value": "יהודה תמר",
+      "count": 27,
+      "years_range": "2008-2011"
+    },
+    {
+      "value": "יהודית גלילי",
+      "count": 60,
+      "years_range": "2000-2005"
+    },
+    {
+      "value": "יהונתן צדקה",
+      "count": 2,
+      "years_range": "2001"
+    },
+    {
+      "value": "יובל בן ארי",
+      "count": 12,
+      "years_range": "2013-2014"
+    },
+    {
+      "value": "יובל בנזימן",
+      "count": 7,
+      "years_range": "2001-2002"
+    },
+    {
+      "value": "יובל וורגן",
+      "count": 185,
+      "years_range": "2005-2025"
+    },
+    {
+      "value": "יונת מייזל",
+      "count": 22,
+      "years_range": "2020-2025"
+    },
+    {
+      "value": "יונתן ארליך",
+      "count": 39,
+      "years_range": "2005-2007"
+    },
+    {
+      "value": "יוסי זולפן",
+      "count": 59,
+      "years_range": "2000-2005"
+    },
+    {
+      "value": "יניב רונן",
+      "count": 142,
+      "years_range": "2006-2021"
+    },
+    {
+      "value": "יסכה מוניקנדם - גבעון",
+      "count": 59,
+      "years_range": "2017-2025"
+    },
+    {
+      "value": "יעל לוי אריאל",
+      "count": 7,
+      "years_range": "2024-2025"
+    },
+    {
+      "value": "יעקב ורשבסקי",
+      "count": 6,
+      "years_range": "2001-2005"
+    },
+    {
+      "value": "יעקב יקיר כהן",
+      "count": 18,
+      "years_range": "2009-2011"
+    },
+    {
+      "value": "יפעת הולנדר",
+      "count": 4,
+      "years_range": "2000-2001"
+    },
+    {
+      "value": "יפעת שחק",
+      "count": 37,
+      "years_range": "2001-2004"
+    },
+    {
+      "value": "יפעת שי",
+      "count": 69,
+      "years_range": "2000-2004"
+    },
+    {
+      "value": "ירון אונגר",
+      "count": 53,
+      "years_range": "2009-2021"
+    },
+    {
+      "value": "ירון הירשפלד",
+      "count": 6,
+      "years_range": "2001-2002"
+    },
+    {
+      "value": "ירון פישמן",
+      "count": 18,
+      "years_range": "2000-2001"
+    },
+    {
+      "value": "ישי לקס",
+      "count": 21,
+      "years_range": "2022-2025"
+    },
+    {
+      "value": "ליאור בן-דוד",
+      "count": 99,
+      "years_range": "2004-2025"
+    },
+    {
+      "value": "ליאת בן מאיר",
+      "count": 11,
+      "years_range": "2002-2003"
+    },
+    {
+      "value": "ליאת רוסו",
+      "count": 21,
+      "years_range": "2003-2005"
+    },
+    {
+      "value": "לירן קוסמן",
+      "count": 61,
+      "years_range": "2018-2025"
+    },
+    {
+      "value": "מאיר אזנקוט",
+      "count": 74,
+      "years_range": "2018-2025"
+    },
+    {
+      "value": "מוחמד סייד אחמד",
+      "count": 40,
+      "years_range": "2000-2003"
+    },
+    {
+      "value": "מיכה נוי",
+      "count": 17,
+      "years_range": "2022-2025"
+    },
+    {
+      "value": "מיכל בר אילן",
+      "count": 15,
+      "years_range": "2000-2004"
+    },
+    {
+      "value": "מיכל טביביאן-מזרחי",
+      "count": 38,
+      "years_range": "2002-2007"
+    },
+    {
+      "value": "מיכל כספי",
+      "count": 37,
+      "years_range": "2001-2004"
+    },
+    {
+      "value": "מיכל לרר",
+      "count": 50,
+      "years_range": "2017-2025"
+    },
+    {
+      "value": "מיכל קורא",
+      "count": 16,
+      "years_range": "2001-2004"
+    },
+    {
+      "value": "מרב גבאי פלג",
+      "count": 30,
+      "years_range": "2019-2025"
+    },
+    {
+      "value": "מריה רבינוביץ",
+      "count": 121,
+      "years_range": "2008-2025"
+    },
+    {
+      "value": "מרים כהן נבות",
+      "count": 1,
+      "years_range": "2001"
+    },
+    {
+      "value": "מרים רחל גלבלום",
+      "count": 1,
+      "years_range": "2025"
+    },
+    {
+      "value": "מרק ויין",
+      "count": 10,
+      "years_range": "2007-2008"
+    },
+    {
+      "value": "משה ברדה",
+      "count": 64,
+      "years_range": "2001-2008"
+    },
+    {
+      "value": "מתן שחק",
+      "count": 105,
+      "years_range": "2014-2025"
+    },
+    {
+      "value": "נאוה לוונהיים",
+      "count": 10,
+      "years_range": "2000-2003"
+    },
+    {
+      "value": "נועה לפלר",
+      "count": 5,
+      "years_range": "2000-2001"
+    },
+    {
+      "value": "נורית יכימוביץ כהן",
+      "count": 110,
+      "years_range": "2015-2025"
+    },
+    {
+      "value": "נטע משה",
+      "count": 97,
+      "years_range": "2013-2025"
+    },
+    {
+      "value": "ניבי קליין",
+      "count": 33,
+      "years_range": "2000-2004"
+    },
+    {
+      "value": "ניצן פייביש",
+      "count": 16,
+      "years_range": "2023-2025"
+    },
+    {
+      "value": "נלי אליאס",
+      "count": 1,
+      "years_range": "2000"
+    },
+    {
+      "value": "נלי כפיר",
+      "count": 22,
+      "years_range": "2022-2025"
+    },
+    {
+      "value": "נעם גרינברג",
+      "count": 18,
+      "years_range": "2022-2025"
+    },
+    {
+      "value": "נעם דוד בוטוש",
+      "count": 100,
+      "years_range": "2018-2025"
+    },
+    {
+      "value": "נעמה טשנר",
+      "count": 20,
+      "years_range": "2013-2014"
+    },
+    {
+      "value": "נעמי שלג מי עמי",
+      "count": 76,
+      "years_range": "2002-2010"
+    },
+    {
+      "value": "נתן פערלמאן",
+      "count": 44,
+      "years_range": "2009-2022"
+    },
+    {
+      "value": "נתן שבע",
+      "count": 53,
+      "years_range": "2020-2025"
+    },
+    {
+      "value": "נתנאל יהושוע קופראק",
+      "count": 74,
+      "years_range": "2018-2025"
+    },
+    {
+      "value": "סיגלית רבינוביץ",
+      "count": 1,
+      "years_range": "2002"
+    },
+    {
+      "value": "סמי כהונאי",
+      "count": 28,
+      "years_range": "2002-2005"
+    },
+    {
+      "value": "עדו אבגר",
+      "count": 86,
+      "years_range": "2014-2024"
+    },
+    {
+      "value": "עדי כהן אהרונוב",
+      "count": 17,
+      "years_range": "2022-2025"
+    },
+    {
+      "value": "עדי ענבר",
+      "count": 17,
+      "years_range": "2015-2018"
+    },
+    {
+      "value": "עוגן גולדמן",
+      "count": 52,
+      "years_range": "2000-2005"
+    },
+    {
+      "value": "עומרי מצר",
+      "count": 10,
+      "years_range": "2002"
+    },
+    {
+      "value": "עמוס אולצוור",
+      "count": 32,
+      "years_range": "2003-2005"
+    },
+    {
+      "value": "עמי צדיק",
+      "count": 78,
+      "years_range": "2005-2022"
+    },
+    {
+      "value": "ענת ירון",
+      "count": 62,
+      "years_range": "2013-2018"
+    },
+    {
+      "value": "פלורה קוך דבידוביץ",
+      "count": 125,
+      "years_range": "2008-2025"
+    },
+    {
+      "value": "צח בן יהודה",
+      "count": 48,
+      "years_range": "2014-2022"
+    },
+    {
+      "value": "ראדה חסייסי",
+      "count": 30,
+      "years_range": "2012-2017"
+    },
+    {
+      "value": "רוזלין אטיס",
+      "count": 6,
+      "years_range": "2008"
+    },
+    {
+      "value": "רון תקוה",
+      "count": 59,
+      "years_range": "2005-2008"
+    },
+    {
+      "value": "רוני בר נתן",
+      "count": 28,
+      "years_range": "2004-2005"
+    },
+    {
+      "value": "רוני בר צורי",
+      "count": 1,
+      "years_range": "2004"
+    },
+    {
+      "value": "רוני דיסקין",
+      "count": 6,
+      "years_range": "2001-2002"
+    },
+    {
+      "value": "רוני הרשקוביץ",
+      "count": 17,
+      "years_range": "2022-2025"
+    },
+    {
+      "value": "רוניה בריטברד",
+      "count": 14,
+      "years_range": "2003-2005"
+    },
+    {
+      "value": "רוניה וייסמן",
+      "count": 1,
+      "years_range": "2002"
+    },
+    {
+      "value": "רועי גולדשמידט",
+      "count": 118,
+      "years_range": "2006-2025"
+    },
+    {
+      "value": "רועי פייביש",
+      "count": 12,
+      "years_range": "2005-2006"
+    },
+    {
+      "value": "רחל ורצברגר",
+      "count": 55,
+      "years_range": "2000-2004"
+    },
+    {
+      "value": "רחל מלול",
+      "count": 1,
+      "years_range": "2003"
+    },
+    {
+      "value": "רחל עזריה",
+      "count": 5,
+      "years_range": "2001-2002"
+    },
+    {
+      "value": "ריטה ינקילוביץ",
+      "count": 26,
+      "years_range": "2003-2005"
+    },
+    {
+      "value": "רינת בניטה",
+      "count": 74,
+      "years_range": "2015-2025"
+    },
+    {
+      "value": "רמי שוורץ",
+      "count": 38,
+      "years_range": "2020-2025"
+    },
+    {
+      "value": "רננה גוטרייך",
+      "count": 22,
+      "years_range": "2016-2025"
+    },
+    {
+      "value": "שחר גולדמן",
+      "count": 5,
+      "years_range": "2001"
+    },
+    {
+      "value": "שילה רולף",
+      "count": 13,
+      "years_range": "2002-2010"
+    },
+    {
+      "value": "שירה בן ששון פורסטנברג",
+      "count": 40,
+      "years_range": "2000-2004"
+    },
+    {
+      "value": "שירי ספקטור בן ארי",
+      "count": 68,
+      "years_range": "2010-2020"
+    },
+    {
+      "value": "שירלי אברמי",
+      "count": 89,
+      "years_range": "2004-2013"
+    },
+    {
+      "value": "שלומי עדין",
+      "count": 2,
+      "years_range": "2024-2025"
+    },
+    {
+      "value": "שלי לוי",
+      "count": 108,
+      "years_range": "2005-2025"
+    },
+    {
+      "value": "שלי מזרחי סימון",
+      "count": 35,
+      "years_range": "2010-2018"
+    },
+    {
+      "value": "שמואל חן",
+      "count": 1,
+      "years_range": "2020"
+    },
+    {
+      "value": "שרה צוובנר",
+      "count": 104,
+      "years_range": "2000-2017"
+    },
+    {
+      "value": "שרון בוחניק",
+      "count": 7,
+      "years_range": "2000-2001"
+    },
+    {
+      "value": "שרון סופר",
+      "count": 27,
+      "years_range": "2003-2012"
+    },
+    {
+      "value": "שרון פז",
+      "count": 4,
+      "years_range": "2004"
+    },
+    {
+      "value": "שרית אלנבוגן פרנקוביץ",
+      "count": 1,
+      "years_range": "2001"
+    },
+    {
+      "value": "תהילה שחר",
+      "count": 18,
+      "years_range": "2023-2025"
+    },
+    {
+      "value": "תומר דרור",
+      "count": 10,
+      "years_range": "2005"
+    },
+    {
+      "value": "תמיר אגמון",
+      "count": 155,
+      "years_range": "2009-2022"
+    },
+    {
+      "value": "תמר מרכוס",
+      "count": 7,
+      "years_range": "2003-2005"
+    }
+  ]
+}
