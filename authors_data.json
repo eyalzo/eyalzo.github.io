@@ -1,856 +1,1196 @@
 {
-  "updated_at": "2025-12-15 20:31:28",
+  "updated_at": "2025-12-15 20:47:41",
   "total_docs": 6217,
   "authors": [
     {
       "value": "אביחיל סגל",
       "count": 1,
-      "years_range": "2025"
+      "years_range": "2025",
+      "avg_per_year": 1.0,
+      "is_active": true
     },
     {
       "value": "אביטל אפל",
       "count": 53,
-      "years_range": "2000-2004"
+      "years_range": "2000-2004",
+      "avg_per_year": 10.6,
+      "is_active": false
     },
     {
       "value": "אביטל מגן",
       "count": 12,
-      "years_range": "2022-2025"
+      "years_range": "2022-2025",
+      "avg_per_year": 3.0,
+      "is_active": true
     },
     {
       "value": "אבנר מולכו",
       "count": 1,
-      "years_range": "2000"
+      "years_range": "2000",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "אדוארד קורצנשטיין",
       "count": 27,
-      "years_range": "2005-2007"
+      "years_range": "2005-2007",
+      "avg_per_year": 9.0,
+      "is_active": false
     },
     {
       "value": "אדם קרן",
       "count": 9,
-      "years_range": "2003-2004"
+      "years_range": "2003-2004",
+      "avg_per_year": 4.5,
+      "is_active": false
     },
     {
       "value": "אהוד בקר",
       "count": 65,
-      "years_range": "2015-2025"
+      "years_range": "2015-2025",
+      "avg_per_year": 5.9,
+      "is_active": true
     },
     {
       "value": "אהרן בלנק",
       "count": 62,
-      "years_range": "2016-2025"
+      "years_range": "2016-2025",
+      "avg_per_year": 6.2,
+      "is_active": true
     },
     {
       "value": "אודי שפיגל",
       "count": 23,
-      "years_range": "2000-2003"
+      "years_range": "2000-2003",
+      "avg_per_year": 5.8,
+      "is_active": false
     },
     {
       "value": "אופיר בן אסולי",
       "count": 10,
-      "years_range": "2002-2003"
+      "years_range": "2002-2003",
+      "avg_per_year": 5.0,
+      "is_active": false
     },
     {
       "value": "אורי טל ספירו",
       "count": 154,
-      "years_range": "2005-2025"
+      "years_range": "2005-2025",
+      "avg_per_year": 7.3,
+      "is_active": true
     },
     {
       "value": "אורי פנסירר",
       "count": 8,
-      "years_range": "2011-2013"
+      "years_range": "2011-2013",
+      "avg_per_year": 2.7,
+      "is_active": false
     },
     {
       "value": "אוריאנה אלמסי",
       "count": 77,
-      "years_range": "2011-2025"
+      "years_range": "2011-2025",
+      "avg_per_year": 5.1,
+      "is_active": true
     },
     {
       "value": "אורלי אלמגור לוטן",
       "count": 119,
-      "years_range": "2005-2024"
+      "years_range": "2005-2024",
+      "avg_per_year": 6.0,
+      "is_active": false
     },
     {
       "value": "אורלי פישמן",
       "count": 37,
-      "years_range": "2004-2007"
+      "years_range": "2004-2007",
+      "avg_per_year": 9.2,
+      "is_active": false
     },
     {
       "value": "אחמד חטיב",
       "count": 22,
-      "years_range": "2007-2020"
+      "years_range": "2007-2020",
+      "avg_per_year": 1.6,
+      "is_active": false
     },
     {
       "value": "איילת ברק מדינה",
       "count": 33,
-      "years_range": "2000-2003"
+      "years_range": "2000-2003",
+      "avg_per_year": 8.2,
+      "is_active": false
     },
     {
       "value": "איל קופמן",
       "count": 53,
-      "years_range": "2009-2015"
+      "years_range": "2009-2015",
+      "avg_per_year": 7.6,
+      "is_active": false
     },
     {
       "value": "אילה אליהו",
       "count": 71,
-      "years_range": "2016-2025"
+      "years_range": "2016-2025",
+      "avg_per_year": 7.1,
+      "is_active": true
     },
     {
       "value": "אילן ביטון",
       "count": 32,
-      "years_range": "2009-2012"
+      "years_range": "2009-2012",
+      "avg_per_year": 8.0,
+      "is_active": false
     },
     {
       "value": "אילנית בר",
       "count": 122,
-      "years_range": "2010-2025"
+      "years_range": "2010-2025",
+      "avg_per_year": 7.6,
+      "is_active": true
     },
     {
       "value": "איתי פידלמן",
       "count": 52,
-      "years_range": "2008-2021"
+      "years_range": "2008-2021",
+      "avg_per_year": 3.7,
+      "is_active": false
     },
     {
       "value": "איתמר מילרד",
       "count": 77,
-      "years_range": "2012-2017"
+      "years_range": "2012-2017",
+      "avg_per_year": 12.8,
+      "is_active": false
     },
     {
       "value": "אלה הלר",
       "count": 12,
-      "years_range": "2001-2006"
+      "years_range": "2001-2006",
+      "avg_per_year": 2.0,
+      "is_active": false
     },
     {
       "value": "אלון רובינשטיין",
       "count": 6,
-      "years_range": "2004-2005"
+      "years_range": "2004-2005",
+      "avg_per_year": 3.0,
+      "is_active": false
     },
     {
       "value": "אלינה אליה בוליגין",
       "count": 6,
-      "years_range": "2024"
+      "years_range": "2024",
+      "avg_per_year": 6.0,
+      "is_active": false
     },
     {
       "value": "אלינור לאון-ימין",
       "count": 6,
-      "years_range": "2004-2007"
+      "years_range": "2004-2007",
+      "avg_per_year": 1.5,
+      "is_active": false
     },
     {
       "value": "אליסיה אודנהיימר",
       "count": 5,
-      "years_range": "2005"
+      "years_range": "2005",
+      "avg_per_year": 5.0,
+      "is_active": false
     },
     {
       "value": "אליעזר שוורץ",
       "count": 166,
-      "years_range": "2005-2023"
+      "years_range": "2005-2023",
+      "avg_per_year": 8.7,
+      "is_active": false
     },
     {
       "value": "אלירן זרד",
       "count": 41,
-      "years_range": "2018-2025"
+      "years_range": "2018-2025",
+      "avg_per_year": 5.1,
+      "is_active": true
     },
     {
       "value": "אלעד ואן גלדר",
       "count": 34,
-      "years_range": "2000-2004"
+      "years_range": "2000-2004",
+      "avg_per_year": 6.8,
+      "is_active": false
     },
     {
       "value": "אמיר לופוביץ",
       "count": 34,
-      "years_range": "2001-2004"
+      "years_range": "2001-2004",
+      "avg_per_year": 8.5,
+      "is_active": false
     },
     {
       "value": "אמיר פרגר",
       "count": 12,
-      "years_range": "2019-2021"
+      "years_range": "2019-2021",
+      "avg_per_year": 4.0,
+      "is_active": false
     },
     {
       "value": "אמיר פרימור",
       "count": 3,
-      "years_range": "2003"
+      "years_range": "2003",
+      "avg_per_year": 3.0,
+      "is_active": false
     },
     {
       "value": "אנדריאה סנדרוביץ",
       "count": 13,
-      "years_range": "2002"
+      "years_range": "2002",
+      "avg_per_year": 13.0,
+      "is_active": false
     },
     {
       "value": "אסנת אלגום מזרחי",
       "count": 41,
-      "years_range": "2019-2025"
+      "years_range": "2019-2025",
+      "avg_per_year": 5.9,
+      "is_active": true
     },
     {
       "value": "אסף וינינגר",
       "count": 180,
-      "years_range": "2010-2025"
+      "years_range": "2010-2025",
+      "avg_per_year": 11.2,
+      "is_active": true
     },
     {
       "value": "אפרת קאול גרנות",
       "count": 23,
-      "years_range": "2003-2004"
+      "years_range": "2003-2004",
+      "avg_per_year": 11.5,
+      "is_active": false
     },
     {
       "value": "אתי ווייסבלאי",
       "count": 250,
-      "years_range": "2005-2025"
+      "years_range": "2005-2025",
+      "avg_per_year": 11.9,
+      "is_active": true
     },
     {
       "value": "בדיקה יוסף",
       "count": 1,
-      "years_range": ""
+      "years_range": "",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "בדיקה משה",
       "count": 1,
-      "years_range": ""
+      "years_range": "",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "ברוך לוי",
       "count": 45,
-      "years_range": "2002-2005"
+      "years_range": "2002-2005",
+      "avg_per_year": 11.2,
+      "is_active": false
     },
     {
       "value": "בת חן רוטנברג",
       "count": 64,
-      "years_range": "2018-2025"
+      "years_range": "2018-2025",
+      "avg_per_year": 8.0,
+      "is_active": true
     },
     {
       "value": "ג'רי אלמו קפיטל",
       "count": 34,
-      "years_range": "2019-2025"
+      "years_range": "2019-2025",
+      "avg_per_year": 4.9,
+      "is_active": true
     },
     {
       "value": "גבריאל בוקובזה",
       "count": 6,
-      "years_range": "2022-2023"
+      "years_range": "2022-2023",
+      "avg_per_year": 3.0,
+      "is_active": false
     },
     {
       "value": "גדעון בן דרור",
       "count": 1,
-      "years_range": "2001"
+      "years_range": "2001",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "גדעון זעירא",
       "count": 52,
-      "years_range": "2013-2025"
+      "years_range": "2013-2025",
+      "avg_per_year": 4.0,
+      "is_active": true
     },
     {
       "value": "גיא בר-נס",
       "count": 1,
-      "years_range": "2001"
+      "years_range": "2001",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "גיל לאופר",
       "count": 19,
-      "years_range": "2003-2006"
+      "years_range": "2003-2006",
+      "avg_per_year": 4.8,
+      "is_active": false
     },
     {
       "value": "גילאת בניאד",
       "count": 13,
-      "years_range": "2011-2021"
+      "years_range": "2011-2021",
+      "avg_per_year": 1.2,
+      "is_active": false
     },
     {
       "value": "גלעד נוה",
       "count": 60,
-      "years_range": "2009-2022"
+      "years_range": "2009-2022",
+      "avg_per_year": 4.3,
+      "is_active": false
     },
     {
       "value": "גלעד נתן",
       "count": 143,
-      "years_range": "2005-2013"
+      "years_range": "2005-2013",
+      "avg_per_year": 15.9,
+      "is_active": false
     },
     {
       "value": "דורון אהרון",
       "count": 17,
-      "years_range": "2001-2004"
+      "years_range": "2001-2004",
+      "avg_per_year": 4.2,
+      "is_active": false
     },
     {
       "value": "דורית קציר",
       "count": 3,
-      "years_range": "2000-2001"
+      "years_range": "2000-2001",
+      "avg_per_year": 1.5,
+      "is_active": false
     },
     {
       "value": "דותן רוסו",
       "count": 9,
-      "years_range": "2001"
+      "years_range": "2001",
+      "avg_per_year": 9.0,
+      "is_active": false
     },
     {
       "value": "דינה צדוק",
       "count": 149,
-      "years_range": "2004-2025"
+      "years_range": "2004-2025",
+      "avg_per_year": 6.8,
+      "is_active": true
     },
     {
       "value": "דן להב",
       "count": 50,
-      "years_range": "2001-2006"
+      "years_range": "2001-2006",
+      "avg_per_year": 8.3,
+      "is_active": false
     },
     {
       "value": "דנה נויפלד",
       "count": 10,
-      "years_range": "2002-2005"
+      "years_range": "2002-2005",
+      "avg_per_year": 2.5,
+      "is_active": false
     },
     {
       "value": "דפנה בן פורת",
       "count": 58,
-      "years_range": "2002-2005"
+      "years_range": "2002-2005",
+      "avg_per_year": 14.5,
+      "is_active": false
     },
     {
       "value": "דפנה סחייק",
       "count": 17,
-      "years_range": "2002-2005"
+      "years_range": "2002-2005",
+      "avg_per_year": 4.2,
+      "is_active": false
     },
     {
       "value": "דפנה סידיס-כהן",
       "count": 38,
-      "years_range": "2008-2010"
+      "years_range": "2008-2010",
+      "avg_per_year": 12.7,
+      "is_active": false
     },
     {
       "value": "הודיה קין",
       "count": 21,
-      "years_range": "2002-2009"
+      "years_range": "2002-2009",
+      "avg_per_year": 2.6,
+      "is_active": false
     },
     {
       "value": "ויקטור פתאל",
       "count": 74,
-      "years_range": "2013-2021"
+      "years_range": "2013-2021",
+      "avg_per_year": 8.2,
+      "is_active": false
     },
     {
       "value": "ורד ישולה",
       "count": 11,
-      "years_range": "2000-2002"
+      "years_range": "2000-2002",
+      "avg_per_year": 3.7,
+      "is_active": false
     },
     {
       "value": "חדוה קפלינסקי",
       "count": 33,
-      "years_range": "2018-2025"
+      "years_range": "2018-2025",
+      "avg_per_year": 4.1,
+      "is_active": true
     },
     {
       "value": "טליה קלצקי",
       "count": 1,
-      "years_range": "2019"
+      "years_range": "2019",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "יהודה טרואן",
       "count": 66,
-      "years_range": "2004-2025"
+      "years_range": "2004-2025",
+      "avg_per_year": 3.0,
+      "is_active": true
     },
     {
       "value": "יהודה תמר",
       "count": 27,
-      "years_range": "2008-2011"
+      "years_range": "2008-2011",
+      "avg_per_year": 6.8,
+      "is_active": false
     },
     {
       "value": "יהודית גלילי",
       "count": 60,
-      "years_range": "2000-2005"
+      "years_range": "2000-2005",
+      "avg_per_year": 10.0,
+      "is_active": false
     },
     {
       "value": "יהונתן צדקה",
       "count": 2,
-      "years_range": "2001"
+      "years_range": "2001",
+      "avg_per_year": 2.0,
+      "is_active": false
     },
     {
       "value": "יובל בן ארי",
       "count": 12,
-      "years_range": "2013-2014"
+      "years_range": "2013-2014",
+      "avg_per_year": 6.0,
+      "is_active": false
     },
     {
       "value": "יובל בנזימן",
       "count": 7,
-      "years_range": "2001-2002"
+      "years_range": "2001-2002",
+      "avg_per_year": 3.5,
+      "is_active": false
     },
     {
       "value": "יובל וורגן",
       "count": 185,
-      "years_range": "2005-2025"
+      "years_range": "2005-2025",
+      "avg_per_year": 8.8,
+      "is_active": true
     },
     {
       "value": "יונת מייזל",
       "count": 22,
-      "years_range": "2020-2025"
+      "years_range": "2020-2025",
+      "avg_per_year": 3.7,
+      "is_active": true
     },
     {
       "value": "יונתן ארליך",
       "count": 39,
-      "years_range": "2005-2007"
+      "years_range": "2005-2007",
+      "avg_per_year": 13.0,
+      "is_active": false
     },
     {
       "value": "יוסי זולפן",
       "count": 59,
-      "years_range": "2000-2005"
+      "years_range": "2000-2005",
+      "avg_per_year": 9.8,
+      "is_active": false
     },
     {
       "value": "יניב רונן",
       "count": 142,
-      "years_range": "2006-2021"
+      "years_range": "2006-2021",
+      "avg_per_year": 8.9,
+      "is_active": false
     },
     {
       "value": "יסכה מוניקנדם - גבעון",
       "count": 59,
-      "years_range": "2017-2025"
+      "years_range": "2017-2025",
+      "avg_per_year": 6.6,
+      "is_active": true
     },
     {
       "value": "יעל לוי אריאל",
       "count": 7,
-      "years_range": "2024-2025"
+      "years_range": "2024-2025",
+      "avg_per_year": 3.5,
+      "is_active": true
     },
     {
       "value": "יעקב ורשבסקי",
       "count": 6,
-      "years_range": "2001-2005"
+      "years_range": "2001-2005",
+      "avg_per_year": 1.2,
+      "is_active": false
     },
     {
       "value": "יעקב יקיר כהן",
       "count": 18,
-      "years_range": "2009-2011"
+      "years_range": "2009-2011",
+      "avg_per_year": 6.0,
+      "is_active": false
     },
     {
       "value": "יפעת הולנדר",
       "count": 4,
-      "years_range": "2000-2001"
+      "years_range": "2000-2001",
+      "avg_per_year": 2.0,
+      "is_active": false
     },
     {
       "value": "יפעת שחק",
       "count": 37,
-      "years_range": "2001-2004"
+      "years_range": "2001-2004",
+      "avg_per_year": 9.2,
+      "is_active": false
     },
     {
       "value": "יפעת שי",
       "count": 69,
-      "years_range": "2000-2004"
+      "years_range": "2000-2004",
+      "avg_per_year": 13.8,
+      "is_active": false
     },
     {
       "value": "ירון אונגר",
       "count": 53,
-      "years_range": "2009-2021"
+      "years_range": "2009-2021",
+      "avg_per_year": 4.1,
+      "is_active": false
     },
     {
       "value": "ירון הירשפלד",
       "count": 6,
-      "years_range": "2001-2002"
+      "years_range": "2001-2002",
+      "avg_per_year": 3.0,
+      "is_active": false
     },
     {
       "value": "ירון פישמן",
       "count": 18,
-      "years_range": "2000-2001"
+      "years_range": "2000-2001",
+      "avg_per_year": 9.0,
+      "is_active": false
     },
     {
       "value": "ישי לקס",
       "count": 21,
-      "years_range": "2022-2025"
+      "years_range": "2022-2025",
+      "avg_per_year": 5.2,
+      "is_active": true
     },
     {
       "value": "ליאור בן-דוד",
       "count": 99,
-      "years_range": "2004-2025"
+      "years_range": "2004-2025",
+      "avg_per_year": 4.5,
+      "is_active": true
     },
     {
       "value": "ליאת בן מאיר",
       "count": 11,
-      "years_range": "2002-2003"
+      "years_range": "2002-2003",
+      "avg_per_year": 5.5,
+      "is_active": false
     },
     {
       "value": "ליאת רוסו",
       "count": 21,
-      "years_range": "2003-2005"
+      "years_range": "2003-2005",
+      "avg_per_year": 7.0,
+      "is_active": false
     },
     {
       "value": "לירן קוסמן",
       "count": 61,
-      "years_range": "2018-2025"
+      "years_range": "2018-2025",
+      "avg_per_year": 7.6,
+      "is_active": true
     },
     {
       "value": "מאיר אזנקוט",
       "count": 74,
-      "years_range": "2018-2025"
+      "years_range": "2018-2025",
+      "avg_per_year": 9.2,
+      "is_active": true
     },
     {
       "value": "מוחמד סייד אחמד",
       "count": 40,
-      "years_range": "2000-2003"
+      "years_range": "2000-2003",
+      "avg_per_year": 10.0,
+      "is_active": false
     },
     {
       "value": "מיכה נוי",
       "count": 17,
-      "years_range": "2022-2025"
+      "years_range": "2022-2025",
+      "avg_per_year": 4.2,
+      "is_active": true
     },
     {
       "value": "מיכל בר אילן",
       "count": 15,
-      "years_range": "2000-2004"
+      "years_range": "2000-2004",
+      "avg_per_year": 3.0,
+      "is_active": false
     },
     {
       "value": "מיכל טביביאן-מזרחי",
       "count": 38,
-      "years_range": "2002-2007"
+      "years_range": "2002-2007",
+      "avg_per_year": 6.3,
+      "is_active": false
     },
     {
       "value": "מיכל כספי",
       "count": 37,
-      "years_range": "2001-2004"
+      "years_range": "2001-2004",
+      "avg_per_year": 9.2,
+      "is_active": false
     },
     {
       "value": "מיכל לרר",
       "count": 50,
-      "years_range": "2017-2025"
+      "years_range": "2017-2025",
+      "avg_per_year": 5.6,
+      "is_active": true
     },
     {
       "value": "מיכל קורא",
       "count": 16,
-      "years_range": "2001-2004"
+      "years_range": "2001-2004",
+      "avg_per_year": 4.0,
+      "is_active": false
     },
     {
       "value": "מרב גבאי פלג",
       "count": 30,
-      "years_range": "2019-2025"
+      "years_range": "2019-2025",
+      "avg_per_year": 4.3,
+      "is_active": true
     },
     {
       "value": "מריה רבינוביץ",
       "count": 121,
-      "years_range": "2008-2025"
+      "years_range": "2008-2025",
+      "avg_per_year": 6.7,
+      "is_active": true
     },
     {
       "value": "מרים כהן נבות",
       "count": 1,
-      "years_range": "2001"
+      "years_range": "2001",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "מרים רחל גלבלום",
       "count": 1,
-      "years_range": "2025"
+      "years_range": "2025",
+      "avg_per_year": 1.0,
+      "is_active": true
     },
     {
       "value": "מרק ויין",
       "count": 10,
-      "years_range": "2007-2008"
+      "years_range": "2007-2008",
+      "avg_per_year": 5.0,
+      "is_active": false
     },
     {
       "value": "משה ברדה",
       "count": 64,
-      "years_range": "2001-2008"
+      "years_range": "2001-2008",
+      "avg_per_year": 8.0,
+      "is_active": false
     },
     {
       "value": "מתן שחק",
       "count": 105,
-      "years_range": "2014-2025"
+      "years_range": "2014-2025",
+      "avg_per_year": 8.8,
+      "is_active": true
     },
     {
       "value": "נאוה לוונהיים",
       "count": 10,
-      "years_range": "2000-2003"
+      "years_range": "2000-2003",
+      "avg_per_year": 2.5,
+      "is_active": false
     },
     {
       "value": "נועה לפלר",
       "count": 5,
-      "years_range": "2000-2001"
+      "years_range": "2000-2001",
+      "avg_per_year": 2.5,
+      "is_active": false
     },
     {
       "value": "נורית יכימוביץ כהן",
       "count": 110,
-      "years_range": "2015-2025"
+      "years_range": "2015-2025",
+      "avg_per_year": 10.0,
+      "is_active": true
     },
     {
       "value": "נטע משה",
       "count": 97,
-      "years_range": "2013-2025"
+      "years_range": "2013-2025",
+      "avg_per_year": 7.5,
+      "is_active": true
     },
     {
       "value": "ניבי קליין",
       "count": 33,
-      "years_range": "2000-2004"
+      "years_range": "2000-2004",
+      "avg_per_year": 6.6,
+      "is_active": false
     },
     {
       "value": "ניצן פייביש",
       "count": 16,
-      "years_range": "2023-2025"
+      "years_range": "2023-2025",
+      "avg_per_year": 5.3,
+      "is_active": true
     },
     {
       "value": "נלי אליאס",
       "count": 1,
-      "years_range": "2000"
+      "years_range": "2000",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "נלי כפיר",
       "count": 22,
-      "years_range": "2022-2025"
+      "years_range": "2022-2025",
+      "avg_per_year": 5.5,
+      "is_active": true
     },
     {
       "value": "נעם גרינברג",
       "count": 18,
-      "years_range": "2022-2025"
+      "years_range": "2022-2025",
+      "avg_per_year": 4.5,
+      "is_active": true
     },
     {
       "value": "נעם דוד בוטוש",
       "count": 100,
-      "years_range": "2018-2025"
+      "years_range": "2018-2025",
+      "avg_per_year": 12.5,
+      "is_active": true
     },
     {
       "value": "נעמה טשנר",
       "count": 20,
-      "years_range": "2013-2014"
+      "years_range": "2013-2014",
+      "avg_per_year": 10.0,
+      "is_active": false
     },
     {
       "value": "נעמי שלג מי עמי",
       "count": 76,
-      "years_range": "2002-2010"
+      "years_range": "2002-2010",
+      "avg_per_year": 8.4,
+      "is_active": false
     },
     {
       "value": "נתן פערלמאן",
       "count": 44,
-      "years_range": "2009-2022"
+      "years_range": "2009-2022",
+      "avg_per_year": 3.1,
+      "is_active": false
     },
     {
       "value": "נתן שבע",
       "count": 53,
-      "years_range": "2020-2025"
+      "years_range": "2020-2025",
+      "avg_per_year": 8.8,
+      "is_active": true
     },
     {
       "value": "נתנאל יהושוע קופראק",
       "count": 74,
-      "years_range": "2018-2025"
+      "years_range": "2018-2025",
+      "avg_per_year": 9.2,
+      "is_active": true
     },
     {
       "value": "סיגלית רבינוביץ",
       "count": 1,
-      "years_range": "2002"
+      "years_range": "2002",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "סמי כהונאי",
       "count": 28,
-      "years_range": "2002-2005"
+      "years_range": "2002-2005",
+      "avg_per_year": 7.0,
+      "is_active": false
     },
     {
       "value": "עדו אבגר",
       "count": 86,
-      "years_range": "2014-2024"
+      "years_range": "2014-2024",
+      "avg_per_year": 7.8,
+      "is_active": false
     },
     {
       "value": "עדי כהן אהרונוב",
       "count": 17,
-      "years_range": "2022-2025"
+      "years_range": "2022-2025",
+      "avg_per_year": 4.2,
+      "is_active": true
     },
     {
       "value": "עדי ענבר",
       "count": 17,
-      "years_range": "2015-2018"
+      "years_range": "2015-2018",
+      "avg_per_year": 4.2,
+      "is_active": false
     },
     {
       "value": "עוגן גולדמן",
       "count": 52,
-      "years_range": "2000-2005"
+      "years_range": "2000-2005",
+      "avg_per_year": 8.7,
+      "is_active": false
     },
     {
       "value": "עומרי מצר",
       "count": 10,
-      "years_range": "2002"
+      "years_range": "2002",
+      "avg_per_year": 10.0,
+      "is_active": false
     },
     {
       "value": "עמוס אולצוור",
       "count": 32,
-      "years_range": "2003-2005"
+      "years_range": "2003-2005",
+      "avg_per_year": 10.7,
+      "is_active": false
     },
     {
       "value": "עמי צדיק",
       "count": 78,
-      "years_range": "2005-2022"
+      "years_range": "2005-2022",
+      "avg_per_year": 4.3,
+      "is_active": false
     },
     {
       "value": "ענת ירון",
       "count": 62,
-      "years_range": "2013-2018"
+      "years_range": "2013-2018",
+      "avg_per_year": 10.3,
+      "is_active": false
     },
     {
       "value": "פלורה קוך דבידוביץ",
       "count": 125,
-      "years_range": "2008-2025"
+      "years_range": "2008-2025",
+      "avg_per_year": 6.9,
+      "is_active": true
     },
     {
       "value": "צח בן יהודה",
       "count": 48,
-      "years_range": "2014-2022"
+      "years_range": "2014-2022",
+      "avg_per_year": 5.3,
+      "is_active": false
     },
     {
       "value": "ראדה חסייסי",
       "count": 30,
-      "years_range": "2012-2017"
+      "years_range": "2012-2017",
+      "avg_per_year": 5.0,
+      "is_active": false
     },
     {
       "value": "רוזלין אטיס",
       "count": 6,
-      "years_range": "2008"
+      "years_range": "2008",
+      "avg_per_year": 6.0,
+      "is_active": false
     },
     {
       "value": "רון תקוה",
       "count": 59,
-      "years_range": "2005-2008"
+      "years_range": "2005-2008",
+      "avg_per_year": 14.8,
+      "is_active": false
     },
     {
       "value": "רוני בר נתן",
       "count": 28,
-      "years_range": "2004-2005"
+      "years_range": "2004-2005",
+      "avg_per_year": 14.0,
+      "is_active": false
     },
     {
       "value": "רוני בר צורי",
       "count": 1,
-      "years_range": "2004"
+      "years_range": "2004",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "רוני דיסקין",
       "count": 6,
-      "years_range": "2001-2002"
+      "years_range": "2001-2002",
+      "avg_per_year": 3.0,
+      "is_active": false
     },
     {
       "value": "רוני הרשקוביץ",
       "count": 17,
-      "years_range": "2022-2025"
+      "years_range": "2022-2025",
+      "avg_per_year": 4.2,
+      "is_active": true
     },
     {
       "value": "רוניה בריטברד",
       "count": 14,
-      "years_range": "2003-2005"
+      "years_range": "2003-2005",
+      "avg_per_year": 4.7,
+      "is_active": false
     },
     {
       "value": "רוניה וייסמן",
       "count": 1,
-      "years_range": "2002"
+      "years_range": "2002",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "רועי גולדשמידט",
       "count": 118,
-      "years_range": "2006-2025"
+      "years_range": "2006-2025",
+      "avg_per_year": 5.9,
+      "is_active": true
     },
     {
       "value": "רועי פייביש",
       "count": 12,
-      "years_range": "2005-2006"
+      "years_range": "2005-2006",
+      "avg_per_year": 6.0,
+      "is_active": false
     },
     {
       "value": "רחל ורצברגר",
       "count": 55,
-      "years_range": "2000-2004"
+      "years_range": "2000-2004",
+      "avg_per_year": 11.0,
+      "is_active": false
     },
     {
       "value": "רחל מלול",
       "count": 1,
-      "years_range": "2003"
+      "years_range": "2003",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "רחל עזריה",
       "count": 5,
-      "years_range": "2001-2002"
+      "years_range": "2001-2002",
+      "avg_per_year": 2.5,
+      "is_active": false
     },
     {
       "value": "ריטה ינקילוביץ",
       "count": 26,
-      "years_range": "2003-2005"
+      "years_range": "2003-2005",
+      "avg_per_year": 8.7,
+      "is_active": false
     },
     {
       "value": "רינת בניטה",
       "count": 74,
-      "years_range": "2015-2025"
+      "years_range": "2015-2025",
+      "avg_per_year": 6.7,
+      "is_active": true
     },
     {
       "value": "רמי שוורץ",
       "count": 38,
-      "years_range": "2020-2025"
+      "years_range": "2020-2025",
+      "avg_per_year": 6.3,
+      "is_active": true
     },
     {
       "value": "רננה גוטרייך",
       "count": 22,
-      "years_range": "2016-2025"
+      "years_range": "2016-2025",
+      "avg_per_year": 2.2,
+      "is_active": true
     },
     {
       "value": "שחר גולדמן",
       "count": 5,
-      "years_range": "2001"
+      "years_range": "2001",
+      "avg_per_year": 5.0,
+      "is_active": false
     },
     {
       "value": "שילה רולף",
       "count": 13,
-      "years_range": "2002-2010"
+      "years_range": "2002-2010",
+      "avg_per_year": 1.4,
+      "is_active": false
     },
     {
       "value": "שירה בן ששון פורסטנברג",
       "count": 40,
-      "years_range": "2000-2004"
+      "years_range": "2000-2004",
+      "avg_per_year": 8.0,
+      "is_active": false
     },
     {
       "value": "שירי ספקטור בן ארי",
       "count": 68,
-      "years_range": "2010-2020"
+      "years_range": "2010-2020",
+      "avg_per_year": 6.2,
+      "is_active": false
     },
     {
       "value": "שירלי אברמי",
       "count": 89,
-      "years_range": "2004-2013"
+      "years_range": "2004-2013",
+      "avg_per_year": 8.9,
+      "is_active": false
     },
     {
       "value": "שלומי עדין",
       "count": 2,
-      "years_range": "2024-2025"
+      "years_range": "2024-2025",
+      "avg_per_year": 1.0,
+      "is_active": true
     },
     {
       "value": "שלי לוי",
       "count": 108,
-      "years_range": "2005-2025"
+      "years_range": "2005-2025",
+      "avg_per_year": 5.1,
+      "is_active": true
     },
     {
       "value": "שלי מזרחי סימון",
       "count": 35,
-      "years_range": "2010-2018"
+      "years_range": "2010-2018",
+      "avg_per_year": 3.9,
+      "is_active": false
     },
     {
       "value": "שמואל חן",
       "count": 1,
-      "years_range": "2020"
+      "years_range": "2020",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "שרה צוובנר",
       "count": 104,
-      "years_range": "2000-2017"
+      "years_range": "2000-2017",
+      "avg_per_year": 5.8,
+      "is_active": false
     },
     {
       "value": "שרון בוחניק",
       "count": 7,
-      "years_range": "2000-2001"
+      "years_range": "2000-2001",
+      "avg_per_year": 3.5,
+      "is_active": false
     },
     {
       "value": "שרון סופר",
       "count": 27,
-      "years_range": "2003-2012"
+      "years_range": "2003-2012",
+      "avg_per_year": 2.7,
+      "is_active": false
     },
     {
       "value": "שרון פז",
       "count": 4,
-      "years_range": "2004"
+      "years_range": "2004",
+      "avg_per_year": 4.0,
+      "is_active": false
     },
     {
       "value": "שרית אלנבוגן פרנקוביץ",
       "count": 1,
-      "years_range": "2001"
+      "years_range": "2001",
+      "avg_per_year": 1.0,
+      "is_active": false
     },
     {
       "value": "תהילה שחר",
       "count": 18,
-      "years_range": "2023-2025"
+      "years_range": "2023-2025",
+      "avg_per_year": 6.0,
+      "is_active": true
     },
     {
       "value": "תומר דרור",
       "count": 10,
-      "years_range": "2005"
+      "years_range": "2005",
+      "avg_per_year": 10.0,
+      "is_active": false
     },
     {
       "value": "תמיר אגמון",
       "count": 155,
-      "years_range": "2009-2022"
+      "years_range": "2009-2022",
+      "avg_per_year": 11.1,
+      "is_active": false
     },
     {
       "value": "תמר מרכוס",
       "count": 7,
-      "years_range": "2003-2005"
+      "years_range": "2003-2005",
+      "avg_per_year": 2.3,
+      "is_active": false
     }
   ]
 }

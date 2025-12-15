@@ -17,11 +17,9 @@
            --hover-bg: #e3f2fd;
            --meta-color: #555;
 
-           --tag-subject-bg: #e1f5fe;
-           --tag-subject-text: #0277bd;
-           --tag-keyword-bg: #f5f5f5;
-           --tag-keyword-text: #616161;
-           --tag-keyword-hover: #e0e0e0;
+           /* צבעים לחוקר פעיל */
+           --active-bg: #f0fdf4; /* ירוק מנטה בהיר מאוד */
+           --active-border: #86efac; /* ירוק בהיר */
        }
 
        body {
@@ -49,8 +47,7 @@
            text-decoration: none; background-color: var(--primary-color); color: white;
            padding: 8px 16px; border-radius: 6px; font-weight: bold; transition: background 0.2s;
            font-size: 0.9em;
-           cursor: pointer;
-           border: none;
+           cursor: pointer; border: none;
        }
        .nav-btn:hover { background-color: #004494; }
        .nav-btn.secondary { background-color: #546e7a; }
@@ -72,33 +69,57 @@
        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
        .authors-grid {
-           display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;
+           display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 15px;
        }
 
        .author-card {
-           background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
-           padding: 15px; text-decoration: none; color: var(--text-color); transition: all 0.2s;
-           display: flex; flex-direction: column; justify-content: center; min-height: 90px; /* קצת יותר גבוה בשביל השנים */
+           background: var(--card-bg);
+           border: 1px solid var(--border-color);
+           border-radius: 8px;
+           padding: 15px;
+           text-decoration: none;
+           color: var(--text-color);
+           transition: all 0.2s;
+           display: flex; flex-direction: column; justify-content: center; min-height: 100px;
            text-align: right; align-items: flex-start;
+           position: relative;
        }
+
+       /* סגנון לחוקר פעיל - עדין וחיובי */
+       .author-card.active-author {
+           background-color: var(--active-bg);
+           border-color: var(--active-border);
+       }
+
        .author-card:hover {
            transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-           border-color: var(--primary-color); background-color: var(--hover-bg);
        }
+       /* שומרים על ההובר של הפעיל גם ירקרק אבל קצת יותר כהה/מודגש אם רוצים, או משאירים רגיל */
+       .author-card.active-author:hover {
+           background-color: #dcfce7;
+           border-color: #4ade80;
+       }
+
        .author-name {
            font-weight: bold; font-size: 1.1em; width: 100%;
            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+           margin-bottom: 8px;
        }
-       .author-meta-row {
-           display: flex; align-items: center; gap: 8px; margin-top: 8px;
+
+       .stats-row {
+           display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8em; align-items: center;
+           color: #666;
        }
-       .author-count {
-           font-size: 0.85em; color: #fff; background-color: #78909c;
-           padding: 2px 8px; border-radius: 12px;
+
+       .stat-badge {
+           background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;
        }
-       .author-years {
-           font-size: 0.8em; color: #666; background-color: #f5f5f5;
-           padding: 2px 6px; border-radius: 4px; border: 1px solid #eee;
+       .stat-badge.count-badge { background-color: #e0f2fe; color: #0284c7; border-color: #bae6fd; font-weight: bold; }
+
+       /* תגית "פעיל" אופציונלית, אם נרצה להוסיף טקסט */
+       .active-tag {
+           font-size: 0.7em; color: #15803d; font-weight: bold;
+           margin-right: auto; /* דוחף שמאלה */
        }
 
        /* Doc List Styles */
@@ -155,7 +176,7 @@
        <header>
            <h1>
                📚 אינדקס מחברים
-               <span class="version-tag">v5.0 • Static & Years</span>
+               <span class="version-tag">v6.0 • Active & Avg</span>
            </h1>
            <div class="nav-links">
                <a href="index.html" class="nav-btn secondary">חיפוש</a>
@@ -219,7 +240,6 @@
            statusText.innerText = "טוען אינדקס מחברים...";
 
            try {
-               // הוספת timestamp כדי למנוע קאש של הקובץ הסטטי עצמו
                const response = await fetch(`authors_data.json?t=${new Date().getTime()}`);
 
                if (response.ok) {
@@ -229,7 +249,6 @@
                    statusBox.style.color = "#2e7d32";
                    statusText.innerHTML = `<b>אינדקס נטען בהצלחה</b> (עודכן לאחרונה: ${data.updated_at})`;
 
-                   // renderGrid מצפה למערך של אובייקטים, בדיוק כמו שמגיע מהקובץ
                    renderGrid(container, data.authors);
 
                    loader.style.display = 'none';
@@ -239,33 +258,38 @@
                }
 
            } catch (e) {
-               console.warn("Falling back to live scan...", e);
-               // אם תרצה, תוכל להחזיר כאן את fetchAuthorsLive מהגרסאות הקודמות
-               // אבל לביצועים הכי טובים, עדיף פשוט לוודא שהקובץ authors_data.json קיים
+               console.warn("Could not load static file.", e);
                statusText.innerText = "קובץ נתונים חסר. נא להריץ את סקריפט העדכון.";
                statusBox.style.backgroundColor = "#f8d7da";
                loader.style.display = 'none';
            }
        }
 
-       // --- 2. רינדור הגריד עם שנים ---
+       // --- 2. רינדור הגריד (מעודכן: צבע פעילות + ממוצע) ---
        function renderGrid(container, authorsArray) {
-           // authorsArray הוא רשימה שכבר מגיעה ממויינת מה-Python,
-           // אבל ליתר ביטחון נמיין שוב למקרה של סריקה חיה
-           // במבנה החדש זה: { value: "Name", count: 10, years_range: "2010-2020" }
 
            const html = authorsArray.map(auth => {
-               // בדיקה אם יש שנים להציג
+               // האם להוסיף Class של פעיל?
+               const activeClass = auth.is_active ? 'active-author' : '';
+
+               // תצוגת טווח שנים
                const yearsHtml = auth.years_range
-                   ? `<span class="author-years">${auth.years_range}</span>`
+                   ? `<span class="stat-badge">${auth.years_range}</span>`
+                   : '';
+
+               // תצוגת ממוצע (רק אם קיים)
+               const avgHtml = (auth.avg_per_year !== undefined)
+                   ? `<span class="stat-badge" title="ממוצע מסמכים לשנה">Ø ${auth.avg_per_year}</span>`
                    : '';
 
                return `
-               <a href="authors.html?author=${encodeURIComponent(auth.value)}" class="author-card">
+               <a href="authors.html?author=${encodeURIComponent(auth.value)}" class="author-card ${activeClass}">
                    <div class="author-name">${auth.value}</div>
-                   <div class="author-meta-row">
-                       <span class="author-count">${auth.count} מסמכים</span>
+
+                   <div class="stats-row">
+                       <span class="stat-badge count-badge">${auth.count} מסמכים</span>
                        ${yearsHtml}
+                       ${avgHtml}
                    </div>
                </a>
                `;
@@ -275,7 +299,7 @@
        }
 
 
-       // --- 3. טעינת מסמכים למחבר בודד (ללא שינוי מהותי) ---
+       // --- 3. טעינת מסמכים למחבר בודד (ללא שינוי) ---
        async function loadAuthorDocuments(authorName) {
            const loader = document.getElementById('loader');
            const view = document.getElementById('author-detail-view');
