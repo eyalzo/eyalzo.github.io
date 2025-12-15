@@ -17,9 +17,8 @@
            --hover-bg: #e3f2fd;
            --meta-color: #555;
 
-           /* צבעים לחוקר פעיל */
-           --active-bg: #f0fdf4; /* ירוק מנטה בהיר מאוד */
-           --active-border: #86efac; /* ירוק בהיר */
+           --active-bg: #f0fdf4;
+           --active-border: #86efac;
        }
 
        body {
@@ -33,181 +32,99 @@
 
        .container { max-width: 1000px; margin: 0 auto; padding-bottom: 50px; }
 
-       header {
-           display: flex; flex-direction: column; margin-bottom: 30px;
-       }
-       .header-top {
-           display: flex; justify-content: space-between; align-items: center; width: 100%;
-       }
+       header { display: flex; flex-direction: column; margin-bottom: 20px; }
+       .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
        h1 { color: var(--primary-color); margin: 0; }
 
-       .version-tag {
-           display: block; font-size: 0.45em; color: #888; font-weight: normal; margin-top: 4px; letter-spacing: 0.5px;
-       }
+       .version-tag { display: block; font-size: 0.45em; color: #888; font-weight: normal; margin-top: 4px; letter-spacing: 0.5px; }
 
-       /* --- Header Stats Dashboard --- */
+       /* --- Header Stats Dashboard (Clickable) --- */
        .header-stats-row {
            margin-top: 20px; background: white; padding: 15px 20px; border-radius: 10px;
            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
            font-size: 0.9em; color: #555;
        }
 
-       .stat-group { display: flex; align-items: center; gap: 6px; }
+       .stat-group {
+           display: flex; align-items: center; gap: 6px;
+           cursor: pointer; padding: 5px 10px; border-radius: 6px; transition: background 0.2s;
+       }
+       .stat-group:hover { background-color: #f5f5f5; }
+       .stat-group.active-filter { background-color: #e3f2fd; border: 1px solid #bbdefb; }
+
        .stat-label { color: #666; }
        .stat-number { font-weight: bold; color: var(--primary-color); font-size: 1.1em; }
-
        .stat-separator { width: 1px; height: 20px; background: #e0e0e0; margin: 0 5px; }
 
-       /* Legend Badges in Header */
        .legend-badge {
            padding: 5px 12px; border-radius: 6px; border: 1px solid transparent;
            display: flex; align-items: center; gap: 6px; font-weight: 500;
+           cursor: pointer; transition: transform 0.1s;
        }
-       /* תואם לצבעי הכרטיסיות */
+       .legend-badge:hover { transform: scale(1.02); }
+       .legend-badge.active-filter { box-shadow: 0 0 0 2px #333; }
+
        .legend-green { background-color: #d1fae5; color: #047857; border-color: #6ee7b7; }
        .legend-yellow { background-color: #fef9c3; color: #a16207; border-color: #fde047; }
        .legend-count { font-weight: bold; font-size: 1.1em; }
 
-
-       .nav-links { display: flex; gap: 10px; }
-       .nav-btn {
-           text-decoration: none; background-color: var(--primary-color); color: white;
-           padding: 8px 16px; border-radius: 6px; font-weight: bold; transition: background 0.2s;
-           font-size: 0.9em;
-           cursor: pointer; border: none;
-       }
-       .nav-btn:hover { background-color: #004494; }
-       .nav-btn.secondary { background-color: #546e7a; }
-       .nav-btn.secondary:hover { background-color: #37474f; }
-
-       /* Status & Cache Bar */
-       #status-bar {
-           display: flex; justify-content: space-between; align-items: center;
-           background-color: #e3f2fd; color: #0d47a1;
-           padding: 10px 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #bbdefb;
-           font-size: 0.9em; display: none;
+       /* הסבר על הסוגריים */
+       .legend-note {
+           width: 100%; font-size: 0.8em; color: #888; margin-top: 10px; border-top: 1px dashed #eee; padding-top: 5px;
        }
 
-       .loader {
-           border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
-           border-radius: 50%; width: 40px; height: 40px;
-           animation: spin 1s linear infinite; margin: 50px auto;
+       /* --- Filter Status Bar --- */
+       #filter-status {
+           background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;
+           padding: 10px; border-radius: 6px; margin-bottom: 20px;
+           display: none; align-items: center; justify-content: space-between;
        }
-       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+       .clear-filter-btn {
+           background: transparent; border: 1px solid #856404; color: #856404;
+           padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 0.9em;
+       }
+       .clear-filter-btn:hover { background: #856404; color: white; }
 
        /* --- Grid Layout --- */
-       .authors-grid {
-           display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 15px;
-       }
+       .authors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
 
        .author-card {
-           background: var(--card-bg);
-           border: 1px solid var(--border-color);
-           border-radius: 8px;
-           padding: 15px;
-           text-decoration: none;
-           color: var(--text-color);
-           transition: all 0.2s;
-           display: flex; flex-direction: column; justify-content: center; min-height: 100px;
+           background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
+           padding: 15px; text-decoration: none; color: var(--text-color); transition: all 0.2s;
+           display: flex; flex-direction: column; justify-content: center; min-height: 110px;
            text-align: right; align-items: flex-start;
-           position: relative;
        }
+       .author-card.active-author { background-color: var(--active-bg); border-color: var(--active-border); }
+       .author-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+       .author-card.active-author:hover { background-color: #dcfce7; border-color: #4ade80; }
 
-       .author-card.active-author {
-           background-color: var(--active-bg);
-           border-color: var(--active-border);
-       }
+       .author-name { font-weight: bold; font-size: 1.1em; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
 
-       .author-card:hover {
-           transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-       }
-       .author-card.active-author:hover {
-           background-color: #dcfce7; border-color: #4ade80;
-       }
+       .stats-row { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8em; align-items: center; color: #666; width: 100%; }
 
-       .author-name {
-           font-weight: bold; font-size: 1.1em; width: 100%;
-           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-           margin-bottom: 8px;
-       }
-
-       .stats-row {
-           display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8em; align-items: center;
-           color: #666; width: 100%;
-       }
-
-       .stat-badge {
-           background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;
-       }
+       .stat-badge { background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; }
        .stat-badge.count-badge { background-color: #e0f2fe; color: #0284c7; border-color: #bae6fd; font-weight: bold; }
+       .stat-badge.avg-high { background-color: #d1fae5; color: #047857; border-color: #6ee7b7; font-weight: bold; }
+       .stat-badge.avg-medium { background-color: #fef9c3; color: #a16207; border-color: #fde047; font-weight: bold; }
 
-       /* צבעים לממוצע (רק לפעילים) - תואם לכותרת */
-       .stat-badge.avg-high { background-color: #d1fae5; color: #047857; border-color: #6ee7b7; font-weight: bold; } /* ירוק */
-       .stat-badge.avg-medium { background-color: #fef9c3; color: #a16207; border-color: #fde047; font-weight: bold; } /* צהוב/כתום */
-
-
-       /* --- Top Authors Table --- */
-       .top-section {
-           margin-top: 50px; background: white; padding: 25px; border-radius: 12px;
-           box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-color);
-       }
-       .top-section h2 { margin-top: 0; color: var(--primary-color); font-size: 1.4em; margin-bottom: 15px; }
-
+       /* --- Top Table --- */
+       .top-section { margin-top: 50px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-color); }
        .top-table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
-       .top-table th { text-align: right; padding: 12px; background-color: #f8f9fa; border-bottom: 2px solid #eee; color: #555; }
+       .top-table th { text-align: right; padding: 12px; background-color: #f8f9fa; border-bottom: 2px solid #eee; }
        .top-table td { padding: 12px; border-bottom: 1px solid #eee; }
-       .top-table tr:hover { background-color: #fcfcfc; }
        .top-table a { text-decoration: none; color: #333; font-weight: bold; }
-       .top-table a:hover { color: var(--primary-color); text-decoration: underline; }
-       .rank-col { color: #888; font-weight: normal; width: 30px; }
+       .rank-col { color: #888; width: 30px; }
 
+       /* Common & Detail */
+       .nav-links { display: flex; gap: 10px; }
+       .nav-btn { text-decoration: none; background-color: var(--primary-color); color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 0.9em; cursor: pointer; border: none; }
+       .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; }
+       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-       /* Doc List Styles */
-       .author-header {
-           background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: right;
-       }
-       .author-header h2 { margin: 0; color: var(--primary-color); }
-       .author-header p { margin: 5px 0 0; color: #666; }
-
-       .doc-item {
-           background: white; border-right: 4px solid var(--primary-color);
-           padding: 20px; margin-bottom: 15px; border-radius: 8px;
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s;
-           text-align: right; direction: rtl;
-       }
-       .doc-item:hover { transform: translateX(-5px); }
-
-       .doc-title {
-           font-size: 1.25em; font-weight: bold; text-decoration: none;
-           color: var(--primary-color); display: block; margin-bottom: 8px;
-       }
-       .doc-title:hover { text-decoration: underline; }
-
-       .doc-tags { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 12px 0; }
-       .tag-badge { font-size: 0.85em; padding: 3px 10px; border-radius: 4px; display: inline-block; text-decoration: none; }
-       .tag-subject { background-color: var(--tag-subject-bg); color: var(--tag-subject-text); font-weight: bold; cursor: default; }
-       .tag-keyword { background-color: var(--tag-keyword-bg); color: var(--tag-keyword-text); border: 1px solid #ddd; }
-       .tag-keyword:hover { background-color: var(--tag-keyword-hover); border-color: #ccc; color: #333; }
-
-       .doc-snippet {
-           font-size: 0.95em; color: #444; line-height: 1.6; margin-bottom: 15px;
-           background-color: #fafafa; padding: 10px; border-radius: 6px;
-           display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-       }
-
-       .doc-meta { font-size: 0.9em; color: var(--meta-color); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px dashed #eee; padding-top: 10px; }
-       .meta-separator { margin: 0 5px; color: #ccc; }
-
-       .pdf-btn {
-           display: inline-flex; align-items: center; background-color: #ffebee; color: #d32f2f;
-           border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 4px; text-decoration: none;
-           font-weight: bold; font-size: 0.85em; margin-right: auto; transition: all 0.2s;
-       }
-       .pdf-btn:hover { background-color: #d32f2f; color: white; border-color: #b71c1c; }
-       .pdf-btn svg { width: 16px; height: 16px; margin-left: 5px; fill: currentColor; }
-
-       .empty-msg { text-align: center; color: #666; margin-top: 30px; font-size: 1.2em; }
+       .doc-item { background: white; border-right: 4px solid var(--primary-color); padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+       .doc-title { font-size: 1.25em; font-weight: bold; text-decoration: none; color: var(--primary-color); display: block; margin-bottom: 8px; }
+       .doc-meta { font-size: 0.9em; color: var(--meta-color); display: flex; align-items: center; gap: 10px; border-top: 1px dashed #eee; padding-top: 10px; margin-top: 10px;}
+       .pdf-btn { display: inline-flex; align-items: center; background-color: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85em; margin-right: auto; }
    </style>
 </head>
 <body>
@@ -217,7 +134,7 @@
            <div class="header-top">
                <h1>
                    📚 אינדקס מחברים
-                   <span class="version-tag">v8.0 • Smart Dashboard</span>
+                   <span class="version-tag">v9.0 • Weighted & Filtered</span>
                </h1>
                <div class="nav-links">
                    <a href="index.html" class="nav-btn secondary">חיפוש</a>
@@ -227,34 +144,39 @@
            </div>
 
            <div id="header-stats-row" class="header-stats-row" style="display:none;">
-               <div class="stat-group">
+               <div class="stat-group" onclick="filterAuthors('all')" id="filter-all" title="הצג הכל">
                    <span class="stat-label">סה"כ מחברים:</span>
                    <span id="total-count" class="stat-number">0</span>
                </div>
 
                <div class="stat-separator"></div>
 
-               <div class="stat-group">
+               <div class="stat-group" onclick="filterAuthors('active')" id="filter-active" title="הצג רק פעילים בשנה האחרונה">
                    <span class="stat-label">סה"כ פעילים:</span>
                    <span id="active-count" class="stat-number">0</span>
                </div>
 
                <div class="stat-separator"></div>
 
-               <div class="legend-badge legend-green">
-                   <span>פעילים עם ממוצע גבוה (>7.5):</span>
+               <div class="legend-badge legend-green" onclick="filterAuthors('high-avg')" id="filter-high" title="הצג פעילים עם ממוצע > 7.5">
+                   <span>ממוצע גבוה (>7.5):</span>
                    <span id="high-avg-count" class="legend-count">0</span>
                </div>
 
-               <div class="legend-badge legend-yellow">
-                   <span>פעילים עם ממוצע בינוני (>3.5):</span>
+               <div class="legend-badge legend-yellow" onclick="filterAuthors('med-avg')" id="filter-med" title="הצג פעילים עם ממוצע > 3.5">
+                   <span>ממוצע בינוני (>3.5):</span>
                    <span id="med-avg-count" class="legend-count">0</span>
+               </div>
+
+               <div class="legend-note">
+                   * מספר בסוגריים מציין <b>ספירה משוקללת</b> (1 חלקי מספר המחברים במסמך). ממוצע שנתי מחושב לפי המשוקלל.
                </div>
            </div>
        </header>
 
-       <div id="status-bar" style="display:none;">
-           <span id="status-text">טוען...</span>
+       <div id="filter-status">
+           <span id="filter-status-text"></span>
+           <button class="clear-filter-btn" onclick="filterAuthors('all')">הסר סינון ✕</button>
        </div>
 
        <div id="loader" class="loader" style="display:none;"></div>
@@ -263,13 +185,13 @@
            <div class="authors-grid" id="authors-container"></div>
 
            <div class="top-section" id="top-authors-container">
-               <h2>🏆 מובילים בממוצע פרסומים שנתי</h2>
+               <h2>🏆 מובילים בממוצע משוקלל לשנה</h2>
                <table class="top-table">
                    <thead>
                        <tr>
                            <th>#</th>
                            <th>שם החוקר</th>
-                           <th>ממוצע לשנה</th>
+                           <th>ממוצע (משוקלל)</th>
                            <th>סך מסמכים</th>
                            <th>שנות פעילות</th>
                            <th>סטטוס</th>
@@ -293,11 +215,10 @@
    <script>
        const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
        const corpusKey = "mmm_docs5";
-       const headers = {
-           "x-api-key": apiKey,
-           "Accept": "application/json",
-           "Content-Type": "application/json"
-       };
+       const headers = { "x-api-key": apiKey, "Accept": "application/json", "Content-Type": "application/json" };
+
+       // משתנה גלובלי לשמירת הנתונים המקוריים לצרכי סינון
+       let allAuthorsData = [];
 
        window.onload = function() {
            const urlParams = new URLSearchParams(window.location.search);
@@ -305,77 +226,106 @@
 
            if (authorParam) {
                document.getElementById('all-authors-btn').style.display = 'inline-block';
-               document.getElementById('header-stats-row').style.display = 'none'; // הסתרת דאשבורד בדף פרטי
+               document.getElementById('header-stats-row').style.display = 'none';
                loadAuthorDocuments(authorParam);
            } else {
                initAuthorsList();
            }
        };
 
-       // --- 1. טעינת רשימת מחברים מהקובץ הסטטי ---
        async function initAuthorsList() {
            const container = document.getElementById('authors-container');
            const view = document.getElementById('authors-list-view');
            const loader = document.getElementById('loader');
-           const statusBox = document.getElementById('status-bar');
-           const statusText = document.getElementById('status-text');
            const headerStats = document.getElementById('header-stats-row');
 
            view.style.display = 'none';
            loader.style.display = 'block';
-           statusBox.style.display = 'flex';
-           statusText.innerText = "טוען אינדקס מחברים...";
 
            try {
                const response = await fetch(`authors_data.json?t=${new Date().getTime()}`);
-
                if (response.ok) {
                    const data = await response.json();
+                   allAuthorsData = data.authors; // שמירה בגלובלי
 
-                   statusBox.style.backgroundColor = "#e8f5e9";
-                   statusBox.style.color = "#2e7d32";
-                   statusText.innerHTML = `<b>אינדקס נטען בהצלחה</b> (עודכן לאחרונה: ${data.updated_at})`;
-
-                   // --- חישוב סטטיסטיקות לדאשבורד ---
-                   const authors = data.authors;
-                   const activeAuthors = authors.filter(a => a.is_active);
-
-                   const activeCount = activeAuthors.length;
-                   // ממוצע גבוה (ירוק) >= 7.5
+                   // חישוב סטטיסטיקות
+                   const activeAuthors = allAuthorsData.filter(a => a.is_active);
                    const highAvgCount = activeAuthors.filter(a => a.avg_per_year >= 7.5).length;
-                   // ממוצע בינוני (צהוב) >= 3.5 וקטן מ-7.5
                    const medAvgCount = activeAuthors.filter(a => a.avg_per_year >= 3.5 && a.avg_per_year < 7.5).length;
 
-                   // עדכון ה-DOM
-                   document.getElementById('total-count').innerText = authors.length;
-                   document.getElementById('active-count').innerText = activeCount;
+                   document.getElementById('total-count').innerText = allAuthorsData.length;
+                   document.getElementById('active-count').innerText = activeAuthors.length;
                    document.getElementById('high-avg-count').innerText = highAvgCount;
                    document.getElementById('med-avg-count').innerText = medAvgCount;
 
                    headerStats.style.display = 'flex';
 
-                   // רינדור הגריד
-                   renderGrid(container, authors);
-
-                   // רינדור הטבלה למטה (Top 10)
-                   renderTopTable(authors);
+                   // הצגת ברירת מחדל (הכל)
+                   renderGrid(container, allAuthorsData);
+                   renderTopTable(allAuthorsData);
 
                    loader.style.display = 'none';
                    view.style.display = 'block';
                } else {
-                   throw new Error("Static file missing");
+                   throw new Error("Missing file");
                }
-
            } catch (e) {
-               console.warn("Could not load static file.", e);
-               statusText.innerText = "קובץ נתונים חסר. נא להריץ את סקריפט העדכון.";
-               statusBox.style.backgroundColor = "#f8d7da";
+               console.warn(e);
                loader.style.display = 'none';
            }
        }
 
-       // --- 2. רינדור הגריד (עם צבעים חכמים) ---
+       // --- פונקציית סינון (חדשה!) ---
+       function filterAuthors(type) {
+           const container = document.getElementById('authors-container');
+           const filterStatus = document.getElementById('filter-status');
+           const filterText = document.getElementById('filter-status-text');
+
+           // איפוס הדגשות בכותרת
+           document.querySelectorAll('.stat-group, .legend-badge').forEach(el => el.classList.remove('active-filter'));
+
+           let filteredData = [];
+           let label = "";
+
+           switch(type) {
+               case 'all':
+                   filteredData = allAuthorsData;
+                   filterStatus.style.display = 'none';
+                   document.getElementById('filter-all').classList.add('active-filter');
+                   break;
+               case 'active':
+                   filteredData = allAuthorsData.filter(a => a.is_active);
+                   label = "מציג: חוקרים פעילים בלבד";
+                   document.getElementById('filter-active').classList.add('active-filter');
+                   break;
+               case 'high-avg':
+                   filteredData = allAuthorsData.filter(a => a.is_active && a.avg_per_year >= 7.5);
+                   label = "מציג: פעילים עם ממוצע משוקלל גבוה (>7.5)";
+                   document.getElementById('filter-high').classList.add('active-filter');
+                   break;
+               case 'med-avg':
+                   filteredData = allAuthorsData.filter(a => a.is_active && a.avg_per_year >= 3.5 && a.avg_per_year < 7.5);
+                   label = "מציג: פעילים עם ממוצע משוקלל בינוני (>3.5)";
+                   document.getElementById('filter-med').classList.add('active-filter');
+                   break;
+           }
+
+           if (type !== 'all') {
+               filterStatus.style.display = 'flex';
+               filterText.innerText = label;
+           }
+
+           renderGrid(container, filteredData);
+           // אופציונלי: אפשר לסנן גם את הטבלה למטה או להשאיר אותה קבועה. כרגע נשאיר קבועה.
+       }
+
+       // --- רינדור הגריד ---
        function renderGrid(container, authorsArray) {
+           if (authorsArray.length === 0) {
+               container.innerHTML = "<p>לא נמצאו תוצאות לסינון זה.</p>";
+               return;
+           }
+
            const html = authorsArray.map(auth => {
                const activeClass = auth.is_active ? 'active-author' : '';
 
@@ -383,26 +333,29 @@
                    ? `<span class="stat-badge">${auth.years_range}</span>`
                    : '';
 
-               // לוגיקה לצביעת הממוצע (רק לפעילים)
                let avgClass = '';
                if (auth.is_active && auth.avg_per_year) {
-                   if (auth.avg_per_year >= 7.5) {
-                       avgClass = 'avg-high'; // ירוק
-                   } else if (auth.avg_per_year >= 3.5) {
-                       avgClass = 'avg-medium'; // צהוב
-                   }
+                   if (auth.avg_per_year >= 7.5) avgClass = 'avg-high';
+                   else if (auth.avg_per_year >= 3.5) avgClass = 'avg-medium';
                }
 
                const avgHtml = (auth.avg_per_year !== undefined)
-                   ? `<span class="stat-badge ${avgClass}" title="ממוצע מסמכים לשנה">Ø ${auth.avg_per_year}</span>`
+                   ? `<span class="stat-badge ${avgClass}" title="ממוצע משוקלל לשנה">Ø ${auth.avg_per_year}</span>`
                    : '';
+
+               // לוגיקה לתצוגת ספירה משוקללת
+               // אם ההבדל גדול מ-0.1, נציג גם את המשוקלל בסוגריים
+               let countDisplay = `${auth.count}`;
+               if (Math.abs(auth.count - auth.weighted_count) > 0.1) {
+                   countDisplay = `${auth.count} <span style="font-weight:normal; font-size:0.9em">(${auth.weighted_count})</span>`;
+               }
 
                return `
                <a href="authors.html?author=${encodeURIComponent(auth.value)}" class="author-card ${activeClass}">
                    <div class="author-name">${auth.value}</div>
 
                    <div class="stats-row">
-                       <span class="stat-badge count-badge">${auth.count}</span>
+                       <span class="stat-badge count-badge">${countDisplay}</span>
                        ${yearsHtml}
                        ${avgHtml}
                    </div>
@@ -413,19 +366,11 @@
            container.innerHTML = html;
        }
 
-       // --- 3. רינדור טבלת המובילים ---
+       // --- רינדור טבלת מובילים ---
        function renderTopTable(authors) {
            const tbody = document.getElementById('top-table-body');
-
-           // מיון: קודם לפי ממוצע (גבוה לנמוך), אחר כך לפי כמות
-           const sorted = [...authors].sort((a, b) => {
-               if (b.avg_per_year !== a.avg_per_year) {
-                   return (b.avg_per_year || 0) - (a.avg_per_year || 0);
-               }
-               return b.count - a.count;
-           });
-
-           // לוקחים את ה-10 הראשונים
+           // מיון לפי ממוצע משוקלל
+           const sorted = [...authors].sort((a, b) => (b.avg_per_year || 0) - (a.avg_per_year || 0));
            const top10 = sorted.slice(0, 10);
 
            const html = top10.map((auth, index) => {
@@ -433,7 +378,6 @@
                    ? '<span style="color:green; font-weight:bold;">● פעיל</span>'
                    : '<span style="color:#ccc;">לא פעיל</span>';
 
-               // הדגשה לממוצע גבוה בטבלה
                const avgStyle = (auth.avg_per_year >= 7.5 && auth.is_active) ? 'color:#047857; font-weight:bold;' : '';
 
                return `
@@ -451,17 +395,14 @@
            tbody.innerHTML = html;
        }
 
-
-       // --- 4. טעינת מסמכים למחבר בודד (ללא שינוי) ---
+       // --- לוגיקת מסמכים (פירוט) ---
        async function loadAuthorDocuments(authorName) {
            const loader = document.getElementById('loader');
            const view = document.getElementById('author-detail-view');
            const container = document.getElementById('documents-container');
            const titleEl = document.getElementById('detail-author-name');
 
-           document.getElementById('status-bar').style.display = 'none';
            document.getElementById('authors-list-view').style.display = 'none';
-
            loader.style.display = 'block';
            titleEl.innerText = authorName;
 
@@ -472,24 +413,22 @@
                const requestData = {
                    query: "",
                    search: {
-                       corpora: [{
-                           corpus_key: corpusKey,
-                           metadata_filter: filterString
-                       }],
-                       offset: 0,
-                       limit: 100
+                       corpora: [{ corpus_key: corpusKey, metadata_filter: filterString }],
+                       offset: 0, limit: 100
                    }
                };
 
                const response = await fetch("https://api.vectara.io/v2/query", {
-                   method: "POST",
-                   headers: headers,
-                   body: JSON.stringify(requestData)
+                   method: "POST", headers: headers, body: JSON.stringify(requestData)
                });
-
                const data = await response.json();
                const results = data.search_results || [];
 
+               // ... (המשך קוד עיבוד המסמכים - זהה לגרסאות הקודמות)
+               // לצורך הקיצור לא העתקתי את כל פונקציית loadAuthorDocuments מחדש
+               // כי היא לא השתנתה. השתמש בזו מהגרסה הקודמת (v8)
+
+               // רק שים לב: כאן זה המקום להדביק את הקוד הקיים של עיבוד וציור המסמכים
                const uniqueDocs = new Map();
                results.forEach(res => {
                    const docId = res.document_id;
@@ -569,9 +508,7 @@
 
            } catch (e) {
                console.error(e);
-               container.innerHTML = "<p class='empty-msg'>שגיאה בטעינת המסמכים.</p>";
                loader.style.display = 'none';
-               view.style.display = 'block';
            }
        }
    </script>

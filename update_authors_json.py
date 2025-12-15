@@ -50,21 +50,15 @@ def list_all_docs(api_key, corpus_key):
 
 
 def parse_date(date_str):
-    """ מנסה להמיר מחרוזת תאריך לאובייקט datetime """
-    if not date_str:
-        return None
+    if not date_str: return None
     try:
-        # פורמט סטנדרטי YYYY-MM-DD
         return datetime.strptime(date_str, "%Y-%m-%d")
     except ValueError:
         return None
 
 
 def extract_year(doc_meta):
-    """ חילוץ שנה כמספר """
-    if doc_meta.get('ez_year'):
-        return int(doc_meta.get('ez_year'))
-
+    if doc_meta.get('ez_year'): return int(doc_meta.get('ez_year'))
     date_str = doc_meta.get('ez_date')
     if date_str and len(date_str) >= 4:
         try:
@@ -76,15 +70,15 @@ def extract_year(doc_meta):
 
 def process_authors(documents):
     """
-    עיבוד נתונים: ספירה, טווח שנים, זיהוי פעילות וממוצע
+    עיבוד נתונים: ספירה רגילה + ספירה משוקללת
     """
-    # מבנה זמני: { "Name": { count: 0, years: set(), latest_date: datetime } }
+    # מבנה: { "Name": { count: 0, weighted_count: 0.0, years: set(), latest_date: ... } }
     authors_temp = {}
 
     today = datetime.now()
-    cutoff_date = today - timedelta(days=365)  # שנה אחורה מהיום
+    cutoff_date = today - timedelta(days=365)
 
-    print("Processing authors stats...")
+    print("Processing authors stats (weighted)...")
 
     for doc in documents:
         meta = doc.get('metadata', {})
@@ -103,64 +97,66 @@ def process_authors(documents):
             except:
                 people_list = [people_val]
 
-        # נתונים למסמך
+        # ניקוי שמות ריקים
+        people_list = [str(p).strip() for p in people_list if str(p).strip()]
+
+        num_authors = len(people_list)
+        if num_authors == 0:
+            continue
+
+        # חישוב משקל למסמך זה (אם יש 2 מחברים, כל אחד מקבל 0.5)
+        weight_per_person = 1.0 / num_authors
+
         doc_year = extract_year(meta)
         doc_date_str = meta.get('ez_date')
         doc_date_obj = parse_date(doc_date_str)
 
-        # עדכון לכל מחבר
         for person in people_list:
-            clean_name = str(person).strip()
-            if clean_name:
-                if clean_name not in authors_temp:
-                    authors_temp[clean_name] = {
-                        "count": 0,
-                        "years": set(),
-                        "latest_date": None
-                    }
+            if person not in authors_temp:
+                authors_temp[person] = {
+                    "count": 0,
+                    "weighted_count": 0.0,
+                    "years": set(),
+                    "latest_date": None
+                }
 
-                # עדכון ספירה
-                authors_temp[clean_name]["count"] += 1
+            # עדכונים
+            authors_temp[person]["count"] += 1
+            authors_temp[person]["weighted_count"] += weight_per_person
 
-                # עדכון שנים
-                if doc_year:
-                    authors_temp[clean_name]["years"].add(doc_year)
+            if doc_year:
+                authors_temp[person]["years"].add(doc_year)
 
-                # עדכון תאריך אחרון (לצורך בדיקת פעילות)
-                current_latest = authors_temp[clean_name]["latest_date"]
-                if doc_date_obj:
-                    if current_latest is None or doc_date_obj > current_latest:
-                        authors_temp[clean_name]["latest_date"] = doc_date_obj
+            curr_date = authors_temp[person]["latest_date"]
+            if doc_date_obj:
+                if curr_date is None or doc_date_obj > curr_date:
+                    authors_temp[person]["latest_date"] = doc_date_obj
 
     # בניית הרשימה הסופית
     final_list = []
 
     for name, data in authors_temp.items():
         count = data["count"]
+        weighted_count = round(data["weighted_count"], 1)  # עיגול ספרה אחת
         years_set = data["years"]
         latest_date = data["latest_date"]
 
-        # 1. חישוב טווח שנים
+        # טווח שנים
         years_range_str = ""
         span_years = 1
-
         if years_set:
             min_y = min(years_set)
             max_y = max(years_set)
-            span_years = max_y - min_y + 1  # למשל 2020-2020 זה שנה אחת
+            span_years = max_y - min_y + 1
             if min_y == max_y:
                 years_range_str = str(min_y)
             else:
                 years_range_str = f"{min_y}-{max_y}"
 
-        # 2. חישוב ממוצע שנתי
-        # אם אין שנים ידועות, נניח טווח של 1 כדי לא לחלק ב-0
-        if not years_set:
-            span_years = 1
+        # חישוב ממוצע שנתי (לפי המשוקלל בלבד!)
+        if not years_set: span_years = 1
+        avg_per_year = round(weighted_count / span_years, 1)
 
-        avg_per_year = round(count / span_years, 1)
-
-        # 3. בדיקת פעילות (האם פרסם בשנה האחרונה לפי תאריך מדויק)
         is_active = False
         if latest_date and latest_date >= cutoff_date:
             is_active = True
@@ -168,12 +164,13 @@ def process_authors(documents):
         final_list.append({
             "value": name,
             "count": count,
+            "weighted_count": weighted_count,
             "years_range": years_range_str,
             "avg_per_year": avg_per_year,
             "is_active": is_active
         })
 
-    # מיון לפי שם
+    # מיון אלפביתי
     sorted_authors = sorted(final_list, key=lambda x: x['value'])
     return sorted_authors
 
@@ -181,9 +178,7 @@ def process_authors(documents):
 def main():
     docs = list_all_docs(API_KEY, CORPUS_ID)
     print(f"Total documents found: {len(docs)}")
-
     authors_data = process_authors(docs)
-    print(f"Total unique authors found: {len(authors_data)}")
 
     final_json = {
         "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -191,11 +186,10 @@ def main():
         "authors": authors_data
     }
 
-    filename = "authors_data.json"
-    with open(filename, "w", encoding="utf-8") as f:
+    with open("authors_data.json", "w", encoding="utf-8") as f:
         json.dump(final_json, f, ensure_ascii=False, indent=2)
 
-    print(f"Successfully saved data to {filename}")
+    print("Done. authors_data.json updated.")
 
 
 if __name__ == "__main__":
