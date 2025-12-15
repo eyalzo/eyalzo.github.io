@@ -4,13 +4,13 @@ import argparse
 import sys
 from datetime import datetime, timedelta
 
-# הגדרות
+# הגדרות - וודא שהמפתח והקורפוס מעודכנים
 API_KEY = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA"
 CORPUS_ID = "mmm_docs5"
+DATA_VERSION = "2.5"  # עדכן את המספר הזה ידנית כשאתה עושה שינויים מהותיים
 
 
 def list_all_docs(api_key, corpus_key):
-    """ שולף את כל המסמכים מהקורפוס """
     url_list = f"https://api.vectara.io/v2/corpora/{corpus_key}/documents"
     headers = {'Accept': 'application/json', 'x-api-key': api_key}
 
@@ -69,11 +69,7 @@ def extract_year(doc_meta):
 
 
 def process_topics(documents):
-    """
-    עיבוד מילות מפתח
-    """
     topics_temp = {}
-
     today = datetime.now()
     cutoff_date = today - timedelta(days=365)
 
@@ -82,7 +78,6 @@ def process_topics(documents):
     for doc in documents:
         meta = doc.get('metadata', {})
 
-        # חילוץ מילות מפתח (ez_keywords)
         kw_val = meta.get('ez_keywords')
         kw_list = []
 
@@ -90,7 +85,6 @@ def process_topics(documents):
             kw_list = kw_val
         elif isinstance(kw_val, str):
             try:
-                # לפעמים זה מגיע כמחרוזת JSON ולפעמים מופרד פסיקים
                 if kw_val.strip().startswith('['):
                     kw_list = json.loads(kw_val.replace("'", '"'))
                 elif ',' in kw_val:
@@ -100,14 +94,12 @@ def process_topics(documents):
             except:
                 kw_list = [kw_val]
 
-        # נתונים למסמך
         doc_year = extract_year(meta)
         doc_date_str = meta.get('ez_date')
         doc_date_obj = parse_date(doc_date_str)
 
         for topic in kw_list:
             clean_topic = str(topic).strip()
-            # סינון רעשים: מילים קצרות מדי או ריקות
             if len(clean_topic) < 2:
                 continue
 
@@ -118,9 +110,7 @@ def process_topics(documents):
                     "latest_date": None
                 }
 
-            # עדכונים
             topics_temp[clean_topic]["count"] += 1
-
             if doc_year:
                 topics_temp[clean_topic]["years"].add(doc_year)
 
@@ -129,7 +119,6 @@ def process_topics(documents):
                 if curr_date is None or doc_date_obj > curr_date:
                     topics_temp[clean_topic]["latest_date"] = doc_date_obj
 
-    # בניית הרשימה הסופית
     final_list = []
 
     for name, data in topics_temp.items():
@@ -137,7 +126,6 @@ def process_topics(documents):
         years_set = data["years"]
         latest_date = data["latest_date"]
 
-        # טווח שנים
         years_range_str = ""
         span_years = 1
 
@@ -150,7 +138,6 @@ def process_topics(documents):
             else:
                 years_range_str = f"{min_y}-{max_y}"
 
-        # חישוב ממוצע שנתי
         if not years_set: span_years = 1
         avg_per_year = round(count / span_years, 1)
 
@@ -162,12 +149,11 @@ def process_topics(documents):
             "value": name,
             "count": count,
             "years_range": years_range_str,
-            "span_years": span_years,  # נשמור לצורך מיון
+            "span_years": span_years,
             "avg_per_year": avg_per_year,
             "is_active": is_active
         })
 
-    # מיון ברירת מחדל: לפי כמות (הכי נפוץ ראשון)
     sorted_topics = sorted(final_list, key=lambda x: x['count'], reverse=True)
     return sorted_topics
 
@@ -180,7 +166,8 @@ def main():
     print(f"Total unique topics found: {len(topics_data)}")
 
     final_json = {
-        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "updated_at": datetime.now().strftime("%d/%m/%Y %H:%M"),  # פורמט ישראלי
+        "data_version": DATA_VERSION,
         "total_docs": len(docs),
         "topics": topics_data
     }

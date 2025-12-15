@@ -4,12 +4,13 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Gilat AI - אינדקס נושאים</title>
-
+   
    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
    <style>
        :root {
-           --primary-color: #00897b; /* צבע טורקיז לנושאים */
+           --primary-color: #00897b;
            --bg-color: #f4f7f6;
            --card-bg: #ffffff;
            --text-color: #333;
@@ -19,6 +20,12 @@
 
            --active-bg: #f0fdf4;
            --active-border: #86efac;
+
+           --tag-subject-bg: #e1f5fe;
+           --tag-subject-text: #0277bd;
+           --tag-keyword-bg: #f5f5f5;
+           --tag-keyword-text: #616161;
+           --tag-keyword-hover: #e0e0e0;
        }
 
        body {
@@ -30,95 +37,112 @@
            direction: rtl; text-align: right;
        }
 
-       .container { max-width: 1000px; margin: 0 auto; padding-bottom: 50px; }
+       .container { max-width: 1100px; margin: 0 auto; padding-bottom: 50px; }
 
        header { display: flex; flex-direction: column; margin-bottom: 20px; }
        .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-       h1 { color: var(--primary-color); margin: 0; }
+       h1 { color: var(--primary-color); margin: 0; font-size: 2em; }
 
-       .version-tag { display: block; font-size: 0.45em; color: #888; font-weight: normal; margin-top: 4px; letter-spacing: 0.5px; }
+       /* תצוגת גרסה ותאריך בכותרת */
+       .version-info {
+           display: block; font-size: 0.45em; color: #888; font-weight: normal;
+           margin-top: 4px; letter-spacing: 0.5px;
+       }
 
-       /* --- Control Panel (Sort & Stats) --- */
+       /* --- Tooltip System --- */
+       .has-tooltip { position: relative; cursor: pointer; }
+       .tooltip-content {
+           visibility: hidden; width: 200px; background-color: #2c3e50; color: #fff; text-align: right;
+           border-radius: 6px; padding: 8px 12px; position: absolute; z-index: 999;
+           bottom: 135%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; pointer-events: none;
+           font-size: 0.8rem; font-weight: normal; line-height: 1.4; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+       }
+       .tooltip-content::after {
+           content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #2c3e50 transparent transparent transparent;
+       }
+       .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; }
+
+       /* --- Control Panel --- */
        .controls-row {
            margin-top: 20px; background: white; padding: 15px 20px; border-radius: 10px;
            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;
            font-size: 0.9em; color: #555;
        }
+       .filters-area { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+       .sort-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-       .stats-group { display: flex; gap: 15px; align-items: center; }
-       .sort-group { display: flex; gap: 10px; align-items: center; }
-
-       .stat-number { font-weight: bold; color: var(--primary-color); font-size: 1.1em; }
-
-       /* Sort Buttons */
-       .sort-btn {
-           background: #f5f5f5; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px;
-           cursor: pointer; font-size: 0.9em; transition: all 0.2s; color: #555;
-       }
+       .search-input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; width: 200px; font-family: inherit; }
+       .clear-search-btn { background: none; border: none; font-size: 1.1em; color: #999; cursor: pointer; margin-right: -25px; z-index: 10; display: none; }
+       .min-count-select { padding: 6px 5px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; background: white; cursor: pointer; }
+       .sort-btn { background: #f5f5f5; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.9em; transition: all 0.2s; color: #555; }
        .sort-btn:hover { background: #e0e0e0; }
        .sort-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-       /* Tooltips */
-       .has-tooltip { position: relative; cursor: help; }
-       .tooltip-content {
-           visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: right;
-           border-radius: 6px; padding: 10px; position: absolute; z-index: 100;
-           bottom: 125%; right: 50%; transform: translateX(50%); opacity: 0; transition: opacity 0.3s;
-           font-size: 0.85rem; line-height: 1.4; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-       }
-       .tooltip-content::after {
-           content: ""; position: absolute; top: 100%; right: 50%; margin-right: -5px;
-           border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent;
-       }
-       .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; }
+       .stat-number { font-weight: bold; color: var(--primary-color); }
 
-       /* --- Filter Status Bar --- */
-       #filter-status {
-           background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;
-           padding: 10px; border-radius: 6px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between;
-       }
-
-       /* --- Grid --- */
+       /* --- Topics Grid --- */
        .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-
        .topic-card {
-           background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
-           padding: 15px; text-decoration: none; color: var(--text-color); transition: all 0.2s;
-           display: flex; flex-direction: column; min-height: 110px; position: relative; overflow: visible;
+           background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px;
+           text-decoration: none; color: var(--text-color); transition: all 0.2s; display: flex; flex-direction: column; min-height: 110px; position: relative; overflow: visible;
        }
        .topic-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-color: var(--primary-color); }
-
-       .topic-card.active-topic { background-color: #e0f2f1; border-color: #80cbc4; } /* ירוק טורקיז בהיר */
-
-       .topic-name { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; line-height: 1.3; }
-
+       .topic-card.active-topic { background-color: #e0f2f1; border-color: #80cbc4; }
+       .topic-name { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; line-height: 1.3; display: inline-block; }
        .stats-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-
        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.8em; border: 1px solid #eee; background: #fafafa; }
        .badge-count { background: #e0f7fa; color: #006064; border-color: #b2ebf2; font-weight: bold; }
        .badge-avg-high { background: #d1fae5; color: #047857; border-color: #6ee7b7; font-weight: bold; }
 
-       /* Top Table */
-       .top-section { margin-top: 50px; background: white; padding: 25px; border-radius: 12px; border-top: 4px solid var(--primary-color); }
-       .top-table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
-       .top-table th { text-align: right; padding: 12px; background-color: #f8f9fa; border-bottom: 2px solid #eee; }
-       .top-table td { padding: 12px; border-bottom: 1px solid #eee; }
-       .top-table a { text-decoration: none; color: #333; font-weight: bold; }
+       /* --- Chart Section --- */
+       .chart-container {
+           background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative;
+       }
+       .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+       .reset-year-btn {
+           background-color: #ef5350; color: white; border: none; padding: 5px 12px;
+           border-radius: 20px; cursor: pointer; font-size: 0.9em; display: none;
+       }
+       .reset-year-btn:hover { background-color: #d32f2f; }
 
-       /* Common */
+       /* --- Document List --- */
+       .doc-item {
+           background: white; border-right: 4px solid var(--primary-color);
+           padding: 20px; margin-bottom: 15px; border-radius: 8px;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s;
+           text-align: right; direction: rtl;
+       }
+       .doc-item:hover { transform: translateX(-5px); }
+
+       .doc-title { font-size: 1.25em; font-weight: bold; text-decoration: none; color: var(--primary-color); display: block; margin-bottom: 8px; }
+       .doc-title:hover { text-decoration: underline; }
+
+       .doc-tags { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; margin-bottom: 12px; width: 100%; }
+       .tag-badge { font-size: 0.85em; padding: 3px 10px; border-radius: 4px; display: inline-block; text-decoration: none; transition: all 0.2s; }
+       .tag-subject { background-color: var(--tag-subject-bg); color: var(--tag-subject-text); font-weight: bold; cursor: default; }
+       .tag-keyword { background-color: var(--tag-keyword-bg); color: var(--tag-keyword-text); border: 1px solid #ddd; cursor: pointer; }
+       .tag-keyword:hover { background-color: var(--tag-keyword-hover); border-color: #ccc; color: #333; }
+
+       .doc-snippet {
+           font-size: 0.95em; color: #444; line-height: 1.6; margin-bottom: 15px;
+           background-color: #fafafa; padding: 10px; border-radius: 6px;
+           display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+       }
+
+       .doc-meta { font-size: 0.9em; color: var(--meta-color); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px dashed #eee; padding-top: 10px; }
+       .meta-separator { margin: 0 5px; color: #ccc; }
+
+       .pdf-btn { display: inline-flex; align-items: center; background-color: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85em; margin-right: auto; }
+
+       /* Navigation */
        .nav-links { display: flex; gap: 10px; }
+       /* הסרת קישורים אחרים */
        .nav-btn { text-decoration: none; background-color: var(--primary-color); color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 0.9em; cursor: pointer; border: none; }
        .nav-btn.secondary { background-color: #546e7a; }
 
        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; }
        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-       /* Detail View */
-       .doc-item { background: white; border-right: 4px solid var(--primary-color); padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-       .doc-title { font-size: 1.25em; font-weight: bold; text-decoration: none; color: var(--primary-color); display: block; margin-bottom: 8px; }
-       .doc-meta { font-size: 0.9em; color: var(--meta-color); display: flex; align-items: center; gap: 10px; border-top: 1px dashed #eee; padding-top: 10px; margin-top: 10px;}
-       .pdf-btn { display: inline-flex; align-items: center; background-color: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85em; margin-right: auto; }
-
        .empty-msg { text-align: center; color: #666; margin-top: 30px; }
    </style>
 </head>
@@ -129,30 +153,46 @@
            <div class="header-top">
                <h1>
                    🏷️ אינדקס מילות מפתח
-                   <span class="version-tag">v1.0 • Topics & Trends</span>
+                   <span class="version-tag" id="header-version-info">טוען...</span>
                </h1>
                <div class="nav-links">
-                   <a href="index.html" class="nav-btn secondary">חיפוש</a>
-                   <a href="stats.html" class="nav-btn secondary">סטטיסטיקות</a>
-                   <a href="authors.html" class="nav-btn secondary">מחברים</a>
                    <a href="topics.html" class="nav-btn" id="all-topics-btn" style="display:none;">← חזרה לרשימה</a>
                </div>
            </div>
 
            <div id="controls-panel" class="controls-row" style="display:none;">
-               <div class="stats-group">
-                   <span>סה"כ נושאים: <span id="total-count" class="stat-number">0</span></span>
-                   <span style="border-right:1px solid #ccc; height:15px;"></span>
-                   <span>נושאים פעילים: <span id="active-count" class="stat-number">0</span></span>
+               <div class="filters-area">
+                   <div style="position:relative; display:flex; align-items:center;">
+                       <input type="text" id="topic-search" class="search-input" placeholder="חפש ביטוי..." oninput="handleSearch()">
+                       <button id="clear-search" class="clear-search-btn" onclick="clearSearch()" title="נקה">✕</button>
+                   </div>
+
+                   <div class="has-tooltip">
+                       <select id="min-count-select" class="min-count-select" onchange="handleFilters()">
+                           <option value="2">מינימום 2 מופעים</option>
+                           <option value="5">מינימום 5 מופעים</option>
+                           <option value="10">מינימום 10 מופעים</option>
+                           <option value="20">מינימום 20 מופעים</option>
+                       </select>
+                       <span class="tooltip-content">סנן נושאים נדירים. הצג רק נושאים שהופיעו לפחות X פעמים.</span>
+                   </div>
                </div>
 
-               <div class="sort-group">
-                   <span>מיין לפי:</span>
-                   <button class="sort-btn active" onclick="sortTopics('count')">🔥 נפוץ ביותר</button>
-                   <button class="sort-btn" onclick="sortTopics('avg')">📈 ממוצע גבוה</button>
-                   <button class="sort-btn" onclick="sortTopics('years')">⏳ וותק (שנים)</button>
-                   <button class="sort-btn" onclick="sortTopics('az')">🔤 א-ב</button>
+               <div class="sort-area">
+                   <span style="color:#666; font-size:0.9em;">מיין לפי:</span>
+                   <button class="sort-btn active has-tooltip" onclick="sortTopics('count')">🔥 נפוץ<span class="tooltip-content">מיון לפי כמות מסמכים כוללת.</span></button>
+                   <button class="sort-btn has-tooltip" onclick="sortTopics('avg')">📈 ממוצע<span class="tooltip-content">מיון לפי ממוצע מסמכים לשנה.</span></button>
+                   <button class="sort-btn has-tooltip" onclick="sortTopics('years')">⏳ וותק<span class="tooltip-content">מיון לפי מספר שנות פעילות.</span></button>
+                   <button class="sort-btn has-tooltip" onclick="sortTopics('az')">🔤 א-ב<span class="tooltip-content">מיון אלפביתי.</span></button>
                </div>
+
+               <div style="font-size:0.9em; color:#666; margin-right:auto; padding-left:10px;">
+                   סה"כ נושאים: <span id="total-db-count" class="stat-number">0</span>
+               </div>
+           </div>
+
+           <div id="results-count" style="margin-top:10px; color:#666; font-size:0.9em; display:none;">
+               מציג <span id="visible-count" style="font-weight:bold;">0</span> נושאים
            </div>
        </header>
 
@@ -160,29 +200,20 @@
 
        <div id="topics-list-view" style="display:none;">
            <div class="topics-grid" id="topics-container"></div>
-
-           <div class="top-section" id="top-topics-container">
-               <h2>🔥 נושאים מובילים בממוצע שנתי</h2>
-               <table class="top-table">
-                   <thead>
-                       <tr>
-                           <th>#</th>
-                           <th>שם הנושא</th>
-                           <th>ממוצע לשנה</th>
-                           <th>סך מסמכים</th>
-                           <th>טווח שנים</th>
-                           <th>סטטוס</th>
-                       </tr>
-                   </thead>
-                   <tbody id="top-table-body"></tbody>
-               </table>
-           </div>
        </div>
 
        <div id="topic-detail-view" style="display:none;">
-           <div class="author-header"> <h2 id="detail-topic-name"></h2>
-               <p>רשימת מסמכים בהם מופיע הביטוי (ממויין לפי תאריך)</p>
+           <h2 id="detail-topic-name" style="color:var(--primary-color); margin-bottom:15px;"></h2>
+
+           <div class="chart-container">
+               <div class="chart-header">
+                   <span style="color:#555; font-weight:bold;">התפלגות פרסומים לפי שנים</span>
+                   <button id="reset-year-filter" class="reset-year-btn" onclick="resetYearFilter()">✕ נקה סינון שנה</button>
+               </div>
+               <canvas id="yearsChart" style="max-height: 250px;"></canvas>
+               <p style="font-size:0.8em; color:#888; margin-top:10px; text-align:center;">* לחץ על עמודה בגרף כדי לסנן מסמכים מאותה שנה</p>
            </div>
+
            <div id="documents-container"></div>
        </div>
 
@@ -195,6 +226,11 @@
 
        let allTopicsData = [];
        let currentSort = 'count';
+       let currentMinCount = 2;
+       let currentSearchTerm = '';
+
+       let currentTopicDocs = [];
+       let topicChart = null;
 
        window.onload = function() {
            const urlParams = new URLSearchParams(window.location.search);
@@ -203,6 +239,7 @@
            if (topicParam) {
                document.getElementById('all-topics-btn').style.display = 'inline-block';
                document.getElementById('controls-panel').style.display = 'none';
+               document.getElementById('results-count').style.display = 'none';
                loadTopicDocuments(topicParam);
            } else {
                initTopicsList();
@@ -222,18 +259,18 @@
                const response = await fetch(`topics_data.json?t=${new Date().getTime()}`);
                if (response.ok) {
                    const data = await response.json();
-                   // סינון ראשוני: רק נושאים עם יותר מ-2 מסמכים (למנוע רעש)
-                   allTopicsData = data.topics.filter(t => t.count >= 2);
+                   allTopicsData = data.topics;
 
-                   const activeTopics = allTopicsData.filter(t => t.is_active).length;
-                   document.getElementById('total-count').innerText = allTopicsData.length;
-                   document.getElementById('active-count').innerText = activeTopics;
+                   // הצגת גרסה ותאריך בכותרת הראשית
+                   const versionText = `v${data.data_version || '1.0'} • עודכן: ${data.updated_at}`;
+                   document.getElementById('header-version-info').innerText = versionText;
+
+                   document.getElementById('total-db-count').innerText = allTopicsData.length;
 
                    controls.style.display = 'flex';
+                   document.getElementById('results-count').style.display = 'block';
 
-                   // מיון ורינדור ראשוני
-                   sortTopics('count'); // ברירת מחדל
-                   renderTopTable(allTopicsData);
+                   handleFilters();
 
                    loader.style.display = 'none';
                    view.style.display = 'block';
@@ -248,120 +285,124 @@
            }
        }
 
-       // --- לוגיקת מיון ---
-       function sortTopics(criteria) {
-           currentSort = criteria;
+       // --- פילטרים ומיון ---
+       function handleSearch() {
+           const input = document.getElementById('topic-search');
+           const clearBtn = document.getElementById('clear-search');
+           currentSearchTerm = input.value.trim().toLowerCase();
+           clearBtn.style.display = currentSearchTerm.length > 0 ? 'block' : 'none';
+           handleFilters();
+       }
 
-           // עדכון כפתורים
-           document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
-           document.querySelector(`.sort-btn[onclick="sortTopics('${criteria}')"]`).classList.add('active');
+       function clearSearch() {
+           document.getElementById('topic-search').value = '';
+           handleSearch();
+       }
 
-           let sorted = [...allTopicsData];
+       function handleFilters() {
+           const select = document.getElementById('min-count-select');
+           currentMinCount = parseInt(select.value);
 
-           switch(criteria) {
-               case 'count':
-                   sorted.sort((a, b) => b.count - a.count);
-                   break;
-               case 'avg':
-                   sorted.sort((a, b) => b.avg_per_year - a.avg_per_year);
-                   break;
-               case 'years':
-                   sorted.sort((a, b) => b.span_years - a.span_years);
-                   break;
-               case 'az':
-                   sorted.sort((a, b) => a.value.localeCompare(b.value, 'he'));
-                   break;
+           let filtered = allTopicsData.filter(t => t.count >= currentMinCount);
+
+           if (currentSearchTerm) {
+               filtered = filtered.filter(t => t.value.toLowerCase().includes(currentSearchTerm));
            }
 
+           applySort(filtered, currentSort);
+       }
+
+       function sortTopics(criteria) {
+           currentSort = criteria;
+           document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+           document.querySelector(`.sort-btn[onclick="sortTopics('${criteria}')"]`).classList.add('active');
+           handleFilters();
+       }
+
+       function applySort(data, criteria) {
+           let sorted = [...data];
+           switch(criteria) {
+               case 'count': sorted.sort((a, b) => b.count - a.count); break;
+               case 'avg': sorted.sort((a, b) => b.avg_per_year - a.avg_per_year); break;
+               case 'years': sorted.sort((a, b) => b.span_years - a.span_years); break;
+               case 'az': sorted.sort((a, b) => a.value.localeCompare(b.value, 'he')); break;
+           }
+           document.getElementById('visible-count').innerText = sorted.length;
            renderGrid(document.getElementById('topics-container'), sorted);
        }
 
-       // --- רינדור הגריד ---
        function renderGrid(container, topicsArray) {
+           if (topicsArray.length === 0) {
+               container.innerHTML = "<p class='empty-msg'>לא נמצאו נושאים.</p>";
+               return;
+           }
+
            const html = topicsArray.map(topic => {
                const activeClass = topic.is_active ? 'active-topic' : '';
                const activeTooltip = topic.is_active
-                   ? "<b>נושא פעיל:</b><br>הופיע במסמכים בשנה האחרונה."
-                   : "<b>נושא לא פעיל:</b><br>לא הופיע בשנה האחרונה.";
+                   ? "<b>נושא פעיל (רקע ירוק):</b><br>הופיע במסמכים ב-12 החודשים האחרונים."
+                   : "<b>נושא היסטורי:</b><br>לא הופיע בשנה האחרונה.";
 
                const yearsHtml = topic.years_range
                    ? `<span class="badge has-tooltip">${topic.years_range}
-                        <span class="tooltip-content"><b>שנות פעילות:</b><br>השנה הראשונה והאחרונה בה הופיע הנושא (סה"כ ${topic.span_years} שנים).</span>
-                      </span>`
-                   : '';
+                        <span class="tooltip-content">
+                            <b>טווח פעילות:</b><br>משנת ${topic.years_range.split('-')[0]} ועד ${topic.years_range.split('-')[1] || topic.years_range.split('-')[0]}
+                        </span>
+                      </span>` : '';
 
                let avgClass = '';
                if (topic.avg_per_year >= 3.0) avgClass = 'badge-avg-high';
 
                const avgHtml = `<span class="badge ${avgClass} has-tooltip">Ø ${topic.avg_per_year}
-                                  <span class="tooltip-content"><b>ממוצע לשנה:</b><br>מספר המסמכים חלקי טווח השנים.</span>
+                                  <span class="tooltip-content"><b>ממוצע שנתי:</b><br>${topic.count} מסמכים / ${topic.span_years} שנים.
+                                  ${topic.avg_per_year >= 3.0 ? "<br><br><span style='color:#6ee7b7'>ירוק:</span> ממוצע גבוה." : ""}</span>
                                 </span>`;
+
+               const countHtml = `<span class="badge badge-count has-tooltip">${topic.count} מסמכים
+                                    <span class="tooltip-content"><b>ספירה כוללת:</b><br>סך כל המופעים במאגר.</span>
+                                  </span>`;
 
                return `
                <div style="position:relative;">
-                   <a href="topics.html?topic=${encodeURIComponent(topic.value)}" class="topic-card ${activeClass} has-tooltip">
-                       <div class="topic-name">${topic.value}</div>
-                       <span class="tooltip-content" style="bottom:100%; right:0; transform:none;">${activeTooltip}</span>
-
-                       <div class="stats-badges">
-                           <span class="badge badge-count">${topic.count} מסמכים</span>
-                           ${yearsHtml}
-                           ${avgHtml}
+                   <a href="topics.html?topic=${encodeURIComponent(topic.value)}" class="topic-card ${activeClass}">
+                       <div class="topic-name has-tooltip">
+                           ${topic.value}
+                           <span class="tooltip-content">${activeTooltip}</span>
                        </div>
+                       <div class="stats-badges">${countHtml}${yearsHtml}${avgHtml}</div>
                    </a>
                </div>
                `;
            }).join('');
-
            container.innerHTML = html;
        }
 
-       function renderTopTable(topics) {
-           const tbody = document.getElementById('top-table-body');
-           const sorted = [...topics].sort((a, b) => b.avg_per_year - a.avg_per_year);
-           const top10 = sorted.slice(0, 10);
-
-           const html = top10.map((topic, index) => {
-               const activeBadge = topic.is_active
-                   ? '<span style="color:green; font-weight:bold;">● פעיל</span>'
-                   : '<span style="color:#ccc;">לא פעיל</span>';
-
-               return `
-                   <tr>
-                       <td>${index + 1}</td>
-                       <td><a href="topics.html?topic=${encodeURIComponent(topic.value)}">${topic.value}</a></td>
-                       <td style="font-weight:bold; color:var(--primary-color)">${topic.avg_per_year}</td>
-                       <td>${topic.count}</td>
-                       <td>${topic.years_range}</td>
-                       <td>${activeBadge}</td>
-                   </tr>
-               `;
-           }).join('');
-
-           tbody.innerHTML = html;
-       }
-
-       // --- טעינת מסמכים לנושא בודד ---
+       // --- עמוד פירוט נושא ---
        async function loadTopicDocuments(topicName) {
            const loader = document.getElementById('loader');
            const view = document.getElementById('topic-detail-view');
-           const container = document.getElementById('documents-container');
            const titleEl = document.getElementById('detail-topic-name');
 
            document.getElementById('topics-list-view').style.display = 'none';
            loader.style.display = 'block';
            titleEl.innerText = `נושא: ${topicName}`;
 
+           // במצב פירוט - מנסים לקרוא את גרסת הנתונים גם אם לא היינו בדף הראשי
+           fetch(`topics_data.json?t=${new Date().getTime()}`)
+               .then(res => res.json())
+               .then(data => {
+                   document.getElementById('header-version-info').innerText = `v${data.data_version || '1.0'} • עודכן: ${data.updated_at}`;
+               }).catch(()=>{});
+
            try {
                const safeName = topicName.replace(/'/g, "\\'");
-               // שימוש בפילטר IN לרשימת מילות מפתח
                const filterString = `'${safeName}' IN doc.ez_keywords`;
 
                const requestData = {
                    query: "",
                    search: {
                        corpora: [{ corpus_key: corpusKey, metadata_filter: filterString }],
-                       offset: 0, limit: 100
+                       offset: 0, limit: 300
                    }
                };
 
@@ -371,7 +412,6 @@
                const data = await response.json();
                const results = data.search_results || [];
 
-               // לוגיקת תצוגת מסמכים זהה למחברים
                const uniqueDocs = new Map();
                results.forEach(res => {
                    const docId = res.document_id;
@@ -382,38 +422,28 @@
                            title: meta.title || "ללא כותרת",
                            date: meta.ez_date || meta.date || "לא צוין",
                            url: meta.url || "#",
-                           author: meta.ez_people ? meta.ez_people.join(', ') : (meta.author || "לא ידוע"),
+                           author: meta.ez_people ? (Array.isArray(meta.ez_people) ? meta.ez_people.join(', ') : meta.ez_people) : (meta.author || "לא ידוע"),
+                           teamleader: meta.teamleader || null,
+                           subject: meta.Subject || meta.subject || null,
+                           keywords_list: meta.ez_keywords || null,
                            snippet: res.text || ""
                        });
                    }
                });
 
-               let docsArray = Array.from(uniqueDocs.values());
-               docsArray.sort((a, b) => {
+               currentTopicDocs = Array.from(uniqueDocs.values());
+               currentTopicDocs.sort((a, b) => {
                    if (a.date === "לא צוין") return 1;
                    if (b.date === "לא צוין") return -1;
                    return b.date.localeCompare(a.date);
                });
 
-               if (docsArray.length === 0) {
-                   container.innerHTML = "<p class='empty-msg'>לא נמצאו מסמכים.</p>";
+               if (currentTopicDocs.length === 0) {
+                   document.getElementById('documents-container').innerHTML = "<p class='empty-msg'>לא נמצאו מסמכים.</p>";
+                   document.querySelector('.chart-container').style.display = 'none';
                } else {
-                   const pdfIcon = `<svg class="pdf-icon" viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>`;
-                   const docsHtml = docsArray.map(doc => {
-                       const fullUrl = doc.url !== "#" ? `${doc.url}#page=1` : "#";
-                       return `
-                           <div class="doc-item">
-                               <a href="${fullUrl}" target="_blank" class="doc-title">${doc.title}</a>
-                               <div class="doc-meta">
-                                   <span><strong>תאריך:</strong> ${doc.date}</span>
-                                   <span style="margin:0 5px">|</span>
-                                   <span><strong>מחבר:</strong> ${doc.author}</span>
-                                   ${doc.url !== "#" ? `<a href="${fullUrl}" target="_blank" class="pdf-btn" style="margin-right:auto">${pdfIcon} פתח מסמך</a>` : ''}
-                               </div>
-                           </div>
-                       `;
-                   }).join('');
-                   container.innerHTML = docsHtml;
+                   renderYearChart(currentTopicDocs);
+                   renderTopicDocs(currentTopicDocs);
                }
 
                loader.style.display = 'none';
@@ -423,6 +453,118 @@
                console.error(e);
                loader.style.display = 'none';
            }
+       }
+
+       function renderYearChart(docs) {
+           const ctx = document.getElementById('yearsChart').getContext('2d');
+           const yearCounts = {};
+           docs.forEach(doc => {
+               if (doc.date && doc.date !== "לא צוין") {
+                   const year = doc.date.split('-')[0];
+                   yearCounts[year] = (yearCounts[year] || 0) + 1;
+               }
+           });
+
+           const sortedYears = Object.keys(yearCounts).sort();
+           const counts = sortedYears.map(y => yearCounts[y]);
+
+           if (topicChart) topicChart.destroy();
+
+           topicChart = new Chart(ctx, {
+               type: 'bar',
+               data: {
+                   labels: sortedYears,
+                   datasets: [{
+                       label: 'מספר פרסומים',
+                       data: counts,
+                       backgroundColor: '#00897b',
+                       borderRadius: 4,
+                       hoverBackgroundColor: '#004d40'
+                   }]
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: { display: false },
+                       tooltip: { callbacks: { title: (context) => `שנת ${context[0].label}` } }
+                   },
+                   scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
+                   onClick: (e, elements) => {
+                       if (elements.length > 0) {
+                           const index = elements[0].index;
+                           filterDocsByYear(sortedYears[index]);
+                       }
+                   },
+                   onHover: (event, chartElement) => { event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default'; }
+               }
+           });
+       }
+
+       function filterDocsByYear(year) {
+           const filtered = currentTopicDocs.filter(doc => doc.date.startsWith(year));
+           renderTopicDocs(filtered);
+           const resetBtn = document.getElementById('reset-year-filter');
+           resetBtn.style.display = 'block';
+           resetBtn.innerText = `נקה סינון (${year}: ${filtered.length} מסמכים) ✕`;
+       }
+
+       function resetYearFilter() {
+           renderTopicDocs(currentTopicDocs);
+           document.getElementById('reset-year-filter').style.display = 'none';
+       }
+
+       function renderTopicDocs(docs) {
+           const container = document.getElementById('documents-container');
+           if(docs.length === 0) { container.innerHTML = "<p class='empty-msg'>אין מסמכים להצגה בשנה זו.</p>"; return; }
+
+           const pdfIcon = `<svg class="pdf-icon" viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>`;
+
+           const html = docs.map(doc => {
+               const fullUrl = doc.url !== "#" ? `${doc.url}#page=1` : "#";
+
+               let metaParts = [];
+               if (doc.date) metaParts.push(`<strong>תאריך:</strong> ${doc.date}`);
+
+               let authorsHtml = doc.author;
+               if (doc.teamleader) {
+                    if (authorsHtml) authorsHtml += '<span class="meta-separator">|</span>';
+                    authorsHtml += `<strong>ר"צ:</strong> ${doc.teamleader}`;
+               }
+               if (authorsHtml) metaParts.push(authorsHtml);
+
+               const metaHtml = metaParts.join('<span class="meta-separator">|</span>');
+
+               let tagsHtml = '';
+               if (doc.subject) tagsHtml += `<span class="tag-badge tag-subject">${doc.subject}</span>`;
+               if (doc.keywords_list) {
+                   let keys = Array.isArray(doc.keywords_list) ? doc.keywords_list : doc.keywords_list.split(',');
+                   keys.forEach(k => {
+                       const cleanKey = k.trim();
+                       if(cleanKey) tagsHtml += `<a href="topics.html?topic=${encodeURIComponent(cleanKey)}" class="tag-badge tag-keyword">${cleanKey}</a>`;
+                   });
+               }
+               const tagsContainer = tagsHtml ? `<div class="doc-tags">${tagsHtml}</div>` : '';
+
+               // הסתרת תקציר אם הוא קצר מדי (פחות מ-100 תווים)
+               const snippetHtml = (doc.snippet && doc.snippet.length > 100)
+                   ? `<div class="doc-snippet">${doc.snippet}</div>`
+                   : '';
+
+               return `
+                   <div class="doc-item">
+                       <a href="${fullUrl}" target="_blank" class="doc-title">${doc.title}</a>
+                       ${tagsContainer}
+                       ${snippetHtml}
+                       <div class="doc-meta">
+                           ${metaHtml}
+                           ${doc.url !== "#" ? `<a href="${fullUrl}" target="_blank" class="pdf-btn">${pdfIcon} פתח מסמך</a>` : ''}
+                       </div>
+                   </div>
+               `;
+           }).join('');
+
+           container.innerHTML = html;
        }
    </script>
 </body>
