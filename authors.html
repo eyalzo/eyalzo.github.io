@@ -38,7 +38,56 @@
 
        .version-tag { display: block; font-size: 0.45em; color: #888; font-weight: normal; margin-top: 4px; letter-spacing: 0.5px; }
 
-       /* --- Header Stats Dashboard (Clickable) --- */
+       /* --- Tooltip System --- */
+       /* האלמנט שמחזיק את הטולטיפ חייב להיות relative */
+       .has-tooltip {
+           position: relative;
+           cursor: help; /* סמן שאלה קטן */
+       }
+
+       /* עיצוב הבועה עצמה */
+       .tooltip-content {
+           visibility: hidden;
+           width: 220px;
+           background-color: #333;
+           color: #fff;
+           text-align: right;
+           border-radius: 6px;
+           padding: 10px;
+           position: absolute;
+           z-index: 100;
+           bottom: 125%; /* מופיע מעל האלמנט */
+           right: 50%;
+           transform: translateX(50%); /* מרכוז */
+           opacity: 0;
+           transition: opacity 0.3s;
+
+           /* טקסט בתוך הבועה */
+           font-size: 0.85rem;
+           font-weight: normal;
+           line-height: 1.4;
+           box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+       }
+
+       /* החץ הקטן למטה */
+       .tooltip-content::after {
+           content: "";
+           position: absolute;
+           top: 100%;
+           right: 50%;
+           margin-right: -5px;
+           border-width: 5px;
+           border-style: solid;
+           border-color: #333 transparent transparent transparent;
+       }
+
+       /* הצגה בעת ריחוף */
+       .has-tooltip:hover .tooltip-content {
+           visibility: visible;
+           opacity: 1;
+       }
+
+       /* --- Header Stats Dashboard --- */
        .header-stats-row {
            margin-top: 20px; background: white; padding: 15px 20px; border-radius: 10px;
            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
@@ -47,7 +96,7 @@
 
        .stat-group {
            display: flex; align-items: center; gap: 6px;
-           cursor: pointer; padding: 5px 10px; border-radius: 6px; transition: background 0.2s;
+           padding: 5px 10px; border-radius: 6px; transition: background 0.2s;
        }
        .stat-group:hover { background-color: #f5f5f5; }
        .stat-group.active-filter { background-color: #e3f2fd; border: 1px solid #bbdefb; }
@@ -59,7 +108,7 @@
        .legend-badge {
            padding: 5px 12px; border-radius: 6px; border: 1px solid transparent;
            display: flex; align-items: center; gap: 6px; font-weight: 500;
-           cursor: pointer; transition: transform 0.1s;
+           transition: transform 0.1s;
        }
        .legend-badge:hover { transform: scale(1.02); }
        .legend-badge.active-filter { box-shadow: 0 0 0 2px #333; }
@@ -68,10 +117,6 @@
        .legend-yellow { background-color: #fef9c3; color: #a16207; border-color: #fde047; }
        .legend-count { font-weight: bold; font-size: 1.1em; }
 
-       /* הסבר על הסוגריים */
-       .legend-note {
-           width: 100%; font-size: 0.8em; color: #888; margin-top: 10px; border-top: 1px dashed #eee; padding-top: 5px;
-       }
 
        /* --- Filter Status Bar --- */
        #filter-status {
@@ -93,6 +138,8 @@
            padding: 15px; text-decoration: none; color: var(--text-color); transition: all 0.2s;
            display: flex; flex-direction: column; justify-content: center; min-height: 110px;
            text-align: right; align-items: flex-start;
+           /* חשוב: כדי שהבועה לא תיחתך */
+           overflow: visible;
        }
        .author-card.active-author { background-color: var(--active-bg); border-color: var(--active-border); }
        .author-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -100,7 +147,7 @@
 
        .author-name { font-weight: bold; font-size: 1.1em; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
 
-       .stats-row { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8em; align-items: center; color: #666; width: 100%; }
+       .stats-row { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8em; align-items: center; color: #666; width: 100%; overflow: visible; }
 
        .stat-badge { background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; }
        .stat-badge.count-badge { background-color: #e0f2fe; color: #0284c7; border-color: #bae6fd; font-weight: bold; }
@@ -134,7 +181,7 @@
            <div class="header-top">
                <h1>
                    📚 אינדקס מחברים
-                   <span class="version-tag">v9.0 • Weighted & Filtered</span>
+                   <span class="version-tag">v10.0 • Full Explainability</span>
                </h1>
                <div class="nav-links">
                    <a href="index.html" class="nav-btn secondary">חיפוש</a>
@@ -144,32 +191,32 @@
            </div>
 
            <div id="header-stats-row" class="header-stats-row" style="display:none;">
-               <div class="stat-group" onclick="filterAuthors('all')" id="filter-all" title="הצג הכל">
+               <div class="stat-group has-tooltip" onclick="filterAuthors('all')" id="filter-all">
                    <span class="stat-label">סה"כ מחברים:</span>
                    <span id="total-count" class="stat-number">0</span>
+                   <span class="tooltip-content">סך כל המחברים הייחודיים שאותרו במאגר המסמכים (היסטורי ופעיל).</span>
                </div>
 
                <div class="stat-separator"></div>
 
-               <div class="stat-group" onclick="filterAuthors('active')" id="filter-active" title="הצג רק פעילים בשנה האחרונה">
+               <div class="stat-group has-tooltip" onclick="filterAuthors('active')" id="filter-active">
                    <span class="stat-label">סה"כ פעילים:</span>
                    <span id="active-count" class="stat-number">0</span>
+                   <span class="tooltip-content">מחברים שפרסמו לפחות מסמך אחד ב-365 הימים האחרונים (צבועים ברקע ירוק בהיר).</span>
                </div>
 
                <div class="stat-separator"></div>
 
-               <div class="legend-badge legend-green" onclick="filterAuthors('high-avg')" id="filter-high" title="הצג פעילים עם ממוצע > 7.5">
+               <div class="legend-badge legend-green has-tooltip" onclick="filterAuthors('high-avg')" id="filter-high">
                    <span>ממוצע גבוה (>7.5):</span>
                    <span id="high-avg-count" class="legend-count">0</span>
+                   <span class="tooltip-content"><b>הצטיינות יתרה:</b><br>חוקרים פעילים שמפרסמים בממוצע משוקלל מעל 7.5 מסמכים בשנה.</span>
                </div>
 
-               <div class="legend-badge legend-yellow" onclick="filterAuthors('med-avg')" id="filter-med" title="הצג פעילים עם ממוצע > 3.5">
+               <div class="legend-badge legend-yellow has-tooltip" onclick="filterAuthors('med-avg')" id="filter-med">
                    <span>ממוצע בינוני (>3.5):</span>
                    <span id="med-avg-count" class="legend-count">0</span>
-               </div>
-
-               <div class="legend-note">
-                   * מספר בסוגריים מציין <b>ספירה משוקללת</b> (1 חלקי מספר המחברים במסמך). ממוצע שנתי מחושב לפי המשוקלל.
+                   <span class="tooltip-content"><b>קצב גבוה:</b><br>חוקרים פעילים שמפרסמים בממוצע משוקלל בין 3.5 ל-7.5 מסמכים בשנה.</span>
                </div>
            </div>
        </header>
@@ -217,7 +264,6 @@
        const corpusKey = "mmm_docs5";
        const headers = { "x-api-key": apiKey, "Accept": "application/json", "Content-Type": "application/json" };
 
-       // משתנה גלובלי לשמירת הנתונים המקוריים לצרכי סינון
        let allAuthorsData = [];
 
        window.onload = function() {
@@ -246,9 +292,8 @@
                const response = await fetch(`authors_data.json?t=${new Date().getTime()}`);
                if (response.ok) {
                    const data = await response.json();
-                   allAuthorsData = data.authors; // שמירה בגלובלי
+                   allAuthorsData = data.authors;
 
-                   // חישוב סטטיסטיקות
                    const activeAuthors = allAuthorsData.filter(a => a.is_active);
                    const highAvgCount = activeAuthors.filter(a => a.avg_per_year >= 7.5).length;
                    const medAvgCount = activeAuthors.filter(a => a.avg_per_year >= 3.5 && a.avg_per_year < 7.5).length;
@@ -260,7 +305,6 @@
 
                    headerStats.style.display = 'flex';
 
-                   // הצגת ברירת מחדל (הכל)
                    renderGrid(container, allAuthorsData);
                    renderTopTable(allAuthorsData);
 
@@ -275,13 +319,11 @@
            }
        }
 
-       // --- פונקציית סינון (חדשה!) ---
        function filterAuthors(type) {
            const container = document.getElementById('authors-container');
            const filterStatus = document.getElementById('filter-status');
            const filterText = document.getElementById('filter-status-text');
 
-           // איפוס הדגשות בכותרת
            document.querySelectorAll('.stat-group, .legend-badge').forEach(el => el.classList.remove('active-filter'));
 
            let filteredData = [];
@@ -316,10 +358,9 @@
            }
 
            renderGrid(container, filteredData);
-           // אופציונלי: אפשר לסנן גם את הטבלה למטה או להשאיר אותה קבועה. כרגע נשאיר קבועה.
        }
 
-       // --- רינדור הגריד ---
+       // --- רינדור הגריד (עם Tooltips) ---
        function renderGrid(container, authorsArray) {
            if (authorsArray.length === 0) {
                container.innerHTML = "<p>לא נמצאו תוצאות לסינון זה.</p>";
@@ -327,49 +368,73 @@
            }
 
            const html = authorsArray.map(auth => {
+               // 1. Tooltip for Active/Inactive
                const activeClass = auth.is_active ? 'active-author' : '';
+               const activeTooltip = auth.is_active
+                   ? "<b>חוקר פעיל:</b><br>פרסם מסמך בשנה האחרונה."
+                   : "<b>חוקר היסטורי:</b><br>לא פרסם מסמך ב-365 הימים האחרונים.";
 
+               // 2. Tooltip for Years
                const yearsHtml = auth.years_range
                    ? `<span class="stat-badge">${auth.years_range}</span>`
                    : '';
 
+               // 3. Logic & Tooltip for Average
                let avgClass = '';
+               let avgTooltip = "<b>ממוצע שנתי (משוקלל):</b><br>סך הניקוד המשוקלל חלקי שנות הפעילות.";
+
                if (auth.is_active && auth.avg_per_year) {
-                   if (auth.avg_per_year >= 7.5) avgClass = 'avg-high';
-                   else if (auth.avg_per_year >= 3.5) avgClass = 'avg-medium';
+                   if (auth.avg_per_year >= 7.5) {
+                       avgClass = 'avg-high';
+                       avgTooltip += "<br><br><b style='color:#6ee7b7'>צבע ירוק:</b> ממוצע גבוה במיוחד.";
+                   }
+                   else if (auth.avg_per_year >= 3.5) {
+                       avgClass = 'avg-medium';
+                       avgTooltip += "<br><br><b style='color:#fde047'>צבע צהוב:</b> ממוצע בינוני-גבוה.";
+                   }
                }
 
                const avgHtml = (auth.avg_per_year !== undefined)
-                   ? `<span class="stat-badge ${avgClass}" title="ממוצע משוקלל לשנה">Ø ${auth.avg_per_year}</span>`
+                   ? `<span class="stat-badge ${avgClass} has-tooltip" title="">
+                        Ø ${auth.avg_per_year}
+                        <span class="tooltip-content">${avgTooltip}</span>
+                      </span>`
                    : '';
 
-               // לוגיקה לתצוגת ספירה משוקללת
-               // אם ההבדל גדול מ-0.1, נציג גם את המשוקלל בסוגריים
+               // 4. Logic & Tooltip for Weighted Count
                let countDisplay = `${auth.count}`;
+               let countTooltip = "<b>ספירה רגילה:</b><br>מספר המסמכים הפיזיים שהחוקר הופיע בהם.";
+
                if (Math.abs(auth.count - auth.weighted_count) > 0.1) {
                    countDisplay = `${auth.count} <span style="font-weight:normal; font-size:0.9em">(${auth.weighted_count})</span>`;
+                   countTooltip += `<br><br><b>המספר בסוגריים (${auth.weighted_count}):</b><br>ספירה משוקללת. מחבר יחיד מקבל נקודה מלאה, מחבר בצוות מקבל חלק יחסי (למשל 1/3).`;
                }
 
                return `
-               <a href="authors.html?author=${encodeURIComponent(auth.value)}" class="author-card ${activeClass}">
-                   <div class="author-name">${auth.value}</div>
+               <div style="position:relative;">
+                   <a href="authors.html?author=${encodeURIComponent(auth.value)}" class="author-card ${activeClass} has-tooltip">
+                       <div class="author-name">${auth.value}</div>
+                       <span class="tooltip-content" style="bottom:100%; right:0; transform:none;">${activeTooltip}</span>
 
-                   <div class="stats-row">
-                       <span class="stat-badge count-badge">${countDisplay}</span>
-                       ${yearsHtml}
-                       ${avgHtml}
-                   </div>
-               </a>
+                       <div class="stats-row">
+                           <span class="stat-badge count-badge has-tooltip">
+                               ${countDisplay}
+                               <span class="tooltip-content">${countTooltip}</span>
+                           </span>
+
+                           ${yearsHtml}
+                           ${avgHtml}
+                       </div>
+                   </a>
+               </div>
                `;
            }).join('');
 
            container.innerHTML = html;
        }
 
-       // --- רינדור טבלת מובילים ---
        function renderTopTable(authors) {
            const tbody = document.getElementById('top-table-body');
-           // מיון לפי ממוצע משוקלל
            const sorted = [...authors].sort((a, b) => (b.avg_per_year || 0) - (a.avg_per_year || 0));
            const top10 = sorted.slice(0, 10);
 
@@ -385,7 +450,7 @@
                        <td class="rank-col">${index + 1}</td>
                        <td><a href="authors.html?author=${encodeURIComponent(auth.value)}">${auth.value}</a></td>
                        <td style="${avgStyle}">${auth.avg_per_year}</td>
-                       <td>${auth.count}</td>
+                       <td>${auth.count} <span style="font-size:0.8em; color:#888">(${auth.weighted_count})</span></td>
                        <td>${auth.years_range}</td>
                        <td>${activeBadge}</td>
                    </tr>
@@ -395,7 +460,6 @@
            tbody.innerHTML = html;
        }
 
-       // --- לוגיקת מסמכים (פירוט) ---
        async function loadAuthorDocuments(authorName) {
            const loader = document.getElementById('loader');
            const view = document.getElementById('author-detail-view');
@@ -424,11 +488,6 @@
                const data = await response.json();
                const results = data.search_results || [];
 
-               // ... (המשך קוד עיבוד המסמכים - זהה לגרסאות הקודמות)
-               // לצורך הקיצור לא העתקתי את כל פונקציית loadAuthorDocuments מחדש
-               // כי היא לא השתנתה. השתמש בזו מהגרסה הקודמת (v8)
-
-               // רק שים לב: כאן זה המקום להדביק את הקוד הקיים של עיבוד וציור המסמכים
                const uniqueDocs = new Map();
                results.forEach(res => {
                    const docId = res.document_id;
