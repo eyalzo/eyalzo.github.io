@@ -31,16 +31,43 @@
            direction: rtl; text-align: right;
        }
 
-       .container { max-width: 1000px; margin: 0 auto; }
+       .container { max-width: 1000px; margin: 0 auto; padding-bottom: 50px; }
 
        header {
-           display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+           display: flex; flex-direction: column; margin-bottom: 30px;
+       }
+       .header-top {
+           display: flex; justify-content: space-between; align-items: center; width: 100%;
        }
        h1 { color: var(--primary-color); margin: 0; }
 
        .version-tag {
            display: block; font-size: 0.45em; color: #888; font-weight: normal; margin-top: 4px; letter-spacing: 0.5px;
        }
+
+       /* --- Header Stats Dashboard --- */
+       .header-stats-row {
+           margin-top: 20px; background: white; padding: 15px 20px; border-radius: 10px;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
+           font-size: 0.9em; color: #555;
+       }
+
+       .stat-group { display: flex; align-items: center; gap: 6px; }
+       .stat-label { color: #666; }
+       .stat-number { font-weight: bold; color: var(--primary-color); font-size: 1.1em; }
+
+       .stat-separator { width: 1px; height: 20px; background: #e0e0e0; margin: 0 5px; }
+
+       /* Legend Badges in Header */
+       .legend-badge {
+           padding: 5px 12px; border-radius: 6px; border: 1px solid transparent;
+           display: flex; align-items: center; gap: 6px; font-weight: 500;
+       }
+       /* תואם לצבעי הכרטיסיות */
+       .legend-green { background-color: #d1fae5; color: #047857; border-color: #6ee7b7; }
+       .legend-yellow { background-color: #fef9c3; color: #a16207; border-color: #fde047; }
+       .legend-count { font-weight: bold; font-size: 1.1em; }
+
 
        .nav-links { display: flex; gap: 10px; }
        .nav-btn {
@@ -68,6 +95,7 @@
        }
        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+       /* --- Grid Layout --- */
        .authors-grid {
            display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 15px;
        }
@@ -85,7 +113,6 @@
            position: relative;
        }
 
-       /* סגנון לחוקר פעיל - עדין וחיובי */
        .author-card.active-author {
            background-color: var(--active-bg);
            border-color: var(--active-border);
@@ -94,10 +121,8 @@
        .author-card:hover {
            transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
        }
-       /* שומרים על ההובר של הפעיל גם ירקרק אבל קצת יותר כהה/מודגש אם רוצים, או משאירים רגיל */
        .author-card.active-author:hover {
-           background-color: #dcfce7;
-           border-color: #4ade80;
+           background-color: #dcfce7; border-color: #4ade80;
        }
 
        .author-name {
@@ -108,7 +133,7 @@
 
        .stats-row {
            display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.8em; align-items: center;
-           color: #666;
+           color: #666; width: 100%;
        }
 
        .stat-badge {
@@ -116,11 +141,26 @@
        }
        .stat-badge.count-badge { background-color: #e0f2fe; color: #0284c7; border-color: #bae6fd; font-weight: bold; }
 
-       /* תגית "פעיל" אופציונלית, אם נרצה להוסיף טקסט */
-       .active-tag {
-           font-size: 0.7em; color: #15803d; font-weight: bold;
-           margin-right: auto; /* דוחף שמאלה */
+       /* צבעים לממוצע (רק לפעילים) - תואם לכותרת */
+       .stat-badge.avg-high { background-color: #d1fae5; color: #047857; border-color: #6ee7b7; font-weight: bold; } /* ירוק */
+       .stat-badge.avg-medium { background-color: #fef9c3; color: #a16207; border-color: #fde047; font-weight: bold; } /* צהוב/כתום */
+
+
+       /* --- Top Authors Table --- */
+       .top-section {
+           margin-top: 50px; background: white; padding: 25px; border-radius: 12px;
+           box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-color);
        }
+       .top-section h2 { margin-top: 0; color: var(--primary-color); font-size: 1.4em; margin-bottom: 15px; }
+
+       .top-table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+       .top-table th { text-align: right; padding: 12px; background-color: #f8f9fa; border-bottom: 2px solid #eee; color: #555; }
+       .top-table td { padding: 12px; border-bottom: 1px solid #eee; }
+       .top-table tr:hover { background-color: #fcfcfc; }
+       .top-table a { text-decoration: none; color: #333; font-weight: bold; }
+       .top-table a:hover { color: var(--primary-color); text-decoration: underline; }
+       .rank-col { color: #888; font-weight: normal; width: 30px; }
+
 
        /* Doc List Styles */
        .author-header {
@@ -174,14 +214,42 @@
 
    <div class="container">
        <header>
-           <h1>
-               📚 אינדקס מחברים
-               <span class="version-tag">v6.0 • Active & Avg</span>
-           </h1>
-           <div class="nav-links">
-               <a href="index.html" class="nav-btn secondary">חיפוש</a>
-               <a href="stats.html" class="nav-btn secondary">סטטיסטיקות</a>
-               <a href="authors.html" class="nav-btn" id="all-authors-btn" style="display:none;">← חזרה לרשימה</a>
+           <div class="header-top">
+               <h1>
+                   📚 אינדקס מחברים
+                   <span class="version-tag">v8.0 • Smart Dashboard</span>
+               </h1>
+               <div class="nav-links">
+                   <a href="index.html" class="nav-btn secondary">חיפוש</a>
+                   <a href="stats.html" class="nav-btn secondary">סטטיסטיקות</a>
+                   <a href="authors.html" class="nav-btn" id="all-authors-btn" style="display:none;">← חזרה לרשימה</a>
+               </div>
+           </div>
+
+           <div id="header-stats-row" class="header-stats-row" style="display:none;">
+               <div class="stat-group">
+                   <span class="stat-label">סה"כ מחברים:</span>
+                   <span id="total-count" class="stat-number">0</span>
+               </div>
+
+               <div class="stat-separator"></div>
+
+               <div class="stat-group">
+                   <span class="stat-label">סה"כ פעילים:</span>
+                   <span id="active-count" class="stat-number">0</span>
+               </div>
+
+               <div class="stat-separator"></div>
+
+               <div class="legend-badge legend-green">
+                   <span>פעילים עם ממוצע גבוה (>7.5):</span>
+                   <span id="high-avg-count" class="legend-count">0</span>
+               </div>
+
+               <div class="legend-badge legend-yellow">
+                   <span>פעילים עם ממוצע בינוני (>3.5):</span>
+                   <span id="med-avg-count" class="legend-count">0</span>
+               </div>
            </div>
        </header>
 
@@ -193,6 +261,23 @@
 
        <div id="authors-list-view" style="display:none;">
            <div class="authors-grid" id="authors-container"></div>
+
+           <div class="top-section" id="top-authors-container">
+               <h2>🏆 מובילים בממוצע פרסומים שנתי</h2>
+               <table class="top-table">
+                   <thead>
+                       <tr>
+                           <th>#</th>
+                           <th>שם החוקר</th>
+                           <th>ממוצע לשנה</th>
+                           <th>סך מסמכים</th>
+                           <th>שנות פעילות</th>
+                           <th>סטטוס</th>
+                       </tr>
+                   </thead>
+                   <tbody id="top-table-body"></tbody>
+               </table>
+           </div>
        </div>
 
        <div id="author-detail-view" style="display:none;">
@@ -220,6 +305,7 @@
 
            if (authorParam) {
                document.getElementById('all-authors-btn').style.display = 'inline-block';
+               document.getElementById('header-stats-row').style.display = 'none'; // הסתרת דאשבורד בדף פרטי
                loadAuthorDocuments(authorParam);
            } else {
                initAuthorsList();
@@ -233,6 +319,7 @@
            const loader = document.getElementById('loader');
            const statusBox = document.getElementById('status-bar');
            const statusText = document.getElementById('status-text');
+           const headerStats = document.getElementById('header-stats-row');
 
            view.style.display = 'none';
            loader.style.display = 'block';
@@ -249,7 +336,29 @@
                    statusBox.style.color = "#2e7d32";
                    statusText.innerHTML = `<b>אינדקס נטען בהצלחה</b> (עודכן לאחרונה: ${data.updated_at})`;
 
-                   renderGrid(container, data.authors);
+                   // --- חישוב סטטיסטיקות לדאשבורד ---
+                   const authors = data.authors;
+                   const activeAuthors = authors.filter(a => a.is_active);
+
+                   const activeCount = activeAuthors.length;
+                   // ממוצע גבוה (ירוק) >= 7.5
+                   const highAvgCount = activeAuthors.filter(a => a.avg_per_year >= 7.5).length;
+                   // ממוצע בינוני (צהוב) >= 3.5 וקטן מ-7.5
+                   const medAvgCount = activeAuthors.filter(a => a.avg_per_year >= 3.5 && a.avg_per_year < 7.5).length;
+
+                   // עדכון ה-DOM
+                   document.getElementById('total-count').innerText = authors.length;
+                   document.getElementById('active-count').innerText = activeCount;
+                   document.getElementById('high-avg-count').innerText = highAvgCount;
+                   document.getElementById('med-avg-count').innerText = medAvgCount;
+
+                   headerStats.style.display = 'flex';
+
+                   // רינדור הגריד
+                   renderGrid(container, authors);
+
+                   // רינדור הטבלה למטה (Top 10)
+                   renderTopTable(authors);
 
                    loader.style.display = 'none';
                    view.style.display = 'block';
@@ -265,21 +374,27 @@
            }
        }
 
-       // --- 2. רינדור הגריד (מעודכן: צבע פעילות + ממוצע) ---
+       // --- 2. רינדור הגריד (עם צבעים חכמים) ---
        function renderGrid(container, authorsArray) {
-
            const html = authorsArray.map(auth => {
-               // האם להוסיף Class של פעיל?
                const activeClass = auth.is_active ? 'active-author' : '';
 
-               // תצוגת טווח שנים
                const yearsHtml = auth.years_range
                    ? `<span class="stat-badge">${auth.years_range}</span>`
                    : '';
 
-               // תצוגת ממוצע (רק אם קיים)
+               // לוגיקה לצביעת הממוצע (רק לפעילים)
+               let avgClass = '';
+               if (auth.is_active && auth.avg_per_year) {
+                   if (auth.avg_per_year >= 7.5) {
+                       avgClass = 'avg-high'; // ירוק
+                   } else if (auth.avg_per_year >= 3.5) {
+                       avgClass = 'avg-medium'; // צהוב
+                   }
+               }
+
                const avgHtml = (auth.avg_per_year !== undefined)
-                   ? `<span class="stat-badge" title="ממוצע מסמכים לשנה">Ø ${auth.avg_per_year}</span>`
+                   ? `<span class="stat-badge ${avgClass}" title="ממוצע מסמכים לשנה">Ø ${auth.avg_per_year}</span>`
                    : '';
 
                return `
@@ -287,7 +402,7 @@
                    <div class="author-name">${auth.value}</div>
 
                    <div class="stats-row">
-                       <span class="stat-badge count-badge">${auth.count} מסמכים</span>
+                       <span class="stat-badge count-badge">${auth.count}</span>
                        ${yearsHtml}
                        ${avgHtml}
                    </div>
@@ -298,8 +413,46 @@
            container.innerHTML = html;
        }
 
+       // --- 3. רינדור טבלת המובילים ---
+       function renderTopTable(authors) {
+           const tbody = document.getElementById('top-table-body');
 
-       // --- 3. טעינת מסמכים למחבר בודד (ללא שינוי) ---
+           // מיון: קודם לפי ממוצע (גבוה לנמוך), אחר כך לפי כמות
+           const sorted = [...authors].sort((a, b) => {
+               if (b.avg_per_year !== a.avg_per_year) {
+                   return (b.avg_per_year || 0) - (a.avg_per_year || 0);
+               }
+               return b.count - a.count;
+           });
+
+           // לוקחים את ה-10 הראשונים
+           const top10 = sorted.slice(0, 10);
+
+           const html = top10.map((auth, index) => {
+               const activeBadge = auth.is_active
+                   ? '<span style="color:green; font-weight:bold;">● פעיל</span>'
+                   : '<span style="color:#ccc;">לא פעיל</span>';
+
+               // הדגשה לממוצע גבוה בטבלה
+               const avgStyle = (auth.avg_per_year >= 7.5 && auth.is_active) ? 'color:#047857; font-weight:bold;' : '';
+
+               return `
+                   <tr>
+                       <td class="rank-col">${index + 1}</td>
+                       <td><a href="authors.html?author=${encodeURIComponent(auth.value)}">${auth.value}</a></td>
+                       <td style="${avgStyle}">${auth.avg_per_year}</td>
+                       <td>${auth.count}</td>
+                       <td>${auth.years_range}</td>
+                       <td>${activeBadge}</td>
+                   </tr>
+               `;
+           }).join('');
+
+           tbody.innerHTML = html;
+       }
+
+
+       // --- 4. טעינת מסמכים למחבר בודד (ללא שינוי) ---
        async function loadAuthorDocuments(authorName) {
            const loader = document.getElementById('loader');
            const view = document.getElementById('author-detail-view');
