@@ -1,600 +1,550 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Gilat AI - אינדקס נושאים</title>
-   
-   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
-   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gilat AI - אינדקס נושאים (ניהול ידע)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
 
-   <style>
-       :root {
-           --primary-color: #00897b; /* טורקיז */
-           --bg-color: #f4f7f6;
-           --card-bg: #ffffff;
-           --text-color: #333;
-           --border-color: #e0e0e0;
-           --hover-bg: #e0f2f1;
-           --meta-color: #555;
+    <style>
+        :root {
+            --primary-color: #00897b;
+            --secondary-color: #546e7a;
+            --bg-color: #f4f7f6;
+            --white: #ffffff;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --hover-row: #e0f2f1;
+        }
 
-           --active-bg: #f0fdf4;
-           --active-border: #86efac;
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
 
-           --tag-subject-bg: #e1f5fe;
-           --tag-subject-text: #0277bd;
-           --tag-keyword-bg: #f5f5f5;
-           --tag-keyword-text: #616161;
-           --tag-keyword-hover: #e0e0e0;
-       }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
 
-       body {
-           font-family: 'Heebo', sans-serif;
-           background-color: var(--bg-color);
-           color: var(--text-color);
-           margin: 0;
-           padding: 20px;
-           direction: rtl; text-align: right;
-       }
+        /* --- Header & Controls --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-       .container { max-width: 1100px; margin: 0 auto; padding-bottom: 50px; }
+        h1 { margin: 0; color: var(--primary-color); }
 
-       /* --- Header Styling --- */
-       header { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
 
-       .header-top {
-           display: flex;
-           justify-content: space-between;
-           align-items: flex-start;
-           width: 100%;
-       }
+        .search-box, .filter-select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
 
-       .title-area { display: flex; flex-direction: column; }
+        .search-box { width: 250px; }
+        .filter-select { width: 220px; }
 
-       h1 { color: var(--primary-color); margin: 0; font-size: 2em; line-height: 1.2; }
+        .btn-link {
+            text-decoration: none;
+            color: var(--white);
+            background-color: var(--secondary-color);
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .btn-link:hover { background-color: #455a64; }
 
-       .version-info {
-           font-size: 0.8rem;
-           color: #999;
-           font-weight: normal;
-           margin-top: 4px;
-       }
+        /* --- Table Layout --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
-       /* --- Tooltip System --- */
-       .has-tooltip { position: relative; cursor: pointer; }
-       .tooltip-content {
-           visibility: hidden; width: 200px; background-color: #2c3e50; color: #fff; text-align: right;
-           border-radius: 6px; padding: 8px 12px; position: absolute; z-index: 999;
-           bottom: 135%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; pointer-events: none;
-           font-size: 0.8rem; font-weight: normal; line-height: 1.4; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-       }
-       .tooltip-content::after {
-           content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #2c3e50 transparent transparent transparent;
-       }
-       .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; }
+        th, td {
+            text-align: right;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-       /* --- Control Panel --- */
-       .controls-row {
-           margin-top: 20px; background: white; padding: 15px 20px; border-radius: 10px;
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;
-           font-size: 0.9em; color: #555;
-       }
-       .filters-area { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-       .sort-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        th {
+            background-color: #fafafa;
+            color: var(--secondary-color);
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+        }
 
-       .search-input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; width: 200px; font-family: inherit; }
-       .clear-search-btn { background: none; border: none; font-size: 1.1em; color: #999; cursor: pointer; margin-right: -25px; z-index: 10; display: none; }
-       .min-count-select { padding: 6px 5px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; background: white; cursor: pointer; }
-       .sort-btn { background: #f5f5f5; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.9em; transition: all 0.2s; color: #555; }
-       .sort-btn:hover { background: #e0e0e0; }
-       .sort-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        th:hover { background-color: #f1f1f1; }
+        th::after { content: '↕'; font-size: 0.8em; margin-right: 5px; color: #ccc; }
 
-       .stat-number { font-weight: bold; color: var(--primary-color); }
+        tr:hover { background-color: var(--hover-row); }
 
-       /* --- Topics Grid --- */
-       .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-       .topic-card {
-           background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px;
-           text-decoration: none; color: var(--text-color); transition: all 0.2s; display: flex; flex-direction: column; min-height: 110px; position: relative; overflow: visible;
-       }
-       .topic-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-color: var(--primary-color); }
-       .topic-card.active-topic { background-color: #e0f2f1; border-color: #80cbc4; }
-       .topic-name { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; line-height: 1.3; display: inline-block; }
-       .stats-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-       .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.8em; border: 1px solid #eee; background: #fafafa; }
-       .badge-count { background: #e0f7fa; color: #006064; border-color: #b2ebf2; font-weight: bold; }
-       .badge-avg-high { background: #d1fae5; color: #047857; border-color: #6ee7b7; font-weight: bold; }
+        .topic-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+            cursor: pointer;
+        }
 
-       /* --- Chart Section --- */
-       .chart-container {
-           background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative;
-       }
-       .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-       .reset-year-btn {
-           background-color: #ef5350; color: white; border: none; padding: 5px 12px;
-           border-radius: 20px; cursor: pointer; font-size: 0.9em; display: none;
-       }
-       .reset-year-btn:hover { background-color: #d32f2f; }
+        .badge-count {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
 
-       /* --- Document List --- */
-       .doc-item {
-           background: white; border-right: 4px solid var(--primary-color);
-           padding: 20px; margin-bottom: 15px; border-radius: 8px;
-           box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s;
-           text-align: right; direction: rtl;
-       }
-       .doc-item:hover { transform: translateX(-5px); }
+        /* עיצוב התגית הלחיצה של המחברים */
+        .badge-author {
+            background-color: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ffe0b2;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .badge-author:hover {
+            background-color: #ffcc80;
+            border-color: #ef6c00;
+            transform: scale(1.05);
+        }
 
-       .doc-title { font-size: 1.25em; font-weight: bold; text-decoration: none; color: var(--primary-color); display: block; margin-bottom: 8px; }
-       .doc-title:hover { text-decoration: underline; }
+        .btn-action {
+            background-color: var(--white);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
 
-       .doc-tags { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; margin-bottom: 12px; width: 100%; }
-       .tag-badge { font-size: 0.85em; padding: 3px 10px; border-radius: 4px; display: inline-block; text-decoration: none; transition: all 0.2s; }
-       .tag-subject { background-color: var(--tag-subject-bg); color: var(--tag-subject-text); font-weight: bold; cursor: default; }
-       .tag-keyword { background-color: var(--tag-keyword-bg); color: var(--tag-keyword-text); border: 1px solid #ddd; cursor: pointer; }
-       .tag-keyword:hover { background-color: var(--tag-keyword-hover); border-color: #ccc; color: #333; }
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
 
-       .doc-snippet {
-           font-size: 0.95em; color: #444; line-height: 1.6; margin-bottom: 15px;
-           background-color: #fafafa; padding: 10px; border-radius: 6px;
-           display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-       }
+        .modal-content {
+            background: white;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            border-radius: 8px;
+            padding: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
 
-       .doc-meta { font-size: 0.9em; color: var(--meta-color); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px dashed #eee; padding-top: 10px; }
-       .meta-separator { margin: 0 5px; color: #ccc; }
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafafa;
+            border-radius: 8px 8px 0 0;
+        }
+        .modal-title { margin: 0; color: var(--primary-color); font-size: 1.3rem; }
 
-       .pdf-btn { display: inline-flex; align-items: center; background-color: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85em; margin-right: auto; }
+        .close-modal {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+        }
+        .close-modal:hover { color: #333; }
 
-       /* Navigation */
-       .nav-links { display: flex; gap: 10px; }
-       .nav-btn { text-decoration: none; background-color: var(--primary-color); color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 0.9em; cursor: pointer; border: none; }
-       .nav-btn.secondary { background-color: #546e7a; }
-       .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; }
-       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-       .empty-msg { text-align: center; color: #666; margin-top: 30px; font-size: 1.2em; }
-   </style>
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* עיצוב רשימת המסמכים */
+        .doc-list-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .doc-list-item:last-child { border-bottom: none; }
+
+        .doc-title-link {
+            color: var(--secondary-color);
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 1.05em;
+        }
+        .doc-title-link:hover { text-decoration: underline; color: var(--primary-color); }
+
+        .doc-meta-info { font-size: 0.85em; color: #777; display: flex; gap: 15px; }
+
+        /* עיצוב רשימת המחברים (כפתורים) */
+        .authors-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .author-btn {
+            background-color: #f1f8e9;
+            color: #33691e;
+            border: 1px solid #dcedc8;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 150px;
+        }
+        .author-btn:hover {
+            background-color: #dcedc8;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .author-doc-count {
+            background-color: #33691e;
+            color: white;
+            font-size: 0.8em;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-right: 8px;
+        }
+
+        .back-btn {
+            background: #eee;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .back-btn:hover { background: #ddd; }
+    </style>
 </head>
 <body>
 
-   <div class="container">
-       <header>
-           <div class="header-top">
-               <div class="title-area">
-                   <h1>🏷️ אינדקס נושאים</h1>
-                   <div class="version-info" id="header-version-info">Page v4.2 • טוען נתונים...</div>
-               </div>
-
-               <div class="nav-links">
-                   <a href="index.html" class="nav-btn secondary">🏠 חיפוש מסמכים</a>
-                   <a href="topics.html" class="nav-btn" id="all-topics-btn" style="display:none;">← חזרה לרשימה</a>
-               </div>
-           </div>
-
-           <div id="controls-panel" class="controls-row" style="display:none;">
-
-               <div class="filters-area">
-                   <div class="search-wrapper" style="position:relative; display:flex; align-items:center;">
-                       <input type="text" id="topic-search" class="search-input" placeholder="חפש ביטוי..." oninput="handleSearch()">
-                       <button id="clear-search" class="clear-search-btn" onclick="clearSearch()" title="נקה">✕</button>
-                   </div>
-
-                   <div class="has-tooltip">
-                       <select id="min-count-select" class="min-count-select" onchange="handleFilters()">
-                           <option value="2">מינימום 2 מופעים</option>
-                           <option value="5">מינימום 5 מופעים</option>
-                           <option value="10">מינימום 10 מופעים</option>
-                           <option value="20">מינימום 20 מופעים</option>
-                       </select>
-                       <span class="tooltip-content">סנן נושאים נדירים. הצג רק נושאים שהופיעו לפחות X פעמים.</span>
-                   </div>
-               </div>
-
-               <div class="sort-area">
-                   <span style="color:#666; font-size:0.9em;">מיין לפי:</span>
-
-                   <button class="sort-btn active has-tooltip" onclick="sortTopics('count')">
-                       🔥 נפוץ
-                       <span class="tooltip-content">מיון לפי כמות מסמכים כוללת (מהגבוה לנמוך).</span>
-                   </button>
-
-                   <button class="sort-btn has-tooltip" onclick="sortTopics('avg')">
-                       📈 ממוצע
-                       <span class="tooltip-content">מיון לפי ממוצע מסמכים לשנה (אינדיקציה לאינטנסיביות הנושא).</span>
-                   </button>
-
-                   <button class="sort-btn has-tooltip" onclick="sortTopics('years')">
-                       ⏳ וותק
-                       <span class="tooltip-content">מיון לפי מספר שנות פעילות (מהוותיק לחדש).</span>
-                   </button>
-
-                   <button class="sort-btn has-tooltip" onclick="sortTopics('az')">
-                       🔤 א-ב
-                       <span class="tooltip-content">מיון לפי סדר האלפבית.</span>
-                   </button>
-               </div>
-
-               <div style="font-size:0.9em; color:#666; margin-right:auto; padding-left:10px;">
-                   סה"כ נושאים: <span id="total-db-count" class="stat-number">0</span>
-               </div>
-           </div>
-
-           <div id="results-count" style="margin-top:10px; color:#666; font-size:0.9em; display:none;">
-               מציג <span id="visible-count" style="font-weight:bold;">0</span> נושאים
-           </div>
-       </header>
-
-       <div id="loader" class="loader" style="display:none;"></div>
-
-       <div id="topics-list-view" style="display:none;">
-           <div class="topics-grid" id="topics-container"></div>
-       </div>
-
-       <div id="topic-detail-view" style="display:none;">
-           <h2 id="detail-topic-name" style="color:var(--primary-color); margin-bottom:15px;"></h2>
-
-           <div class="chart-container">
-               <div class="chart-header">
-                   <span style="color:#555; font-weight:bold;">התפלגות פרסומים לפי שנים</span>
-                   <button id="reset-year-filter" class="reset-year-btn" onclick="resetYearFilter()">✕ נקה סינון שנה</button>
-               </div>
-               <canvas id="yearsChart" style="max-height: 250px;"></canvas>
-               <p style="font-size:0.8em; color:#888; margin-top:10px; text-align:center;">* לחץ על עמודה בגרף כדי לסנן מסמכים מאותה שנה</p>
-           </div>
-
-           <div id="documents-container"></div>
-       </div>
-
-   </div>
-
-   <script>
-       const apiKey = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA";
-       const corpusKey = "mmm_docs5";
-       const headers = { "x-api-key": apiKey, "Accept": "application/json", "Content-Type": "application/json" };
-
-       let allTopicsData = [];
-       let currentSort = 'count';
-       let currentMinCount = 2;
-       let currentSearchTerm = '';
-
-       let currentTopicDocs = [];
-       let topicChart = null;
-
-       window.onload = function() {
-           const urlParams = new URLSearchParams(window.location.search);
-           const topicParam = urlParams.get('topic');
-
-           if (topicParam) {
-               document.getElementById('all-topics-btn').style.display = 'inline-block';
-               document.getElementById('controls-panel').style.display = 'none';
-               document.getElementById('results-count').style.display = 'none';
-               loadTopicDocuments(topicParam);
-           } else {
-               initTopicsList();
-           }
-       };
-
-       async function initTopicsList() {
-           const container = document.getElementById('topics-container');
-           const view = document.getElementById('topics-list-view');
-           const loader = document.getElementById('loader');
-           const controls = document.getElementById('controls-panel');
-
-           view.style.display = 'none';
-           loader.style.display = 'block';
-
-           try {
-               const response = await fetch(`topics_data.json?t=${new Date().getTime()}`);
-               if (response.ok) {
-                   const data = await response.json();
-                   allTopicsData = data.topics;
-
-                   const dataDate = data.updated_at || 'לא ידוע';
-                   const dataVer = data.data_version ? `(Data v${data.data_version})` : '';
-                   document.getElementById('header-version-info').innerText = `Page v4.2 • Data: ${dataDate} ${dataVer}`;
-
-                   document.getElementById('total-db-count').innerText = allTopicsData.length;
-
-                   controls.style.display = 'flex';
-                   document.getElementById('results-count').style.display = 'block';
-
-                   handleFilters();
-
-                   loader.style.display = 'none';
-                   view.style.display = 'block';
-               } else {
-                   throw new Error("Missing topics_data.json");
-               }
-           } catch (e) {
-               console.warn(e);
-               loader.style.display = 'none';
-               container.innerHTML = "<p class='empty-msg'>קובץ נתונים חסר. נא להריץ את סקריפט העדכון.</p>";
-               view.style.display = 'block';
-           }
-       }
-
-       // --- פילטרים ומיון ---
-       function handleSearch() {
-           const input = document.getElementById('topic-search');
-           const clearBtn = document.getElementById('clear-search');
-           currentSearchTerm = input.value.trim().toLowerCase();
-           clearBtn.style.display = currentSearchTerm.length > 0 ? 'block' : 'none';
-           handleFilters();
-       }
-
-       function clearSearch() {
-           document.getElementById('topic-search').value = '';
-           handleSearch();
-       }
-
-       function handleFilters() {
-           const select = document.getElementById('min-count-select');
-           currentMinCount = parseInt(select.value);
-
-           let filtered = allTopicsData.filter(t => t.count >= currentMinCount);
-
-           if (currentSearchTerm) {
-               filtered = filtered.filter(t => t.value.toLowerCase().includes(currentSearchTerm));
-           }
-
-           applySort(filtered, currentSort);
-       }
-
-       function sortTopics(criteria) {
-           currentSort = criteria;
-           document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
-           document.querySelector(`.sort-btn[onclick="sortTopics('${criteria}')"]`).classList.add('active');
-           handleFilters();
-       }
-
-       function applySort(data, criteria) {
-           let sorted = [...data];
-           switch(criteria) {
-               case 'count': sorted.sort((a, b) => b.count - a.count); break;
-               case 'avg': sorted.sort((a, b) => b.avg_per_year - a.avg_per_year); break;
-               case 'years': sorted.sort((a, b) => b.span_years - a.span_years); break;
-               case 'az': sorted.sort((a, b) => a.value.localeCompare(b.value, 'he')); break;
-           }
-           document.getElementById('visible-count').innerText = sorted.length;
-           renderGrid(document.getElementById('topics-container'), sorted);
-       }
-
-       function renderGrid(container, topicsArray) {
-           if (topicsArray.length === 0) {
-               container.innerHTML = "<p class='empty-msg'>לא נמצאו נושאים.</p>";
-               return;
-           }
-
-           const html = topicsArray.map(topic => {
-               const activeClass = topic.is_active ? 'active-topic' : '';
-               const activeTooltip = topic.is_active
-                   ? "<b>נושא פעיל (רקע ירוק):</b><br>הופיע במסמכים ב-12 החודשים האחרונים."
-                   : "<b>נושא היסטורי:</b><br>לא הופיע בשנה האחרונה.";
-
-               const yearsHtml = topic.years_range
-                   ? `<span class="badge has-tooltip">${topic.years_range}
-                        <span class="tooltip-content">
-                            <b>טווח פעילות:</b><br>משנת ${topic.years_range.split('-')[0]} ועד ${topic.years_range.split('-')[1] || topic.years_range.split('-')[0]}
-                        </span>
-                      </span>` : '';
-
-               let avgClass = '';
-               if (topic.avg_per_year >= 3.0) avgClass = 'badge-avg-high';
-
-               const avgHtml = `<span class="badge ${avgClass} has-tooltip">Ø ${topic.avg_per_year}
-                                  <span class="tooltip-content"><b>ממוצע שנתי:</b><br>${topic.count} מסמכים / ${topic.span_years} שנים.
-                                  ${topic.avg_per_year >= 3.0 ? "<br><br><span style='color:#6ee7b7'>ירוק:</span> ממוצע גבוה." : ""}</span>
-                                </span>`;
-
-               const countHtml = `<span class="badge badge-count has-tooltip">${topic.count} מסמכים
-                                    <span class="tooltip-content"><b>ספירה כוללת:</b><br>סך כל המופעים במאגר.</span>
-                                  </span>`;
-
-               return `
-               <div style="position:relative;">
-                   <a href="topics.html?topic=${encodeURIComponent(topic.value)}" class="topic-card ${activeClass}">
-                       <div class="topic-name has-tooltip">
-                           ${topic.value}
-                           <span class="tooltip-content">${activeTooltip}</span>
-                       </div>
-                       <div class="stats-badges">${countHtml}${yearsHtml}${avgHtml}</div>
-                   </a>
-               </div>
-               `;
-           }).join('');
-           container.innerHTML = html;
-       }
-
-       // --- עמוד פירוט נושא ---
-       async function loadTopicDocuments(topicName) {
-           const loader = document.getElementById('loader');
-           const view = document.getElementById('topic-detail-view');
-           const titleEl = document.getElementById('detail-topic-name');
-
-           document.getElementById('topics-list-view').style.display = 'none';
-           loader.style.display = 'block';
-           titleEl.innerText = `נושא: ${topicName}`;
-
-           fetch(`topics_data.json?t=${new Date().getTime()}`)
-               .then(res => res.json())
-               .then(data => {
-                   const dataDate = data.updated_at || 'לא ידוע';
-                   const dataVer = data.data_version ? `(Data v${data.data_version})` : '';
-                   document.getElementById('header-version-info').innerText = `Page v4.2 • Data: ${dataDate} ${dataVer}`;
-               }).catch(()=>{});
-
-           try {
-               const safeName = topicName.replace(/'/g, "\\'");
-               const filterString = `'${safeName}' IN doc.ez_keywords`;
-
-               const requestData = {
-                   query: "",
-                   search: {
-                       corpora: [{ corpus_key: corpusKey, metadata_filter: filterString }],
-                       offset: 0, limit: 300
-                   }
-               };
-
-               const response = await fetch("https://api.vectara.io/v2/query", {
-                   method: "POST", headers: headers, body: JSON.stringify(requestData)
-               });
-               const data = await response.json();
-               const results = data.search_results || [];
-
-               const uniqueDocs = new Map();
-               results.forEach(res => {
-                   const docId = res.document_id;
-                   if (!uniqueDocs.has(docId)) {
-                       const meta = res.document_metadata || {};
-                       uniqueDocs.set(docId, {
-                           id: docId,
-                           title: meta.title || "ללא כותרת",
-                           date: meta.ez_date || meta.date || "לא צוין",
-                           url: meta.url || "#",
-                           author: meta.ez_people ? (Array.isArray(meta.ez_people) ? meta.ez_people.join(', ') : meta.ez_people) : (meta.author || "לא ידוע"),
-                           teamleader: meta.teamleader || null,
-                           subject: meta.Subject || meta.subject || null,
-                           keywords_list: meta.ez_keywords || null,
-                           snippet: res.text || ""
-                       });
-                   }
-               });
-
-               currentTopicDocs = Array.from(uniqueDocs.values());
-               currentTopicDocs.sort((a, b) => {
-                   if (a.date === "לא צוין") return 1;
-                   if (b.date === "לא צוין") return -1;
-                   return b.date.localeCompare(a.date);
-               });
-
-               if (currentTopicDocs.length === 0) {
-                   document.getElementById('documents-container').innerHTML = "<p class='empty-msg'>לא נמצאו מסמכים.</p>";
-                   document.querySelector('.chart-container').style.display = 'none';
-               } else {
-                   renderYearChart(currentTopicDocs);
-                   renderTopicDocs(currentTopicDocs);
-               }
-
-               loader.style.display = 'none';
-               view.style.display = 'block';
-
-           } catch (e) {
-               console.error(e);
-               loader.style.display = 'none';
-           }
-       }
-
-       function renderYearChart(docs) {
-           const ctx = document.getElementById('yearsChart').getContext('2d');
-           const yearCounts = {};
-           docs.forEach(doc => {
-               if (doc.date && doc.date !== "לא צוין") {
-                   const year = doc.date.split('-')[0];
-                   yearCounts[year] = (yearCounts[year] || 0) + 1;
-               }
-           });
-
-           const sortedYears = Object.keys(yearCounts).sort();
-           const counts = sortedYears.map(y => yearCounts[y]);
-
-           if (topicChart) topicChart.destroy();
-
-           topicChart = new Chart(ctx, {
-               type: 'bar',
-               data: {
-                   labels: sortedYears,
-                   datasets: [{
-                       label: 'מספר פרסומים',
-                       data: counts,
-                       backgroundColor: '#00897b',
-                       borderRadius: 4,
-                       hoverBackgroundColor: '#004d40'
-                   }]
-               },
-               options: {
-                   responsive: true,
-                   maintainAspectRatio: false,
-                   plugins: {
-                       legend: { display: false },
-                       tooltip: { callbacks: { title: (context) => `שנת ${context[0].label}` } }
-                   },
-                   scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
-                   onClick: (e, elements) => {
-                       if (elements.length > 0) {
-                           const index = elements[0].index;
-                           filterDocsByYear(sortedYears[index]);
-                       }
-                   },
-                   onHover: (event, chartElement) => { event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default'; }
-               }
-           });
-       }
-
-       function filterDocsByYear(year) {
-           const filtered = currentTopicDocs.filter(doc => doc.date.startsWith(year));
-           renderTopicDocs(filtered);
-           const resetBtn = document.getElementById('reset-year-filter');
-           resetBtn.style.display = 'block';
-           resetBtn.innerText = `נקה סינון (${year}: ${filtered.length} מסמכים) ✕`;
-       }
-
-       function resetYearFilter() {
-           renderTopicDocs(currentTopicDocs);
-           document.getElementById('reset-year-filter').style.display = 'none';
-       }
-
-       function renderTopicDocs(docs) {
-           const container = document.getElementById('documents-container');
-           if(docs.length === 0) { container.innerHTML = "<p class='empty-msg'>אין מסמכים להצגה בשנה זו.</p>"; return; }
-
-           const pdfIcon = `<svg class="pdf-icon" viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>`;
-
-           const html = docs.map(doc => {
-               const fullUrl = doc.url !== "#" ? `${doc.url}#page=1` : "#";
-
-               let metaParts = [];
-               if (doc.date) metaParts.push(`<strong>תאריך:</strong> ${doc.date}`);
-
-               let authorsHtml = doc.author;
-               if (doc.teamleader) {
-                    if (authorsHtml) authorsHtml += '<span class="meta-separator">|</span>';
-                    authorsHtml += `<strong>ר"צ:</strong> ${doc.teamleader}`;
-               }
-               if (authorsHtml) metaParts.push(authorsHtml);
-
-               const metaHtml = metaParts.join('<span class="meta-separator">|</span>');
-
-               let tagsHtml = '';
-               if (doc.subject) tagsHtml += `<span class="tag-badge tag-subject">${doc.subject}</span>`;
-               if (doc.keywords_list) {
-                   let keys = Array.isArray(doc.keywords_list) ? doc.keywords_list : doc.keywords_list.split(',');
-                   keys.forEach(k => {
-                       const cleanKey = k.trim();
-                       if(cleanKey) tagsHtml += `<a href="topics.html?topic=${encodeURIComponent(cleanKey)}" class="tag-badge tag-keyword">${cleanKey}</a>`;
-                   });
-               }
-               const tagsContainer = tagsHtml ? `<div class="doc-tags">${tagsHtml}</div>` : '';
-
-               // לוגיקה להסתרת תקציר קצר
-               const snippetHtml = (doc.snippet && doc.snippet.length > 100)
-                   ? `<div class="doc-snippet">${doc.snippet}</div>`
-                   : '';
-
-               return `
-                   <div class="doc-item">
-                       <a href="${fullUrl}" target="_blank" class="doc-title">${doc.title}</a>
-                       ${tagsContainer}
-                       ${snippetHtml}
-                       <div class="doc-meta">
-                           ${metaHtml}
-                           ${doc.url !== "#" ? `<a href="${fullUrl}" target="_blank" class="pdf-btn">${pdfIcon} פתח מסמך</a>` : ''}
-                       </div>
-                   </div>
-               `;
-           }).join('');
-
-           container.innerHTML = html;
-       }
-   </script>
+<div class="container">
+    <header>
+        <div>
+            <h1>אינדקס נושאים</h1>
+            <small style="color: #666;">ניהול ידע וניתוח מסמכים</small>
+        </div>
+
+        <div class="controls">
+            <a href="pairs.html" class="btn-link">🔗 ניתוח צמדים</a>
+
+            <select id="authorFilter" class="filter-select" onchange="applyFilters()">
+                <option value="">-- כל המחברים --</option>
+            </select>
+
+            <input type="text" id="searchInput" class="search-box" placeholder="חפש נושא..." onkeyup="applyFilters()">
+        </div>
+    </header>
+
+    <div id="loading" style="text-align:center; padding: 20px;">טוען נתונים...</div>
+
+    <table id="topicsTable" style="display:none;">
+        <thead>
+            <tr>
+                <th onclick="sortTable('value')">נושא</th>
+                <th onclick="sortTable('count')">מסמכים</th>
+                <th onclick="sortTable('span_years')">טווח שנים</th>
+                <th onclick="sortTable('avg_per_year')">ממוצע לשנה</th>
+                <th onclick="sortTable('author_count')">מחברים שונים</th>
+                <th style="cursor: default;">פעולות</th>
+            </tr>
+        </thead>
+        <tbody id="topicsBody"></tbody>
+    </table>
+</div>
+
+<div id="docModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle" class="modal-title">פרטים</h2>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+    </div>
+</div>
+
+<script>
+    let allTopics = [];
+    let currentTopics = [];
+
+    // הגדרות מיון
+    let sortCol = 'count';
+    let sortAsc = false; // ברירת מחדל: יורד (גדול לקטן)
+
+    // טעינת נתונים
+    fetch('topics_data.json')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('topicsTable').style.display = 'table';
+
+            if (data.topics) {
+                allTopics = data.topics;
+                currentTopics = [...allTopics];
+                populateAuthorFilter(data.all_authors);
+                renderTable();
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('loading').innerText = 'שגיאה בטעינת הנתונים.';
+        });
+
+    function populateAuthorFilter(authors) {
+        const select = document.getElementById('authorFilter');
+        if(!authors) return;
+        authors.forEach(auth => {
+            const opt = document.createElement('option');
+            opt.value = auth;
+            opt.innerText = auth;
+            select.appendChild(opt);
+        });
+    }
+
+    function sortTable(columnName) {
+        if (sortCol === columnName) {
+            sortAsc = !sortAsc; // היפוך כיוון
+        } else {
+            sortCol = columnName;
+            // ברירת מחדל לטקסט -> עולה (א-ת), למספרים -> יורד (גדול לקטן)
+            sortAsc = (columnName === 'value');
+        }
+
+        currentTopics.sort((a, b) => {
+            let valA = a[columnName];
+            let valB = b[columnName];
+
+            // טיפול מיוחד לטווח שנים: המיון מתבצע לפי span_years (שדה נסתר) אבל הכותרת בטבלה היא span_years
+            // (הפייתון מחזיר שדה span_years מספרי, אז זה יעבוד חלק)
+
+            if (typeof valA === 'string') valA = valA.toLowerCase();
+            if (typeof valB === 'string') valB = valB.toLowerCase();
+
+            if (valA < valB) return sortAsc ? -1 : 1;
+            if (valA > valB) return sortAsc ? 1 : -1;
+            return 0;
+        });
+
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('topicsBody');
+
+        if (currentTopics.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">לא נמצאו תוצאות</td></tr>';
+            return;
+        }
+
+        const html = currentTopics.map(t => {
+            // התגית הופכת ללחיצה (onclick פותח את רשימת המחברים)
+            const authorCountDisplay = t.author_count > 0
+                ? `<span class="badge-author" onclick="openAuthorsPopup('${t.value}')" title="לחץ לרשימת המחברים">👥 ${t.author_count}</span>`
+                : '<span style="color:#ccc;">-</span>';
+
+            return `
+                <tr>
+                    <td><span class="topic-name" onclick="openDocsPopup('${t.value}')">${t.value}</span></td>
+                    <td><span class="badge-count">${t.count}</span></td>
+                    <td dir="ltr" style="text-align:right;">${t.years_range}</td>
+                    <td>${t.avg_per_year}</td>
+                    <td>${authorCountDisplay}</td>
+                    <td>
+                        <button class="btn-action" onclick="openDocsPopup('${t.value}')">פרטים</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        tbody.innerHTML = html;
+    }
+
+    function applyFilters() {
+        const txt = document.getElementById('searchInput').value.trim().toLowerCase();
+        const auth = document.getElementById('authorFilter').value;
+
+        currentTopics = allTopics.filter(t => {
+            const matchText = t.value.toLowerCase().includes(txt);
+            const matchAuth = auth === "" ? true : (t.authors && t.authors.includes(auth));
+            return matchText && matchAuth;
+        });
+
+        // שימור המיון אחרי פילטר
+        if (sortCol) {
+           // מיון כפוי לפי ההגדרה האחרונה
+           const tempAsc = sortAsc;
+           sortAsc = !sortAsc; // הופכים וקוראים למיון כדי שיחזיר למצב הרצוי (טריק קטן)
+           sortTable(sortCol);
+        } else {
+            renderTable();
+        }
+    }
+
+    // --- לוגיקת פופ-אפ (Modal) ---
+
+    // פתיחת רשימת כל המסמכים (מכפתור "פרטים" או משם הנושא)
+    function openDocsPopup(topicName) {
+        const topic = allTopics.find(t => t.value === topicName);
+        if (!topic) return;
+
+        document.getElementById('modalTitle').innerText = 'מסמכים בנושא: ' + topicName;
+        renderDocList(topic.documents);
+        document.getElementById('docModal').style.display = 'flex';
+    }
+
+    // פתיחת רשימת המחברים (מלחיצה על התגית הכתומה)
+    function openAuthorsPopup(topicName) {
+        const topic = allTopics.find(t => t.value === topicName);
+        if (!topic) return;
+
+        document.getElementById('modalTitle').innerText = 'מחברים שעסקו בנושא: ' + topicName;
+        const body = document.getElementById('modalBody');
+
+        // חישוב כמה מסמכים יש לכל מחבר בנושא זה
+        const authorDocCounts = {};
+        topic.documents.forEach(doc => {
+            if(doc.author) {
+                authorDocCounts[doc.author] = (authorDocCounts[doc.author] || 0) + 1;
+            }
+        });
+
+        // יצירת הכפתורים
+        let html = '<div class="authors-grid">';
+
+        // מסננים מחברים לא רלוונטיים (כמו ראשי צוותים) אם צריך,
+        // כרגע מציג את כל מי שיש לו מסמך ברשימה
+        Object.keys(authorDocCounts).sort().forEach(authName => {
+            html += `
+                <div class="author-btn" onclick="showAuthorDocs('${topicName}', '${authName}')">
+                    <span>${authName}</span>
+                    <span class="author-doc-count">${authorDocCounts[authName]}</span>
+                </div>
+            `;
+        });
+        html += '</div>';
+
+        if (Object.keys(authorDocCounts).length === 0) {
+            html = '<p>לא נמצאו נתוני מחברים מקושרים.</p>';
+        }
+
+        body.innerHTML = html;
+        document.getElementById('docModal').style.display = 'flex';
+    }
+
+    // הצגת מסמכים של מחבר ספציפי (נקרא מתוך הפופ-אפ של המחברים)
+    function showAuthorDocs(topicName, authorName) {
+        const topic = allTopics.find(t => t.value === topicName);
+        if (!topic) return;
+
+        // סינון המסמכים
+        const filteredDocs = topic.documents.filter(d => d.author === authorName);
+
+        // כותרת וכפתור חזרה
+        const body = document.getElementById('modalBody');
+        const headerHtml = `
+            <button class="back-btn" onclick="openAuthorsPopup('${topicName}')">➜ חזרה לרשימת המחברים</button>
+            <h3>מסמכים של: ${authorName}</h3>
+        `;
+
+        // שימוש בפונקציית העזר לרינדור, אך הזרקה ידנית ל-HTML כדי להוסיף את הכותרת
+        let listHtml = getDocsHtml(filteredDocs);
+        body.innerHTML = headerHtml + listHtml;
+    }
+
+    // פונקציית עזר לרינדור HTML של רשימת מסמכים
+    function getDocsHtml(docs) {
+        if (!docs || docs.length === 0) {
+            return '<p style="text-align:center; color:#666;">לא נמצאו מסמכים.</p>';
+        }
+        return docs.map(doc => {
+            const url = (doc.url && doc.url !== '#') ? doc.url : null;
+            const linkHtml = url
+                ? `<a href="${url}" target="_blank" class="doc-title-link">${doc.title}</a>`
+                : `<span style="font-weight:bold;">${doc.title}</span>`;
+
+            return `
+                <div class="doc-list-item">
+                    ${linkHtml}
+                    <div class="doc-meta-info">
+                        ${doc.date ? `<span>📅 ${doc.date}</span>` : ''}
+                        ${doc.author ? `<span>👤 ${doc.author}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // פונקציה ראשית לרינדור מסמכים למודל (לשימוש הרגיל)
+    function renderDocList(docs) {
+        document.getElementById('modalBody').innerHTML = getDocsHtml(docs);
+    }
+
+    function closeModal() {
+        document.getElementById('docModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('docModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+
 </body>
 </html>
