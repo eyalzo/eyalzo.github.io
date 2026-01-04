@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gilat AI - אינדקס נושאים (ניהול ידע)</title>
+    <title>Gilat AI - אינדקס נושאים</title>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -26,248 +26,117 @@
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--white);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            max-width: 1200px; margin: 0 auto; background: var(--white);
+            padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* --- Header & Controls --- */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--primary-color); padding-bottom: 15px; margin-bottom: 20px;
+            flex-wrap: wrap; gap: 15px;
         }
 
         h1 { margin: 0; color: var(--primary-color); }
 
-        .controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         .search-box, .filter-select {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-family: inherit;
+            padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; font-family: inherit;
         }
-
         .search-box { width: 250px; }
         .filter-select { width: 220px; }
 
         .btn-link {
-            text-decoration: none;
-            color: var(--white);
-            background-color: var(--secondary-color);
-            padding: 8px 15px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            font-weight: bold;
+            text-decoration: none; color: var(--white); background-color: var(--secondary-color);
+            padding: 8px 15px; border-radius: 4px; font-size: 0.9rem; font-weight: bold;
         }
         .btn-link:hover { background-color: #455a64; }
 
         /* --- Table Layout --- */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            text-align: right;
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: right; padding: 12px 15px; border-bottom: 1px solid var(--border-color); }
 
         th {
-            background-color: #fafafa;
-            color: var(--secondary-color);
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-            cursor: pointer;
-            user-select: none;
+            background-color: #fafafa; color: var(--secondary-color); font-weight: bold;
+            position: sticky; top: 0; cursor: pointer; user-select: none;
         }
-
         th:hover { background-color: #f1f1f1; }
         th::after { content: '↕'; font-size: 0.8em; margin-right: 5px; color: #ccc; }
 
         tr:hover { background-color: var(--hover-row); }
 
-        .topic-name {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: #2c3e50;
-            cursor: pointer;
-        }
+        .topic-name { font-weight: bold; font-size: 1.1em; color: #2c3e50; cursor: pointer; }
+        .badge-count { background-color: var(--primary-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
 
-        .badge-count {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-
-        /* עיצוב התגית הלחיצה של המחברים */
+        /* תגית מחברים לחיצה */
         .badge-author {
-            background-color: #fff3e0;
-            color: #ef6c00;
-            border: 1px solid #ffe0b2;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
+            background-color: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2;
+            padding: 2px 8px; border-radius: 4px; font-size: 0.85em;
+            display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: all 0.2s;
         }
-        .badge-author:hover {
-            background-color: #ffcc80;
-            border-color: #ef6c00;
-            transform: scale(1.05);
-        }
+        .badge-author:hover { background-color: #ffcc80; transform: scale(1.05); }
 
         .btn-action {
-            background-color: var(--white);
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.2s;
+            background-color: var(--white); border: 1px solid var(--primary-color); color: var(--primary-color);
+            padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: all 0.2s;
         }
-        .btn-action:hover {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
+        .btn-action:hover { background-color: var(--primary-color); color: var(--white); }
 
         /* --- Modal Styles --- */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; right: 0; bottom: 0; left: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
         }
-
         .modal-content {
-            background: white;
-            width: 80%;
-            max-width: 800px;
-            max-height: 80vh;
-            border-radius: 8px;
-            padding: 0;
-            position: relative;
-            display: flex;
-            flex-direction: column;
+            background: white; width: 85%; max-width: 900px; max-height: 85vh;
+            border-radius: 8px; padding: 0; position: relative; display: flex; flex-direction: column;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-
         .modal-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fafafa;
-            border-radius: 8px 8px 0 0;
+            padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;
+            align-items: center; background: #fafafa; border-radius: 8px 8px 0 0;
         }
         .modal-title { margin: 0; color: var(--primary-color); font-size: 1.3rem; }
-
-        .close-modal {
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #999;
-            line-height: 1;
-        }
+        .close-modal { font-size: 1.8rem; cursor: pointer; color: #999; line-height: 1; }
         .close-modal:hover { color: #333; }
+        .modal-body { padding: 20px; overflow-y: auto; }
 
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        /* עיצוב רשימת המסמכים */
+        /* Document Item Styles in Modal */
         .doc-list-item {
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; flex-direction: column; gap: 8px;
         }
         .doc-list-item:last-child { border-bottom: none; }
 
         .doc-title-link {
-            color: var(--secondary-color);
-            font-weight: bold;
-            text-decoration: none;
-            font-size: 1.05em;
+            color: var(--secondary-color); font-weight: bold; text-decoration: none; font-size: 1.15em;
         }
         .doc-title-link:hover { text-decoration: underline; color: var(--primary-color); }
 
-        .doc-meta-info { font-size: 0.85em; color: #777; display: flex; gap: 15px; }
-
-        /* עיצוב רשימת המחברים (כפתורים) */
-        .authors-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        /* עיצוב התקציר (Subject) */
+        .doc-snippet {
+            font-size: 0.95em; color: #555; background-color: #f9f9f9; padding: 10px;
+            border-radius: 4px; border-right: 3px solid #ddd; line-height: 1.5; margin-bottom: 5px;
         }
 
+        .doc-meta-info {
+            font-size: 0.85em; color: #777; display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
+        }
+        .meta-item { display: inline-flex; align-items: center; gap: 5px; }
+
+        .team-leader-badge {
+            background-color: #e3f2fd; color: #1565c0; padding: 2px 8px; border-radius: 4px; font-weight: bold;
+        }
+
+        .authors-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
         .author-btn {
-            background-color: #f1f8e9;
-            color: #33691e;
-            border: 1px solid #dcedc8;
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-width: 150px;
+            background-color: #f1f8e9; color: #33691e; border: 1px solid #dcedc8;
+            padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 0.95em;
+            display: flex; align-items: center; justify-content: space-between; min-width: 140px;
         }
-        .author-btn:hover {
-            background-color: #dcedc8;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .author-doc-count {
-            background-color: #33691e;
-            color: white;
-            font-size: 0.8em;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-right: 8px;
-        }
+        .author-btn:hover { background-color: #dcedc8; transform: translateY(-2px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .author-doc-count { background-color: #33691e; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 10px; margin-right: 8px; }
 
-        .back-btn {
-            background: #eee;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 15px;
-            font-weight: bold;
-            display: inline-block;
-        }
+        .back-btn { background: #eee; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
         .back-btn:hover { background: #ddd; }
     </style>
 </head>
@@ -282,11 +151,9 @@
 
         <div class="controls">
             <a href="pairs.html" class="btn-link">🔗 ניתוח צמדים</a>
-
             <select id="authorFilter" class="filter-select" onchange="applyFilters()">
                 <option value="">-- כל המחברים --</option>
             </select>
-
             <input type="text" id="searchInput" class="search-box" placeholder="חפש נושא..." onkeyup="applyFilters()">
         </div>
     </header>
@@ -322,9 +189,9 @@
     let allTopics = [];
     let currentTopics = [];
 
-    // הגדרות מיון
+    // הגדרות מיון ברירת מחדל
     let sortCol = 'count';
-    let sortAsc = false; // ברירת מחדל: יורד (גדול לקטן)
+    let sortAsc = false;
 
     // טעינת נתונים
     fetch('topics_data.json')
@@ -358,19 +225,15 @@
 
     function sortTable(columnName) {
         if (sortCol === columnName) {
-            sortAsc = !sortAsc; // היפוך כיוון
+            sortAsc = !sortAsc;
         } else {
             sortCol = columnName;
-            // ברירת מחדל לטקסט -> עולה (א-ת), למספרים -> יורד (גדול לקטן)
             sortAsc = (columnName === 'value');
         }
 
         currentTopics.sort((a, b) => {
             let valA = a[columnName];
             let valB = b[columnName];
-
-            // טיפול מיוחד לטווח שנים: המיון מתבצע לפי span_years (שדה נסתר) אבל הכותרת בטבלה היא span_years
-            // (הפייתון מחזיר שדה span_years מספרי, אז זה יעבוד חלק)
 
             if (typeof valA === 'string') valA = valA.toLowerCase();
             if (typeof valB === 'string') valB = valB.toLowerCase();
@@ -392,7 +255,6 @@
         }
 
         const html = currentTopics.map(t => {
-            // התגית הופכת ללחיצה (onclick פותח את רשימת המחברים)
             const authorCountDisplay = t.author_count > 0
                 ? `<span class="badge-author" onclick="openAuthorsPopup('${t.value}')" title="לחץ לרשימת המחברים">👥 ${t.author_count}</span>`
                 : '<span style="color:#ccc;">-</span>';
@@ -424,20 +286,16 @@
             return matchText && matchAuth;
         });
 
-        // שימור המיון אחרי פילטר
         if (sortCol) {
-           // מיון כפוי לפי ההגדרה האחרונה
-           const tempAsc = sortAsc;
-           sortAsc = !sortAsc; // הופכים וקוראים למיון כדי שיחזיר למצב הרצוי (טריק קטן)
-           sortTable(sortCol);
+           const tempAsc = sortAsc; sortAsc = !sortAsc; sortTable(sortCol);
         } else {
             renderTable();
         }
     }
 
-    // --- לוגיקת פופ-אפ (Modal) ---
+    // --- Modal Logic ---
 
-    // פתיחת רשימת כל המסמכים (מכפתור "פרטים" או משם הנושא)
+    // פתיחת רשימת מסמכים רגילה
     function openDocsPopup(topicName) {
         const topic = allTopics.find(t => t.value === topicName);
         if (!topic) return;
@@ -447,7 +305,7 @@
         document.getElementById('docModal').style.display = 'flex';
     }
 
-    // פתיחת רשימת המחברים (מלחיצה על התגית הכתומה)
+    // פתיחת רשימת כפתורי מחברים
     function openAuthorsPopup(topicName) {
         const topic = allTopics.find(t => t.value === topicName);
         if (!topic) return;
@@ -455,19 +313,14 @@
         document.getElementById('modalTitle').innerText = 'מחברים שעסקו בנושא: ' + topicName;
         const body = document.getElementById('modalBody');
 
-        // חישוב כמה מסמכים יש לכל מחבר בנושא זה
         const authorDocCounts = {};
         topic.documents.forEach(doc => {
-            if(doc.author) {
-                authorDocCounts[doc.author] = (authorDocCounts[doc.author] || 0) + 1;
+            if(doc.authors) {
+                doc.authors.forEach(a => authorDocCounts[a] = (authorDocCounts[a] || 0) + 1);
             }
         });
 
-        // יצירת הכפתורים
         let html = '<div class="authors-grid">';
-
-        // מסננים מחברים לא רלוונטיים (כמו ראשי צוותים) אם צריך,
-        // כרגע מציג את כל מי שיש לו מסמך ברשימה
         Object.keys(authorDocCounts).sort().forEach(authName => {
             html += `
                 <div class="author-btn" onclick="showAuthorDocs('${topicName}', '${authName}')">
@@ -478,58 +331,53 @@
         });
         html += '</div>';
 
-        if (Object.keys(authorDocCounts).length === 0) {
-            html = '<p>לא נמצאו נתוני מחברים מקושרים.</p>';
-        }
-
+        if (Object.keys(authorDocCounts).length === 0) html = '<p>לא נמצאו נתוני מחברים.</p>';
         body.innerHTML = html;
         document.getElementById('docModal').style.display = 'flex';
     }
 
-    // הצגת מסמכים של מחבר ספציפי (נקרא מתוך הפופ-אפ של המחברים)
     function showAuthorDocs(topicName, authorName) {
         const topic = allTopics.find(t => t.value === topicName);
-        if (!topic) return;
+        const filteredDocs = topic.documents.filter(d => d.authors && d.authors.includes(authorName));
 
-        // סינון המסמכים
-        const filteredDocs = topic.documents.filter(d => d.author === authorName);
-
-        // כותרת וכפתור חזרה
         const body = document.getElementById('modalBody');
-        const headerHtml = `
-            <button class="back-btn" onclick="openAuthorsPopup('${topicName}')">➜ חזרה לרשימת המחברים</button>
-            <h3>מסמכים של: ${authorName}</h3>
-        `;
+        const header = `<button class="back-btn" onclick="openAuthorsPopup('${topicName}')">➜ חזרה לרשימת המחברים</button> <h3>מסמכים של: ${authorName}</h3>`;
 
-        // שימוש בפונקציית העזר לרינדור, אך הזרקה ידנית ל-HTML כדי להוסיף את הכותרת
-        let listHtml = getDocsHtml(filteredDocs);
-        body.innerHTML = headerHtml + listHtml;
+        body.innerHTML = header + getDocsHtml(filteredDocs);
     }
 
-    // פונקציית עזר לרינדור HTML של רשימת מסמכים
+    // יצירת ה-HTML של רשימת המסמכים (כולל תקציר, ר"צ וכו')
     function getDocsHtml(docs) {
-        if (!docs || docs.length === 0) {
-            return '<p style="text-align:center; color:#666;">לא נמצאו מסמכים.</p>';
-        }
+        if (!docs || docs.length === 0) return '<p style="text-align:center; color:#666;">לא נמצאו מסמכים.</p>';
+
         return docs.map(doc => {
             const url = (doc.url && doc.url !== '#') ? doc.url : null;
             const linkHtml = url
                 ? `<a href="${url}" target="_blank" class="doc-title-link">${doc.title}</a>`
-                : `<span style="font-weight:bold;">${doc.title}</span>`;
+                : `<span style="font-weight:bold; font-size:1.1em; display:block; margin-bottom:5px;">${doc.title}</span>`;
+
+            const authorsStr = (doc.authors && doc.authors.length > 0) ? doc.authors.join(', ') : '';
+
+            let metaHtml = '';
+            if (doc.date) metaHtml += `<span class="meta-item">📅 ${doc.date}</span>`;
+            if (authorsStr) metaHtml += `<span class="meta-item">👤 ${authorsStr}</span>`;
+            if (doc.team_leader) metaHtml += `<span class="team-leader-badge">⭐ ר"צ: ${doc.team_leader}</span>`;
+
+            // התקציר (Subject)
+            const snippetHtml = doc.snippet ? `<div class="doc-snippet">${doc.snippet}</div>` : '';
 
             return `
                 <div class="doc-list-item">
                     ${linkHtml}
+                    ${snippetHtml}
                     <div class="doc-meta-info">
-                        ${doc.date ? `<span>📅 ${doc.date}</span>` : ''}
-                        ${doc.author ? `<span>👤 ${doc.author}</span>` : ''}
+                        ${metaHtml}
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    // פונקציה ראשית לרינדור מסמכים למודל (לשימוש הרגיל)
     function renderDocList(docs) {
         document.getElementById('modalBody').innerHTML = getDocsHtml(docs);
     }
@@ -540,9 +388,7 @@
 
     window.onclick = function(event) {
         const modal = document.getElementById('docModal');
-        if (event.target == modal) {
-            closeModal();
-        }
+        if (event.target == modal) closeModal();
     }
 </script>
 

@@ -8,10 +8,11 @@ from collections import Counter
 # --- הגדרות ---
 API_KEY = "zqt_WQdPgppS5OLumkFHZXSffKRBLzOS1MmAq-c0HA"
 CORPUS_ID = "mmm_docs5"
-DATA_VERSION = "2.9"
+DATA_VERSION = "3.4"  # גרסה מותאמת לשדות הספציפיים שלך
 
-# רשימת ראשי צוותים שלא ייספרו במונה המחברים
-TEAM_LEADERS = [
+# רשימת ראשי צוותים לסינון מסטטיסטיקת "מחברים שונים" בלבד
+# (הם עדיין יופיעו בפרטי המסמך עצמו)
+TEAM_LEADERS_FILTER = [
     "ראש צוות 1",
     "ראש צוות 2"
 ]
@@ -66,18 +67,43 @@ def extract_year(doc_meta):
     return None
 
 
-def extract_author(doc_meta):
-    val = doc_meta.get('ez_author') or doc_meta.get('author')
-    if not val: return None
-    if isinstance(val, list): return val[0].strip() if val else None
-    s = str(val).strip()
-    if s.startswith('[') and ']' in s:
-        try:
-            lst = json.loads(s.replace("'", '"'))
-            if lst and isinstance(lst, list): return lst[0].strip()
-        except:
-            pass
-    return s
+def extract_all_authors(doc_meta):
+    """חילוץ רשימת כל המחברים מ-ez_people"""
+    # קודם כל בודקים את השדה שהגדרת
+    val = doc_meta.get('ez_people') or doc_meta.get('ez_author') or []
+
+    # טיפול במחרוזת שנראית כמו רשימה או מופרדת בפסיקים
+    if isinstance(val, str):
+        val = val.strip()
+        if val.startswith('[') and ']' in val:
+            try:
+                val = json.loads(val.replace("'", '"'))
+            except:
+                val = [val]
+        elif ',' in val:
+            val = val.split(',')
+        else:
+            val = [val]
+
+    if isinstance(val, list):
+        # ניקוי רווחים ריקים
+        return [str(v).strip() for v in val if str(v).strip()]
+    return []
+
+
+def extract_team_leader(doc_meta):
+    """חילוץ ראש צוות מ-teamleader"""
+    # בדיקה ישירה בשדה שביקשת (וגם fallback למקרים אחרים)
+    return doc_meta.get('teamleader') or \
+        doc_meta.get('ez_team_leader') or \
+        doc_meta.get('manager') or ""
+
+
+def extract_snippet(doc_meta):
+    """חילוץ תקציר מ-Subject"""
+    return doc_meta.get('Subject') or \
+        doc_meta.get('ez_snippet') or \
+        doc_meta.get('description') or ""
 
 
 def extract_title_and_url(doc, meta):
@@ -90,14 +116,23 @@ def process_topics(documents):
     topics_temp = {}
     pair_counts = Counter()
     all_system_authors = set()
+
     today = datetime.now()
     cutoff_date = today - timedelta(days=365)
 
-    print("Processing data...")
+    print("Processing full metadata (Subject, ez_people, teamleader)...")
+
+    # הדפסת דוגמה למסמך הראשון כדי לוודא שהשדות נקראים נכון
+    if len(documents) > 0:
+        print("\n--- DEBUG: First document metadata ---")
+        print(json.dumps(documents[0].get('metadata', {}), indent=2, ensure_ascii=False))
+        print("--------------------------------------\n")
 
     for doc in documents:
         meta = doc.get('metadata', {})
-        kw_val = meta.get('ez_keywords')
+
+        # חילוץ מילות מפתח
+        kw_val = meta.get('ez_keywords') or meta.get('keywords')
         kw_list = []
         if isinstance(kw_val, list):
             kw_list = kw_val
@@ -115,17 +150,25 @@ def process_topics(documents):
         doc_year = extract_year(meta)
         doc_date_str = meta.get('ez_date')
         doc_date_obj = parse_date(doc_date_str)
-        doc_author = extract_author(meta)
+
+        # חילוץ שדות לפי ההנחיות החדשות
+        authors_list = extract_all_authors(meta)
+        team_leader = extract_team_leader(meta)
+        snippet = extract_snippet(meta)
         doc_title, doc_url = extract_title_and_url(doc, meta)
 
-        if doc_author: all_system_authors.add(doc_author)
+        # עדכון רשימת כל המחברים במערכת (לפילטר)
+        for auth in authors_list:
+            all_system_authors.add(auth)
 
-        # מידע מזוקק על המסמך
+        # אובייקט מסמך עשיר
         current_doc_info = {
             "title": doc_title,
             "url": doc_url,
             "date": doc_date_str if doc_date_str else "",
-            "author": doc_author if doc_author else ""
+            "authors": authors_list,
+            "team_leader": team_leader,
+            "snippet": snippet
         }
 
         current_doc_clean_topics = set()
@@ -142,7 +185,10 @@ def process_topics(documents):
 
             topics_temp[clean_topic]["count"] += 1
             if doc_year: topics_temp[clean_topic]["years"].add(doc_year)
-            if doc_author: topics_temp[clean_topic]["authors"].add(doc_author)
+
+            for auth in authors_list:
+                topics_temp[clean_topic]["authors"].add(auth)
+
             topics_temp[clean_topic]["docs_list"].append(current_doc_info)
 
             curr_date = topics_temp[clean_topic]["latest_date"]
@@ -163,28 +209,29 @@ def process_topics(documents):
         authors_set = data["authors"]
         docs_list = data["docs_list"]
 
-        valid_authors = [a for a in authors_set if a not in TEAM_LEADERS]
+        # סינון למונה הסטטיסטי
+        valid_authors = [a for a in authors_set if a not in TEAM_LEADERS_FILTER]
         unique_authors_count = len(valid_authors)
 
         years_range_str = ""
-        span_years = 1  # ברירת מחדל למיון
+        span_years = 1
         if years_set:
             min_y = min(years_set)
             max_y = max(years_set)
-            span_years = max_y - min_y + 1  # חישוב הטווח
+            span_years = max_y - min_y + 1
             years_range_str = str(min_y) if min_y == max_y else f"{min_y}-{max_y}"
 
         avg_per_year = round(count / span_years, 1)
         is_active = True if (latest_date and latest_date >= cutoff_date) else False
 
-        # מיון מסמכים בתוך הנושא לפי תאריך
+        # מיון מסמכים (חדש לישן)
         docs_list.sort(key=lambda x: x['date'] if x['date'] else "0000-00-00", reverse=True)
 
         final_list.append({
             "value": name,
             "count": count,
             "years_range": years_range_str,
-            "span_years": span_years,  # שדה קריטי למיון החדש
+            "span_years": span_years,
             "avg_per_year": avg_per_year,
             "is_active": is_active,
             "authors": list(authors_set),
