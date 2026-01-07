@@ -35,7 +35,7 @@
                     <h2>📊 ריכוז מחקרי ממ"מ (משנת 2023)</h2>
                     <a href="keywords.html" class="nav-btn">📊 ניתוח מילות מפתח</a>
                 </div>
-                <div class="header-left-meta">Gilat AI ver 5.3.6 07-Jan-2026 19:39</div>
+                <div class="header-left-meta">Gilat AI ver 5.3.7 07-Jan-2026 19:43</div>
             </div>
             <div class="search-box-container shadow-sm">
                 <div class="row g-2 align-items-end">
@@ -48,7 +48,7 @@
                     <div class="col-md-1"><button class="btn btn-outline-danger btn-sm w-100" onclick="resetFilters()">נקה</button></div>
                 </div>
                 <div class="keyword-tags-row mt-3 pt-2 border-top d-flex align-items-center gap-2">
-                    <div class="fw-bold text-secondary small">מילות מפתח:</div>
+                    <div class="fw-bold text-secondary small">מילות מפתח (AND):</div>
                     <div id="activeKeywords" class="d-flex flex-wrap gap-2"><span class="text-muted small">בחר מילה לסינון</span></div>
                 </div>
             </div>
@@ -9197,41 +9197,57 @@
             function resetFilters() { $('select, input').val(''); activeKeywords.clear(); renderKeywordTags(); table.draw(); }
 
             $(document).ready(function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const kwParam = urlParams.get('keywords');
-                if (kwParam) kwParam.split(',').forEach(k => activeKeywords.add(k.trim()));
-
-                const authParam = urlParams.get('author');
-                const yearParam = urlParams.get('year_from');
-
+                // הגדרת הטבלה
                 table = $('#mainTable').DataTable({
                     "dom": 'lrtip', "language": hebLang, "order": [[ 0, "desc" ]], "deferRender": true,
-                    "initComplete": function() { 
-                        $('#mainTable').show(); 
-                        renderKeywordTags();
-                        // הפעלת פילטרים מפרמטרים
-                        if (authParam) $('#authorFilter').val(authParam).trigger('change');
-                        if (yearParam) $('#yearFrom').val(yearParam).trigger('change');
-                        if (kwParam || authParam || yearParam) table.draw();
-                    }
+                    "initComplete": function() { $('#mainTable').show(); }
                 });
 
+                // פונקציית הסינון המאוחדת
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    const auth = $('#authorFilter').val(), cat = $('#categoryFilter').val(), lead = $('#leaderFilter').val(), req = $('#requesterFilter').val();
+                    const auth = $('#authorFilter').val();
+                    const cat = $('#categoryFilter').val();
+                    const lead = $('#leaderFilter').val();
+                    const req = $('#requesterFilter').val();
                     const yVal = $('#yearFrom').val();
+
                     if (auth && !data[3].includes(auth)) return false;
                     if (cat && data[1] !== cat) return false;
                     if (lead && data[4] !== lead) return false;
                     if (req && !data[5].includes(req)) return false;
                     if (yVal && !data[0].includes(yVal)) return false;
-                    if (activeKeywords.size > 0 && !Array.from(activeKeywords).every(kw => data[6].includes(kw))) return false;
+
+                    if (activeKeywords.size > 0) {
+                        const rowKws = data[6];
+                        if (!Array.from(activeKeywords).every(kw => rowKws.includes(kw))) return false;
+                    }
+
                     const query = $('#smartSearch').val().toLowerCase();
                     return data.join(' ').toLowerCase().includes(query);
                 });
 
-                $('#smartSearch, select').on('keyup change', () => table.draw());
+                // האזנה לשינויים בתיבות ובחיפוש
+                $('#smartSearch, #categoryFilter, #authorFilter, #leaderFilter, #requesterFilter, #yearFrom').on('keyup change', function() {
+                    table.draw();
+                });
+
+                // קריאת פרמטרים מה-URL והחלתם
+                const urlParams = new URLSearchParams(window.location.search);
+                const kwParam = urlParams.get('keywords');
+                const authParam = urlParams.get('author');
+                const yearParam = urlParams.get('year_from');
+
+                if (kwParam) kwParam.split(',').forEach(k => activeKeywords.add(k.trim()));
+                if (authParam) $('#authorFilter').val(authParam);
+                if (yearParam) $('#yearFrom').val(yearParam);
+
+                // הפעלת פילטרים ורנדור תגיות בטעינה
+                renderKeywordTags();
+                table.draw();
+
                 $('[data-bs-toggle="popover"]').popover({ trigger: 'hover', placement: 'right' });
             });
+
             function filterByAuthor(n) { $('#authorFilter').val(n).trigger('change'); }
             function filterByCategory(c) { $('#categoryFilter').val(c).trigger('change'); }
             function filterByLeader(l) { $('#leaderFilter').val(l).trigger('change'); }
