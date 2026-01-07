@@ -3,31 +3,29 @@
     <html lang="he" dir="rtl">
     <head>
         <meta charset="UTF-8">
-        <title>Gilat AI - דוח מחקרי ממ"מ</title>
+        <title>Gilat AI - אינדקס מסמכים</title>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.rtl.min.css">
         <style>
             body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 15px; }
             .main-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-
-            .header-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
+            .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; }
+            .header-right { display: flex; align-items: center; gap: 15px; }
             .header-right h2 { color: #1a73e8; font-weight: 800; margin: 0; padding-right: 12px; border-right: 5px solid #1a73e8; }
             .header-left-meta { color: #9aa0a6; font-size: 0.75rem; font-family: monospace; }
-
-            .filter-group { display: flex; flex-direction: column; }
+            .nav-btn { text-decoration: none; background: #fff; color: #1a73e8; border: 1px solid #1a73e8; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; transition: 0.2s; }
+            .nav-btn:hover { background: #1a73e8; color: white; }
             .filter-label { font-size: 0.75rem; font-weight: bold; color: #5f6368; margin-bottom: 2px; }
-
-            .badge { cursor: pointer; margin: 1px; border: 1px solid transparent; transition: 0.15s; }
+            .search-box-container { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px; border: 1px solid #dee2e6; }
+            .badge { cursor: pointer; margin: 1px; border: 1px solid transparent; transition: 0.15s; font-size: 0.75rem; }
             .author-badge { background-color: #e3f2fd; color: #0d47a1; border-color: #bbdefb; }
             .category-badge { background-color: #f1f3f4; color: #3c4043; border-color: #dadce0; }
             .leader-badge { background-color: #fef7e0; color: #b06000; border-color: #ffe082; }
             .requester-badge { background-color: #e8f5e9; color: #1b5e20; border-color: #c8e6c9; }
-
             .pdf-btn { background: #ea4335; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.75rem; }
-            .search-box-container { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px; border: 1px solid #dee2e6; }
             .active-keyword-tag { background-color: #3498db; color: white; padding: 3px 10px; border-radius: 15px; display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; }
-
             #mainTable { display: none; width: 100% !important; }
+            table.dataTable thead th { text-align: right !important; }
         </style>
     </head>
     <body>
@@ -35,29 +33,25 @@
             <div class="header-row">
                 <div class="header-right">
                     <h2>📊 ריכוז מחקרי ממ"מ (משנת 2023)</h2>
+                    <a href="keywords.html" class="nav-btn">📊 ניתוח מילות מפתח</a>
                 </div>
-                <div class="header-left-meta">
-                    Gilat AI ver 5.2.5 07-Jan-2026 18:58
-                </div>
+                <div class="header-left-meta">Gilat AI ver 5.3.6 07-Jan-2026 19:39</div>
             </div>
-
             <div class="search-box-container shadow-sm">
                 <div class="row g-2 align-items-end">
-                    <div class="col-md-2 filter-group"><label class="filter-label">חיפוש חופשי</label><input type="text" id="smartSearch" class="form-control form-control-sm" placeholder="הקלד לחיפוש..."></div>
-                    <div class="col-md-2 filter-group"><label class="filter-label">קטגוריה</label><select id="categoryFilter" class="form-select form-select-sm"><option value="">-- כל הקטגוריות --</option><option value="אומדן עלות">אומדן עלות</option><option value="אחר [מסמך ממ"מ]">אחר [מסמך ממ"מ]</option><option value="במבט ראשון">במבט ראשון</option><option value="דוח">דוח</option><option value="דף מידע">דף מידע</option><option value="זרקור">זרקור</option><option value="חיצוני">חיצוני</option><option value="מבט משווה">מבט משווה</option><option value="מבט על">מבט על</option><option value="מידע זמין">מידע זמין</option><option value="מידע ראשוני">מידע ראשוני</option><option value="מפה">מפה</option><option value="נתונים">נתונים</option><option value="סקירה">סקירה</option><option value="סקירה כלכלית">סקירה כלכלית</option><option value="סקירה משווה">סקירה משווה</option><option value="סקירה משפטית משווה">סקירה משפטית משווה</option><option value="פיקוח תקציבי">פיקוח תקציבי</option><option value="רקע לדיון">רקע לדיון</option></select></div>
-                    <div class="col-md-2 filter-group"><label class="filter-label">מחבר</label><select id="authorFilter" class="form-select form-select-sm"><option value="">-- כל המחברים --</option><option value="אביחיל סגל">אביחיל סגל</option><option value="אביטל מגן">אביטל מגן</option><option value="אהוד בקר">אהוד בקר</option><option value="אהרן בלנק">אהרן בלנק</option><option value="אורי טל ספירו">אורי טל ספירו</option><option value="אוריאנה אלמסי">אוריאנה אלמסי</option><option value="אורלי אלמגור לוטן">אורלי אלמגור לוטן</option><option value="אילה אליהו">אילה אליהו</option><option value="אילנית בר">אילנית בר</option><option value="אלינה אליה בוליגין">אלינה אליה בוליגין</option><option value="אליעזר שוורץ">אליעזר שוורץ</option><option value="אלירן זרד">אלירן זרד</option><option value="אסנת אלגום מזרחי">אסנת אלגום מזרחי</option><option value="אסף וינינגר">אסף וינינגר</option><option value="אתי ווייסבלאי">אתי ווייסבלאי</option><option value="בת חן רוטנברג">בת חן רוטנברג</option><option value="ג'רי אלמו קפיטל">ג'רי אלמו קפיטל</option><option value="גבריאל בוקובזה">גבריאל בוקובזה</option><option value="גדעון זעירא">גדעון זעירא</option><option value="דינה צדוק">דינה צדוק</option><option value="חדוה קפלינסקי">חדוה קפלינסקי</option><option value="יהודה טרואן">יהודה טרואן</option><option value="יובל וורגן">יובל וורגן</option><option value="יונת מייזל">יונת מייזל</option><option value="יסכה מוניקנדם - גבעון">יסכה מוניקנדם - גבעון</option><option value="יעל לוי אריאל">יעל לוי אריאל</option><option value="ישי לקס">ישי לקס</option><option value="ליאור בן-דוד">ליאור בן-דוד</option><option value="לירן קוסמן">לירן קוסמן</option><option value="מאיר אזנקוט">מאיר אזנקוט</option><option value="מיכה נוי">מיכה נוי</option><option value="מיכל לרר">מיכל לרר</option><option value="מרב גבאי פלג">מרב גבאי פלג</option><option value="מריה רבינוביץ">מריה רבינוביץ</option><option value="מרים רחל גלבלום">מרים רחל גלבלום</option><option value="מתן שחק">מתן שחק</option><option value="נורית יכימוביץ כהן">נורית יכימוביץ כהן</option><option value="נטע משה">נטע משה</option><option value="ניצן פייביש">ניצן פייביש</option><option value="נלי כפיר">נלי כפיר</option><option value="נעם גרינברג">נעם גרינברג</option><option value="נעם דוד בוטוש">נעם דוד בוטוש</option><option value="נתן שבע">נתן שבע</option><option value="נתנאל יהושוע קופראק">נתנאל יהושוע קופראק</option><option value="עדו אבגר">עדו אבגר</option><option value="עדי כהן אהרונוב">עדי כהן אהרונוב</option><option value="פלורה קוך דבידוביץ">פלורה קוך דבידוביץ</option><option value="רוני הרשקוביץ">רוני הרשקוביץ</option><option value="רועי גולדשמידט">רועי גולדשמידט</option><option value="רינת בניטה">רינת בניטה</option><option value="רמי שוורץ">רמי שוורץ</option><option value="רננה גוטרייך">רננה גוטרייך</option><option value="שלומי עדין">שלומי עדין</option><option value="שלי לוי">שלי לוי</option><option value="תהילה שחר">תהילה שחר</option></select></div>
-                    <div class="col-md-2 filter-group"><label class="filter-label">ראש צוות</label><select id="leaderFilter" class="form-select form-select-sm"><option value="">-- כל הצוותים --</option><option value="אוריאנה אלמסי">אוריאנה אלמסי</option><option value="אורלי אלמגור לוטן">אורלי אלמגור לוטן</option><option value="אליעזר שוורץ">אליעזר שוורץ</option><option value="גילאת בניאד">גילאת בניאד</option><option value="דינה צדוק">דינה צדוק</option><option value="הודיה קין">הודיה קין</option><option value="יובל וורגן">יובל וורגן</option><option value="ליאור בן-דוד">ליאור בן-דוד</option><option value="עדו אבגר">עדו אבגר</option><option value="עמי צדיק">עמי צדיק</option><option value="שירי ספקטור בן ארי">שירי ספקטור בן ארי</option><option value="שלי לוי">שלי לוי</option></select></div>
-                    <div class="col-md-2 filter-group"><label class="filter-label">גוף מבקש</label><select id="requesterFilter" class="form-select form-select-sm"><option value="">-- כל המבקשים --</option><option value="אביגדור ליברמן">אביגדור ליברמן</option><option value="אביגדור מעוז">אביגדור מעוז</option><option value="אביחי בוארון">אביחי בוארון</option><option value="אופיר כץ">אופיר כץ</option><option value="אורי מקלב">אורי מקלב</option><option value="אורית פרקש-הכהן">אורית פרקש-הכהן</option><option value="אושר שקלים">אושר שקלים</option><option value="אחמד טיבי">אחמד טיבי</option><option value="איימן עודה">איימן עודה</option><option value="אימאן ח'טיב יאסין">אימאן ח'טיב יאסין</option><option value="אלון נתן שוסטר">אלון נתן שוסטר</option><option value="אלי דלל">אלי דלל</option><option value="אליהו ברוכי">אליהו ברוכי</option><option value="אליהו רביבו">אליהו רביבו</option><option value="אלמוג כהן">אלמוג כהן</option><option value="אמיר אוחנה">אמיר אוחנה</option><option value="אפרת רייטן מרום">אפרת רייטן מרום</option><option value="אריאל קלנר">אריאל קלנר</option><option value="בועז ביסמוט">בועז ביסמוט</option><option value="בועז טופורובסקי">בועז טופורובסקי</option><option value="גלית דיסטל">גלית דיסטל</option><option value="גלעד קריב">גלעד קריב</option><option value="דבי ביטון">דבי ביטון</option><option value="הוועדה המיוחדת לטיפול בשורדי השואה">הוועדה המיוחדת לטיפול בשורדי השואה</option><option value="הוועדה המיוחדת לעובדים זרים">הוועדה המיוחדת לעובדים זרים</option><option value="הוועדה המיוחדת לעניין הקרן לאזרחי ישראל">הוועדה המיוחדת לעניין הקרן לאזרחי ישראל</option><option value="הוועדה המיוחדת לענייני הצעירים">הוועדה המיוחדת לענייני הצעירים</option><option value="הוועדה המיוחדת לפיקוח על תהליכי הסרת חסמים">הוועדה המיוחדת לפיקוח על תהליכי הסרת חסמים</option><option value="הוועדה המיוחדת לצמצום פערים חברתיים בפריפריה">הוועדה המיוחדת לצמצום פערים חברתיים בפריפריה</option><option value="הוועדה לביטחון לאומי">הוועדה לביטחון לאומי</option><option value="הוועדה לזכויות הילד">הוועדה לזכויות הילד</option><option value="הוועדה לחיזוק ופיתוח הנגב והגליל">הוועדה לחיזוק ופיתוח הנגב והגליל</option><option value="הוועדה למאבק בנגעי הסמים והאלכוהול">הוועדה למאבק בנגעי הסמים והאלכוהול</option><option value="הוועדה למיזמים ציבוריים">הוועדה למיזמים ציבוריים</option><option value="הוועדה לענייני ביקורת המדינה">הוועדה לענייני ביקורת המדינה</option><option value="הוועדה לפניות הציבור">הוועדה לפניות הציבור</option><option value="הוועדה לקידום מעמד האישה ולשוויון מגדרי">הוועדה לקידום מעמד האישה ולשוויון מגדרי</option><option value="הייעוץ המשפטי לוועדה לביטחון לאומי">הייעוץ המשפטי לוועדה לביטחון לאומי</option><option value="הייעוץ המשפטי לוועדה לזכויות הילד">הייעוץ המשפטי לוועדה לזכויות הילד</option><option value="הייעוץ המשפטי לוועדת החוץ והביטחון">הייעוץ המשפטי לוועדת החוץ והביטחון</option><option value="הייעוץ המשפטי לוועדת החינוך">הייעוץ המשפטי לוועדת החינוך</option><option value="הייעוץ המשפטי לוועדת החינוך, התרבות והספורט">הייעוץ המשפטי לוועדת החינוך, התרבות והספורט</option><option value="הייעוץ המשפטי לוועדת הכלכלה">הייעוץ המשפטי לוועדת הכלכלה</option><option value="הייעוץ המשפטי לוועדת הכספים">הייעוץ המשפטי לוועדת הכספים</option><option value="הייעוץ המשפטי לוועדת העבודה">הייעוץ המשפטי לוועדת העבודה</option><option value="הייעוץ המשפטי לוועדת העבודה, הרווחה והבריאות">הייעוץ המשפטי לוועדת העבודה, הרווחה והבריאות</option><option value="הייעוץ המשפטי לוועדת הפנים והגנת הסביבה">הייעוץ המשפטי לוועדת הפנים והגנת הסביבה</option><option value="הייעוץ המשפטי לוועדת חוקה">הייעוץ המשפטי לוועדת חוקה</option><option value="הייעוץ המשפטי לכנסת - לשכת היועץ המשפטי לכנסת">הייעוץ המשפטי לכנסת - לשכת היועץ המשפטי לכנסת</option><option value="הקליטה והתפוצות">הקליטה והתפוצות</option><option value="הרווחה והבריאות">הרווחה והבריאות</option><option value="התרבות והספורט">התרבות והספורט</option><option value="ואליד אל הואשלה">ואליד אל הואשלה</option><option value="ואליד טאהא">ואליד טאהא</option><option value="ולדימיר בליאק">ולדימיר בליאק</option><option value="ועדה לצמצום פערים חברתיים">ועדה לצמצום פערים חברתיים</option><option value="ועדת הבריאות">ועדת הבריאות</option><option value="ועדת החוץ וביטחון">ועדת החוץ וביטחון</option><option value="ועדת החוקה, חוק ומשפט">ועדת החוקה, חוק ומשפט</option><option value="ועדת החינוך">ועדת החינוך</option><option value="ועדת החינוך, התרבות והספורט">ועדת החינוך, התרבות והספורט</option><option value="ועדת הכלכלה">ועדת הכלכלה</option><option value="ועדת הכנסת">ועדת הכנסת</option><option value="ועדת הכספים">ועדת הכספים</option><option value="ועדת המדע והטכנולוגיה">ועדת המדע והטכנולוגיה</option><option value="ועדת המשנה לקידום מנופי צמיחה של ענף החקלאות">ועדת המשנה לקידום מנופי צמיחה של ענף החקלאות</option><option value="ועדת העבודה והרווחה">ועדת העבודה והרווחה</option><option value="ועדת העלייה">ועדת העלייה</option><option value="ועדת העלייה, הקליטה והתפוצות">ועדת העלייה, הקליטה והתפוצות</option><option value="ועדת הפנים והגנת הסביבה">ועדת הפנים והגנת הסביבה</option><option value="זאב אלקין">זאב אלקין</option><option value="חוק ומשפט">חוק ומשפט</option><option value="חטיבת המידע">חטיבת המידע</option><option value="חמד עמאר">חמד עמאר</option><option value="חנוך דב מלביצקי">חנוך דב מלביצקי</option><option value="חשבות הכנסת">חשבות הכנסת</option><option value="טטיאנה מזרסקי">טטיאנה מזרסקי</option><option value="יאיר לפיד">יאיר לפיד</option><option value="יאסר חוג'יראת">יאסר חוג'יראת</option><option value="יבגני סובה">יבגני סובה</option><option value="יו"ר הכנסת">יו"ר הכנסת</option><option value="יואב סגלוביץ">יואב סגלוביץ</option><option value="יוליה מלינובסקי">יוליה מלינובסקי</option><option value="יונתן מישרקי">יונתן מישרקי</option><option value="יוסף טייב">יוסף טייב</option><option value="יוסף עטאונה">יוסף עטאונה</option><option value="יוראי להב הרצנו">יוראי להב הרצנו</option><option value="יחיאל משה טרופר">יחיאל משה טרופר</option><option value="ינון אזולאי">ינון אזולאי</option><option value="יסמין פרידמן">יסמין פרידמן</option><option value="יצחק קרויזר">יצחק קרויזר</option><option value="ירון לוי">ירון לוי</option><option value="לימור סון הר מלך">לימור סון הר מלך</option><option value="לשכת יו">לשכת יו</option><option value="לשכת מנכ"ל הכנסת">לשכת מנכ"ל הכנסת</option><option value="מאיר כהן">מאיר כהן</option><option value="מאיר פרוש">מאיר פרוש</option><option value="מחלקת קשרי חוץ">מחלקת קשרי חוץ</option><option value="מטי צרפתי הרכבי">מטי צרפתי הרכבי</option><option value="מיכאל מרדכי ביטון">מיכאל מרדכי ביטון</option><option value="מיכל מרים וולדיגר">מיכל מרים וולדיגר</option><option value="מיכל שיר סגמן">מיכל שיר סגמן</option><option value="מיקי לוי">מיקי לוי</option><option value="מירב בן ארי">מירב בן ארי</option><option value="מירב כהן">מירב כהן</option><option value="ממונה על ייצוג הכנסת בערכאות">ממונה על ייצוג הכנסת בערכאות</option><option value="מרב מיכאלי">מרב מיכאלי</option><option value="מרכז המחקר והמידע">מרכז המחקר והמידע</option><option value="מרפאת הכנסת">מרפאת הכנסת</option><option value="משה ארבל">משה ארבל</option><option value="משה גפני">משה גפני</option><option value="משה טור פז">משה טור פז</option><option value="משה סולומון">משה סולומון</option><option value="משה סעדה">משה סעדה</option><option value="משה פסל">משה פסל</option><option value="משה רוט">משה רוט</option><option value="מתן כהנא">מתן כהנא</option><option value="נאור שירי">נאור שירי</option><option value="ניסים ואטורי">ניסים ואטורי</option><option value="נעמה לזימי">נעמה לזימי</option><option value="סימון דוידסון">סימון דוידסון</option><option value="עאידה תומא סלימאן">עאידה תומא סלימאן</option><option value="עודד פורר">עודד פורר</option><option value="עופר כסיף">עופר כסיף</option><option value="עידן רול">עידן רול</option><option value="עמית הלוי">עמית הלוי</option><option value="פנינה תמנו-שטה">פנינה תמנו-שטה</option><option value="צבי ידידיה סוכות">צבי ידידיה סוכות</option><option value="צביקה פוגל">צביקה פוגל</option><option value="צגה צגנש מלקו">צגה צגנש מלקו</option><option value="קטי קטרין שטרית">קטי קטרין שטרית</option><option value="רון כץ">רון כץ</option><option value="רם בן ברק">רם בן ברק</option><option value="שלום דנינו">שלום דנינו</option><option value="שלי טל מירון">שלי טל מירון</option><option value="שלמה קרעי">שלמה קרעי</option><option value="שמחה רוטמן">שמחה רוטמן</option><option value="שרון ניר">שרון ניר</option><option value="שרן השכל">שרן השכל</option></select></div>
-                    <div class="col-md-1 filter-group"><label class="filter-label">שנה</label><select id="yearFrom" class="form-select form-select-sm"><option value="">הכל</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option></select></div>
+                    <div class="col-md-2 d-flex flex-column"><label class="filter-label">חיפוש חופשי</label><input type="text" id="smartSearch" class="form-control form-control-sm" placeholder="חיפוש..."></div>
+                    <div class="col-md-2 d-flex flex-column"><label class="filter-label">קטגוריה</label><select id="categoryFilter" class="form-select form-select-sm"><option value="">-- הכל --</option><option value="אומדן עלות">אומדן עלות</option><option value="אחר [מסמך ממ"מ]">אחר [מסמך ממ"מ]</option><option value="במבט ראשון">במבט ראשון</option><option value="דוח">דוח</option><option value="דף מידע">דף מידע</option><option value="זרקור">זרקור</option><option value="חיצוני">חיצוני</option><option value="מבט משווה">מבט משווה</option><option value="מבט על">מבט על</option><option value="מידע זמין">מידע זמין</option><option value="מידע ראשוני">מידע ראשוני</option><option value="מפה">מפה</option><option value="נתונים">נתונים</option><option value="סקירה">סקירה</option><option value="סקירה כלכלית">סקירה כלכלית</option><option value="סקירה משווה">סקירה משווה</option><option value="סקירה משפטית משווה">סקירה משפטית משווה</option><option value="פיקוח תקציבי">פיקוח תקציבי</option><option value="רקע לדיון">רקע לדיון</option></select></div>
+                    <div class="col-md-2 d-flex flex-column"><label class="filter-label">מחבר</label><select id="authorFilter" class="form-select form-select-sm"><option value="">-- כל המחברים --</option><option value="אביחיל סגל">אביחיל סגל</option><option value="אביטל מגן">אביטל מגן</option><option value="אהוד בקר">אהוד בקר</option><option value="אהרן בלנק">אהרן בלנק</option><option value="אורי טל ספירו">אורי טל ספירו</option><option value="אוריאנה אלמסי">אוריאנה אלמסי</option><option value="אורלי אלמגור לוטן">אורלי אלמגור לוטן</option><option value="אילה אליהו">אילה אליהו</option><option value="אילנית בר">אילנית בר</option><option value="אלינה אליה בוליגין">אלינה אליה בוליגין</option><option value="אליעזר שוורץ">אליעזר שוורץ</option><option value="אלירן זרד">אלירן זרד</option><option value="אסנת אלגום מזרחי">אסנת אלגום מזרחי</option><option value="אסף וינינגר">אסף וינינגר</option><option value="אתי ווייסבלאי">אתי ווייסבלאי</option><option value="בת חן רוטנברג">בת חן רוטנברג</option><option value="ג'רי אלמו קפיטל">ג'רי אלמו קפיטל</option><option value="גבריאל בוקובזה">גבריאל בוקובזה</option><option value="גדעון זעירא">גדעון זעירא</option><option value="דינה צדוק">דינה צדוק</option><option value="חדוה קפלינסקי">חדוה קפלינסקי</option><option value="יהודה טרואן">יהודה טרואן</option><option value="יובל וורגן">יובל וורגן</option><option value="יונת מייזל">יונת מייזל</option><option value="יסכה מוניקנדם - גבעון">יסכה מוניקנדם - גבעון</option><option value="יעל לוי אריאל">יעל לוי אריאל</option><option value="ישי לקס">ישי לקס</option><option value="ליאור בן-דוד">ליאור בן-דוד</option><option value="לירן קוסמן">לירן קוסמן</option><option value="מאיר אזנקוט">מאיר אזנקוט</option><option value="מיכה נוי">מיכה נוי</option><option value="מיכל לרר">מיכל לרר</option><option value="מרב גבאי פלג">מרב גבאי פלג</option><option value="מריה רבינוביץ">מריה רבינוביץ</option><option value="מרים רחל גלבלום">מרים רחל גלבלום</option><option value="מתן שחק">מתן שחק</option><option value="נורית יכימוביץ כהן">נורית יכימוביץ כהן</option><option value="נטע משה">נטע משה</option><option value="ניצן פייביש">ניצן פייביש</option><option value="נלי כפיר">נלי כפיר</option><option value="נעם גרינברג">נעם גרינברג</option><option value="נעם דוד בוטוש">נעם דוד בוטוש</option><option value="נתן שבע">נתן שבע</option><option value="נתנאל יהושוע קופראק">נתנאל יהושוע קופראק</option><option value="עדו אבגר">עדו אבגר</option><option value="עדי כהן אהרונוב">עדי כהן אהרונוב</option><option value="פלורה קוך דבידוביץ">פלורה קוך דבידוביץ</option><option value="רוני הרשקוביץ">רוני הרשקוביץ</option><option value="רועי גולדשמידט">רועי גולדשמידט</option><option value="רינת בניטה">רינת בניטה</option><option value="רמי שוורץ">רמי שוורץ</option><option value="רננה גוטרייך">רננה גוטרייך</option><option value="שלומי עדין">שלומי עדין</option><option value="שלי לוי">שלי לוי</option><option value="תהילה שחר">תהילה שחר</option></select></div>
+                    <div class="col-md-2 d-flex flex-column"><label class="filter-label">ראש צוות</label><select id="leaderFilter" class="form-select form-select-sm"><option value="">-- כל הצוותים --</option><option value="אוריאנה אלמסי">אוריאנה אלמסי</option><option value="אורלי אלמגור לוטן">אורלי אלמגור לוטן</option><option value="אליעזר שוורץ">אליעזר שוורץ</option><option value="גילאת בניאד">גילאת בניאד</option><option value="דינה צדוק">דינה צדוק</option><option value="הודיה קין">הודיה קין</option><option value="יובל וורגן">יובל וורגן</option><option value="ליאור בן-דוד">ליאור בן-דוד</option><option value="עדו אבגר">עדו אבגר</option><option value="עמי צדיק">עמי צדיק</option><option value="שירי ספקטור בן ארי">שירי ספקטור בן ארי</option><option value="שלי לוי">שלי לוי</option></select></div>
+                    <div class="col-md-2 d-flex flex-column"><label class="filter-label">גוף מבקש</label><select id="requesterFilter" class="form-select form-select-sm"><option value="">-- הכל --</option><option value="אביגדור ליברמן">אביגדור ליברמן</option><option value="אביגדור מעוז">אביגדור מעוז</option><option value="אביחי בוארון">אביחי בוארון</option><option value="אופיר כץ">אופיר כץ</option><option value="אורי מקלב">אורי מקלב</option><option value="אורית פרקש-הכהן">אורית פרקש-הכהן</option><option value="אושר שקלים">אושר שקלים</option><option value="אחמד טיבי">אחמד טיבי</option><option value="איימן עודה">איימן עודה</option><option value="אימאן ח'טיב יאסין">אימאן ח'טיב יאסין</option><option value="אלון נתן שוסטר">אלון נתן שוסטר</option><option value="אלי דלל">אלי דלל</option><option value="אליהו ברוכי">אליהו ברוכי</option><option value="אליהו רביבו">אליהו רביבו</option><option value="אלמוג כהן">אלמוג כהן</option><option value="אמיר אוחנה">אמיר אוחנה</option><option value="אפרת רייטן מרום">אפרת רייטן מרום</option><option value="אריאל קלנר">אריאל קלנר</option><option value="בועז ביסמוט">בועז ביסמוט</option><option value="בועז טופורובסקי">בועז טופורובסקי</option><option value="גלית דיסטל">גלית דיסטל</option><option value="גלעד קריב">גלעד קריב</option><option value="דבי ביטון">דבי ביטון</option><option value="הוועדה המיוחדת לטיפול בשורדי השואה">הוועדה המיוחדת לטיפול בשורדי השואה</option><option value="הוועדה המיוחדת לעובדים זרים">הוועדה המיוחדת לעובדים זרים</option><option value="הוועדה המיוחדת לעניין הקרן לאזרחי ישראל">הוועדה המיוחדת לעניין הקרן לאזרחי ישראל</option><option value="הוועדה המיוחדת לענייני הצעירים">הוועדה המיוחדת לענייני הצעירים</option><option value="הוועדה המיוחדת לפיקוח על תהליכי הסרת חסמים">הוועדה המיוחדת לפיקוח על תהליכי הסרת חסמים</option><option value="הוועדה המיוחדת לצמצום פערים חברתיים בפריפריה">הוועדה המיוחדת לצמצום פערים חברתיים בפריפריה</option><option value="הוועדה לביטחון לאומי">הוועדה לביטחון לאומי</option><option value="הוועדה לזכויות הילד">הוועדה לזכויות הילד</option><option value="הוועדה לחיזוק ופיתוח הנגב והגליל">הוועדה לחיזוק ופיתוח הנגב והגליל</option><option value="הוועדה למאבק בנגעי הסמים והאלכוהול">הוועדה למאבק בנגעי הסמים והאלכוהול</option><option value="הוועדה למיזמים ציבוריים">הוועדה למיזמים ציבוריים</option><option value="הוועדה לענייני ביקורת המדינה">הוועדה לענייני ביקורת המדינה</option><option value="הוועדה לפניות הציבור">הוועדה לפניות הציבור</option><option value="הוועדה לקידום מעמד האישה ולשוויון מגדרי">הוועדה לקידום מעמד האישה ולשוויון מגדרי</option><option value="הייעוץ המשפטי לוועדה לביטחון לאומי">הייעוץ המשפטי לוועדה לביטחון לאומי</option><option value="הייעוץ המשפטי לוועדה לזכויות הילד">הייעוץ המשפטי לוועדה לזכויות הילד</option><option value="הייעוץ המשפטי לוועדת החוץ והביטחון">הייעוץ המשפטי לוועדת החוץ והביטחון</option><option value="הייעוץ המשפטי לוועדת החינוך">הייעוץ המשפטי לוועדת החינוך</option><option value="הייעוץ המשפטי לוועדת החינוך, התרבות והספורט">הייעוץ המשפטי לוועדת החינוך, התרבות והספורט</option><option value="הייעוץ המשפטי לוועדת הכלכלה">הייעוץ המשפטי לוועדת הכלכלה</option><option value="הייעוץ המשפטי לוועדת הכספים">הייעוץ המשפטי לוועדת הכספים</option><option value="הייעוץ המשפטי לוועדת העבודה">הייעוץ המשפטי לוועדת העבודה</option><option value="הייעוץ המשפטי לוועדת העבודה, הרווחה והבריאות">הייעוץ המשפטי לוועדת העבודה, הרווחה והבריאות</option><option value="הייעוץ המשפטי לוועדת הפנים והגנת הסביבה">הייעוץ המשפטי לוועדת הפנים והגנת הסביבה</option><option value="הייעוץ המשפטי לוועדת חוקה">הייעוץ המשפטי לוועדת חוקה</option><option value="הייעוץ המשפטי לכנסת - לשכת היועץ המשפטי לכנסת">הייעוץ המשפטי לכנסת - לשכת היועץ המשפטי לכנסת</option><option value="הקליטה והתפוצות">הקליטה והתפוצות</option><option value="הרווחה והבריאות">הרווחה והבריאות</option><option value="התרבות והספורט">התרבות והספורט</option><option value="ואליד אל הואשלה">ואליד אל הואשלה</option><option value="ואליד טאהא">ואליד טאהא</option><option value="ולדימיר בליאק">ולדימיר בליאק</option><option value="ועדה לצמצום פערים חברתיים">ועדה לצמצום פערים חברתיים</option><option value="ועדת הבריאות">ועדת הבריאות</option><option value="ועדת החוץ וביטחון">ועדת החוץ וביטחון</option><option value="ועדת החוקה, חוק ומשפט">ועדת החוקה, חוק ומשפט</option><option value="ועדת החינוך">ועדת החינוך</option><option value="ועדת החינוך, התרבות והספורט">ועדת החינוך, התרבות והספורט</option><option value="ועדת הכלכלה">ועדת הכלכלה</option><option value="ועדת הכנסת">ועדת הכנסת</option><option value="ועדת הכספים">ועדת הכספים</option><option value="ועדת המדע והטכנולוגיה">ועדת המדע והטכנולוגיה</option><option value="ועדת המשנה לקידום מנופי צמיחה של ענף החקלאות">ועדת המשנה לקידום מנופי צמיחה של ענף החקלאות</option><option value="ועדת העבודה והרווחה">ועדת העבודה והרווחה</option><option value="ועדת העלייה">ועדת העלייה</option><option value="ועדת העלייה, הקליטה והתפוצות">ועדת העלייה, הקליטה והתפוצות</option><option value="ועדת הפנים והגנת הסביבה">ועדת הפנים והגנת הסביבה</option><option value="זאב אלקין">זאב אלקין</option><option value="חוק ומשפט">חוק ומשפט</option><option value="חטיבת המידע">חטיבת המידע</option><option value="חמד עמאר">חמד עמאר</option><option value="חנוך דב מלביצקי">חנוך דב מלביצקי</option><option value="חשבות הכנסת">חשבות הכנסת</option><option value="טטיאנה מזרסקי">טטיאנה מזרסקי</option><option value="יאיר לפיד">יאיר לפיד</option><option value="יאסר חוג'יראת">יאסר חוג'יראת</option><option value="יבגני סובה">יבגני סובה</option><option value="יו"ר הכנסת">יו"ר הכנסת</option><option value="יואב סגלוביץ">יואב סגלוביץ</option><option value="יוליה מלינובסקי">יוליה מלינובסקי</option><option value="יונתן מישרקי">יונתן מישרקי</option><option value="יוסף טייב">יוסף טייב</option><option value="יוסף עטאונה">יוסף עטאונה</option><option value="יוראי להב הרצנו">יוראי להב הרצנו</option><option value="יחיאל משה טרופר">יחיאל משה טרופר</option><option value="ינון אזולאי">ינון אזולאי</option><option value="יסמין פרידמן">יסמין פרידמן</option><option value="יצחק קרויזר">יצחק קרויזר</option><option value="ירון לוי">ירון לוי</option><option value="לימור סון הר מלך">לימור סון הר מלך</option><option value="לשכת יו">לשכת יו</option><option value="לשכת מנכ"ל הכנסת">לשכת מנכ"ל הכנסת</option><option value="מאיר כהן">מאיר כהן</option><option value="מאיר פרוש">מאיר פרוש</option><option value="מחלקת קשרי חוץ">מחלקת קשרי חוץ</option><option value="מטי צרפתי הרכבי">מטי צרפתי הרכבי</option><option value="מיכאל מרדכי ביטון">מיכאל מרדכי ביטון</option><option value="מיכל מרים וולדיגר">מיכל מרים וולדיגר</option><option value="מיכל שיר סגמן">מיכל שיר סגמן</option><option value="מיקי לוי">מיקי לוי</option><option value="מירב בן ארי">מירב בן ארי</option><option value="מירב כהן">מירב כהן</option><option value="ממונה על ייצוג הכנסת בערכאות">ממונה על ייצוג הכנסת בערכאות</option><option value="מרב מיכאלי">מרב מיכאלי</option><option value="מרכז המחקר והמידע">מרכז המחקר והמידע</option><option value="מרפאת הכנסת">מרפאת הכנסת</option><option value="משה ארבל">משה ארבל</option><option value="משה גפני">משה גפני</option><option value="משה טור פז">משה טור פז</option><option value="משה סולומון">משה סולומון</option><option value="משה סעדה">משה סעדה</option><option value="משה פסל">משה פסל</option><option value="משה רוט">משה רוט</option><option value="מתן כהנא">מתן כהנא</option><option value="נאור שירי">נאור שירי</option><option value="ניסים ואטורי">ניסים ואטורי</option><option value="נעמה לזימי">נעמה לזימי</option><option value="סימון דוידסון">סימון דוידסון</option><option value="עאידה תומא סלימאן">עאידה תומא סלימאן</option><option value="עודד פורר">עודד פורר</option><option value="עופר כסיף">עופר כסיף</option><option value="עידן רול">עידן רול</option><option value="עמית הלוי">עמית הלוי</option><option value="פנינה תמנו-שטה">פנינה תמנו-שטה</option><option value="צבי ידידיה סוכות">צבי ידידיה סוכות</option><option value="צביקה פוגל">צביקה פוגל</option><option value="צגה צגנש מלקו">צגה צגנש מלקו</option><option value="קטי קטרין שטרית">קטי קטרין שטרית</option><option value="רון כץ">רון כץ</option><option value="רם בן ברק">רם בן ברק</option><option value="שלום דנינו">שלום דנינו</option><option value="שלי טל מירון">שלי טל מירון</option><option value="שלמה קרעי">שלמה קרעי</option><option value="שמחה רוטמן">שמחה רוטמן</option><option value="שרון ניר">שרון ניר</option><option value="שרן השכל">שרן השכל</option></select></div>
+                    <div class="col-md-1 d-flex flex-column"><label class="filter-label">שנה</label><select id="yearFrom" class="form-select form-select-sm"><option value="">הכל</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option></select></div>
                     <div class="col-md-1"><button class="btn btn-outline-danger btn-sm w-100" onclick="resetFilters()">נקה</button></div>
                 </div>
-
                 <div class="keyword-tags-row mt-3 pt-2 border-top d-flex align-items-center gap-2">
-                    <div class="fw-bold text-secondary small">מילות מפתח פעילות (AND):</div>
-                    <div id="activeKeywords" class="d-flex flex-wrap gap-2"><span class="text-muted small">בחר מילה בטבלה לסינון</span></div>
+                    <div class="fw-bold text-secondary small">מילות מפתח:</div>
+                    <div id="activeKeywords" class="d-flex flex-wrap gap-2"><span class="text-muted small">בחר מילה לסינון</span></div>
                 </div>
             </div>
-
             <table id="mainTable" class="display table table-sm table-hover">
                 <thead><tr><th>תאריך</th><th>קטגוריה</th><th>כותרת</th><th>מחברים</th><th>ראש צוות</th><th>מבקשים</th><th>מילות מפתח</th><th style="display:none;">תקציר</th><th>PDF</th></tr></thead>
                 <tbody>
@@ -9182,7 +9176,6 @@
         </tr></tbody>
             </table>
         </div>
-
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -9190,13 +9183,13 @@
             let table;
             let activeKeywords = new Set();
             const hebLang = {
-        "sProcessing": "מעבד...", "sLengthMenu": "הצג _MENU_ פריטים", "sZeroRecords": "לא נמצאו רשומות",
+        "sProcessing": "מעבד...", "sLengthMenu": "הצג _MENU_ פריטים", "sZeroRecords": "לא נמצאו רשומות מתאימות",
         "sSearch": "חיפוש:", "oPaginate": { "sFirst": "ראשון", "sPrevious": "קודם", "sNext": "הבא", "sLast": "אחרון" }
     };
 
             function renderKeywordTags() {
                 const c = $('#activeKeywords').empty();
-                if (activeKeywords.size === 0) return c.append('<span class="text-muted small">בחר מילה בטבלה לסינון</span>');
+                if (activeKeywords.size === 0) return c.append('<span class="text-muted small">בחר מילה לסינון</span>');
                 activeKeywords.forEach(kw => c.append(`<span class="active-keyword-tag shadow-sm">${kw}<span class="ms-2" style="cursor:pointer; font-weight:bold" onclick="removeKeyword('${kw}')">&times;</span></span>`));
             }
             function addKeyword(kw) { activeKeywords.add(kw); renderKeywordTags(); table.draw(); }
@@ -9208,9 +9201,19 @@
                 const kwParam = urlParams.get('keywords');
                 if (kwParam) kwParam.split(',').forEach(k => activeKeywords.add(k.trim()));
 
+                const authParam = urlParams.get('author');
+                const yearParam = urlParams.get('year_from');
+
                 table = $('#mainTable').DataTable({
                     "dom": 'lrtip', "language": hebLang, "order": [[ 0, "desc" ]], "deferRender": true,
-                    "initComplete": function() { $('#mainTable').show(); renderKeywordTags(); }
+                    "initComplete": function() { 
+                        $('#mainTable').show(); 
+                        renderKeywordTags();
+                        // הפעלת פילטרים מפרמטרים
+                        if (authParam) $('#authorFilter').val(authParam).trigger('change');
+                        if (yearParam) $('#yearFrom').val(yearParam).trigger('change');
+                        if (kwParam || authParam || yearParam) table.draw();
+                    }
                 });
 
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
@@ -9221,10 +9224,7 @@
                     if (lead && data[4] !== lead) return false;
                     if (req && !data[5].includes(req)) return false;
                     if (yVal && !data[0].includes(yVal)) return false;
-                    if (activeKeywords.size > 0) {
-                        const rowKws = data[6];
-                        if (!Array.from(activeKeywords).every(kw => rowKws.includes(kw))) return false;
-                    }
+                    if (activeKeywords.size > 0 && !Array.from(activeKeywords).every(kw => data[6].includes(kw))) return false;
                     const query = $('#smartSearch').val().toLowerCase();
                     return data.join(' ').toLowerCase().includes(query);
                 });
@@ -9232,11 +9232,10 @@
                 $('#smartSearch, select').on('keyup change', () => table.draw());
                 $('[data-bs-toggle="popover"]').popover({ trigger: 'hover', placement: 'right' });
             });
-
-            function filterByAuthor(n) { $('#authorFilter').val(n).change(); }
-            function filterByCategory(c) { $('#categoryFilter').val(c).change(); }
-            function filterByLeader(l) { $('#leaderFilter').val(l).change(); }
-            function filterByRequester(r) { $('#requesterFilter').val(r).change(); }
+            function filterByAuthor(n) { $('#authorFilter').val(n).trigger('change'); }
+            function filterByCategory(c) { $('#categoryFilter').val(c).trigger('change'); }
+            function filterByLeader(l) { $('#leaderFilter').val(l).trigger('change'); }
+            function filterByRequester(r) { $('#requesterFilter').val(r).trigger('change'); }
         </script>
     </body>
     </html>
