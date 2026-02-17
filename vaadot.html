@@ -1,0 +1,782 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>דשבורד חומרי ממ"מ - גרסה 1.6.2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', system-ui, sans-serif; padding-top: 70px; padding-bottom: 50px; }
+        .navbar { background-color: #1a2a6c; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .header-banner { background: linear-gradient(135deg, #1a2a6c, #2c5364); color: white; padding: 40px 0; border-radius: 0 0 30px 30px; margin-bottom: 30px; }
+        .card-stat { border: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; background: white; padding: 20px; text-decoration: none; color: inherit; display: block; }
+        .stat-number { font-size: 2rem; font-weight: 800; color: #1a2a6c; display: block; }
+        .table-container { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        th { cursor: pointer; position: relative; }
+        th::after { content: ' ↕'; font-size: 0.8rem; opacity: 0.3; }
+        .doc-link { display: block; font-size: 0.85rem; border-right: 3px solid #ffc107; padding-right: 10px; margin-bottom: 6px; text-decoration: none; color: #0d6efd; }
+        .mention-btn { background: #ffc107; border: none; color: black; padding: 4px 16px; border-radius: 50px; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+        .quote-box { background: #ffffff; border-right: 5px solid #1a2a6c; padding: 15px; margin-bottom: 15px; font-size: 1.05rem; line-height: 1.7; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: #333; }
+        .tip-box { background-color: #fff9db; border-right: 5px solid #fab005; padding: 12px 18px; margin-bottom: 25px; border-radius: 8px; font-weight: 600; color: #856404; }
+        .tooltip-inner { text-align: right; max-width: 320px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">🏛️ דשבורד ממ"מ</a>
+    <div class="navbar-nav ms-auto">
+      <a class="nav-link" href="#committee-summary">סיכום וועדות</a>
+      <a class="nav-link" href="#detailed-sessions">פירוט ישיבות</a>
+    </div>
+  </div>
+</nav>
+
+<div class="header-banner text-center">
+    <div class="container">
+        <h1>דשבורד חומרי הממ"מ בוועדות הכנסת</h1>
+        <div class="mt-3">
+            <span class="badge bg-light text-dark p-2 px-3 shadow-sm rounded-pill">
+                📅 טווח: 01.01.2025 עד 31.01.2025 (31 ימי סריקה)
+            </span>
+        </div>
+        <div class="opacity-75 small mt-3">
+            גרסת קוד: 1.6.2 | הפקה: 17/02/2026 14:09:26
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row g-3 mb-5 text-center">
+        <div class="col-md-3"><div class="card-stat shadow-sm"><span class="stat-number">275</span><small>דיונים שנסרקו</small></div></div>
+        <div class="col-md-3"><a href="#committee-summary" class="card-stat shadow-sm"><span class="stat-number">11</span><small>וועדות פעילות</small></a></div>
+        <div class="col-md-3"><div class="card-stat shadow-sm"><span class="stat-number">32</span><small>דיונים עם חומרי רקע</small></div></div>
+        <div class="col-md-3"><div class="card-stat shadow-sm"><span class="stat-number">v1.6.2</span><small>גרסת מערכת</small></div></div>
+    </div>
+
+    <div class="table-container" id="committee-summary">
+        <h3 class="mb-4 fw-bold text-primary"><i class="fas fa-chart-pie me-2"></i>סיכום וועדות</h3>
+        <table class="table table-hover align-middle text-center sortable">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-end" data-bs-toggle="tooltip" title="שם הוועדה כפי שמופיע באתר הכנסת">שם הוועדה ℹ️</th>
+                    <th data-bs-toggle="tooltip" title="חומרי רקע אלו מסמכים שמופיעים באתר עבור הישיבה הספציפית ושהמסמך מכיל את המילים מכון המחקר או מרכז המחקר והמידע בנושא המסמך">דיונים עם חומרי רקע ℹ️</th>
+                    <th data-bs-toggle="tooltip" title="אחוז הדיונים עם חומרי רקע מתוך כלל הדיונים שבוצעו בוועדה זו בתקופה הנבחרת">% מכלל הישיבות ℹ️</th>
+                    <th data-bs-toggle="tooltip" title="אזכורים זה כאשר היה חומר רקע וגם בסריקת הפרוטוקול, אם פורסם כזה כבר, מופיעות המילים מכון המחקר או מממ">דיונים עם אזכורים ℹ️</th>
+                    <th data-bs-toggle="tooltip" title="אחוז האזכורים בפועל מתוך מספר הישיבות שכללו חומרי רקע בלבד. מדד זה מראה עד כמה חומר הרקע אכן עלה לדיון">% אזכורים מחומרי רקע ℹ️</th>
+                </tr>
+            </thead>
+            <tbody>
+    
+                <tr>
+                    <td class="text-end fw-bold">ועדת החינוך התרבות והספורט</td>
+                    <td data-sort="7"><span class="badge bg-primary rounded-pill px-3">7</span></td>
+                    <td data-sort="25.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 25.0%"></div></div>
+                        <small>25.0%</small>
+                    </td>
+                    <td data-sort="5"><span class="badge bg-warning text-dark rounded-pill px-3">5</span></td>
+                    <td data-sort="71.4286">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 71.42857142857143%"></div></div>
+                        <small>71.4%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">הוועדה לענייני ביקורת המדינה</td>
+                    <td data-sort="5"><span class="badge bg-primary rounded-pill px-3">5</span></td>
+                    <td data-sort="45.4545">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 45.45454545454545%"></div></div>
+                        <small>45.5%</small>
+                    </td>
+                    <td data-sort="4"><span class="badge bg-warning text-dark rounded-pill px-3">4</span></td>
+                    <td data-sort="80.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 80.0%"></div></div>
+                        <small>80.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">ועדת הבריאות</td>
+                    <td data-sort="5"><span class="badge bg-primary rounded-pill px-3">5</span></td>
+                    <td data-sort="31.2500">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 31.25%"></div></div>
+                        <small>31.2%</small>
+                    </td>
+                    <td data-sort="3"><span class="badge bg-warning text-dark rounded-pill px-3">3</span></td>
+                    <td data-sort="60.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 60.0%"></div></div>
+                        <small>60.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">הוועדה לביטחון לאומי</td>
+                    <td data-sort="4"><span class="badge bg-primary rounded-pill px-3">4</span></td>
+                    <td data-sort="50.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 50.0%"></div></div>
+                        <small>50.0%</small>
+                    </td>
+                    <td data-sort="4"><span class="badge bg-warning text-dark rounded-pill px-3">4</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">ועדת הכנסת</td>
+                    <td data-sort="3"><span class="badge bg-primary rounded-pill px-3">3</span></td>
+                    <td data-sort="37.5000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 37.5%"></div></div>
+                        <small>37.5%</small>
+                    </td>
+                    <td data-sort="3"><span class="badge bg-warning text-dark rounded-pill px-3">3</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">ועדת החוץ והביטחון</td>
+                    <td data-sort="3"><span class="badge bg-primary rounded-pill px-3">3</span></td>
+                    <td data-sort="30.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 30.0%"></div></div>
+                        <small>30.0%</small>
+                    </td>
+                    <td data-sort="0"><span class="badge bg-warning text-dark rounded-pill px-3">0</span></td>
+                    <td data-sort="0.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 0.0%"></div></div>
+                        <small>0.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">הוועדה המיוחדת לענייני הצעירים</td>
+                    <td data-sort="1"><span class="badge bg-primary rounded-pill px-3">1</span></td>
+                    <td data-sort="33.3333">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 33.33333333333333%"></div></div>
+                        <small>33.3%</small>
+                    </td>
+                    <td data-sort="1"><span class="badge bg-warning text-dark rounded-pill px-3">1</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">ועדת הכלכלה</td>
+                    <td data-sort="1"><span class="badge bg-primary rounded-pill px-3">1</span></td>
+                    <td data-sort="4.1667">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 4.166666666666666%"></div></div>
+                        <small>4.2%</small>
+                    </td>
+                    <td data-sort="1"><span class="badge bg-warning text-dark rounded-pill px-3">1</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">ועדת משנה לספורט</td>
+                    <td data-sort="1"><span class="badge bg-primary rounded-pill px-3">1</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                    <td data-sort="1"><span class="badge bg-warning text-dark rounded-pill px-3">1</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">ועדת משנה לתוכניות הלימודים במזרח ירושלים והפיקוח עליהן</td>
+                    <td data-sort="1"><span class="badge bg-primary rounded-pill px-3">1</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                    <td data-sort="1"><span class="badge bg-warning text-dark rounded-pill px-3">1</span></td>
+                    <td data-sort="100.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 100.0%"></div></div>
+                        <small>100.0%</small>
+                    </td>
+                </tr>
+        
+                <tr>
+                    <td class="text-end fw-bold">הוועדה המיוחדת לצמצום פערים חברתיים בפריפריה</td>
+                    <td data-sort="1"><span class="badge bg-primary rounded-pill px-3">1</span></td>
+                    <td data-sort="16.6667">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar" style="width: 16.666666666666664%"></div></div>
+                        <small>16.7%</small>
+                    </td>
+                    <td data-sort="0"><span class="badge bg-warning text-dark rounded-pill px-3">0</span></td>
+                    <td data-sort="0.0000">
+                        <div class="progress" style="height: 8px;"><div class="progress-bar bg-warning" style="width: 0.0%"></div></div>
+                        <small>0.0%</small>
+                    </td>
+                </tr>
+        
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="detailed-sessions">
+        <h3 class="mb-4 fw-bold text-danger"><i class="fas fa-search me-2"></i>פירוט ישיבות וממצאים</h3>
+        <div class="tip-box shadow-sm">
+            💡 טיפ: ניתן למיין כל עמודה בלחיצה על הכותרת. המיון הראשוני הוא תמיד מהגבוה לנמוך.
+        </div>
+        <table class="table table-hover align-middle sortable">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th class="text-end" style="width: 12%" data-bs-toggle="tooltip" title="תאריך הישיבה. המיון הוא כרונולוגי">תאריך ℹ️</th>
+                    <th class="text-end" style="width: 15%" data-bs-toggle="tooltip" title="הוועדה המנהלת את הדיון">וועדה ℹ️</th>
+                    <th class="text-end" data-bs-toggle="tooltip" title="נושא הדיון המלא">נושא הדיון ℹ️</th>
+                    <th class="text-end" style="width: 20%" data-bs-toggle="tooltip" title="מסמכי מממ שצורפו כחומרי רקע">מסמכי רקע ℹ️</th>
+                    <th style="width: 8%" data-bs-toggle="tooltip" title="קישור לקובץ הפרוטוקול המלא (Word)">פרוטוקול ℹ️</th>
+                    <th style="width: 12%" data-bs-toggle="tooltip" title="כמות האזכורים של המממ בתוך הפרוטוקול. לחצו לצפייה בציטוטים">אזכורים ℹ️</th>
+                </tr>
+            </thead>
+            <tbody>
+    
+                <tr>
+                    <td class="text-end" data-sort="20250106"><small>6 בינואר 2025<br><b>10:00</b></small></td>
+                    <td class="text-end"><b>הוועדה המיוחדת לצמצום פערים חברתיים בפריפריה</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2233/sessions/2226395" target="_blank" class="text-dark text-decoration-none">השפעת מלחמת חרבות ברזל על ענף התיירות בפריפריה והיערכות לשיקום</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5423064.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - 30באוקטובר 2023 מסמך בנושא השפעת מלחמת חרבות ברזל על ענף התיירות מאת חוקרי מממ לירן קוסמן ונעם בוטוש</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5630664.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <div class="modal fade" id="modal241" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לביטחון לאומי</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...יתן לו את האפשרות להציג את הדברים. מתן מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>, בבקשה.   &lt;&lt; אורח &gt;&gt; מתן שחק: &lt;&lt; אורח &gt;&gt;   תודה כבוד היושב-...</div><div class="quote-box">...&lt;&lt; אורח &gt;&gt;   תודה כבוד היושב-ראש. אני מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת.   &lt;&lt; דובר &gt;&gt; גלעד קריב (העבודה): &lt;&lt; דובר &gt;&gt;   מגי...</div><div class="quote-box">...ל זאת יש לנו כמה שנים טובות של עבודה עם <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> ומגיע להם מכל חברי הוועדה שאפו גדול.   &lt;&lt; יור &gt;&gt; היו&quot;ר צביק...</div><div class="quote-box">...וח יהיה מוטה לצד הפקחים. כפי שהציג מתן מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת, ניתן היה לראות שבאמת יש איזושהי התפלגות אבל עדיין...</div><div class="quote-box">...לפחות הנתונים שאני לוקח מתוך הניתוח של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת, יש כאן ממש קריסה של מערך הסיור. אי אפשר להגדיר את...</div><div class="quote-box">...באו מהמשטרה אבל עובדו בכישרון רב על ידי <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת, שאי אפשר להתעלם מהירידה התלולה במספר שוטרי הסיור....</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250107"><small>7 בינואר 2025<br><b>10:30</b></small></td>
+                    <td class="text-end"><b>הוועדה לביטחון לאומי</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2229/sessions/2226355" target="_blank" class="text-dark text-decoration-none">חוק לייעול האכיפה והפיקוח העירוניים ברשויות המקומיות (הוראת שעה) (תיקון מס' 15), התשפ"ה–2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\law\25_ls_mmm_5351254.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - תכנית השיטור העירוני והמועצתי - תמונת מצב. 15 בדצמבר 2024</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5431398.pdf" target="_blank" class="doc-link">📄 מרכז המחקר והמידע של הכנסת - נתוני כוח אדם ביחידות האכיפה העירוניות ובתפקידי סיור במשטרה. 6 בינואר 2025</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5431390.pdf" target="_blank" class="doc-link">📄 מרכז המחקר והמידע של הכנסת - שיעורי השתתפות המשרד לביטחון לאומי בתקצוב שכר הפקחים המסייעים ברשויות המשתתפות בתוכנית השיטור העירוני. 6 בינואר 2025</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5758477.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="6"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal241">6 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal235" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לענייני ביקורת המדינה</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...מדינה, קצר וקולע, אם יש לכם?  אין לכם.  <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>? קצר וקולע בבקשה. אני רוצה להגיד משהו: אני נוהג בדרך כלל לת...</div><div class="quote-box">..., אני אעשה את המקסימום לתת לכולם.  נציג <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>, אני מבקש סליחה, פשוט חבר הכנסת שטרן צריך לצאת דחוף. בבקשה,...</div><div class="quote-box">...תת לכם, אנחנו נעשה את זה לסירוגין. נציג <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>, בבקשה.   &lt;&lt; דובר &gt;&gt; יובל וורגן: &lt;&lt; דובר &gt;&gt;     אני ראש צוו...</div><div class="quote-box">...ובל וורגן: &lt;&lt; דובר &gt;&gt;     אני ראש צוות ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> - -   &lt;&lt; דובר &gt;&gt; דני אלגרט: &lt;&lt; דובר &gt;&gt;     מיקי, מתי אני אד...</div><div class="quote-box">...מיקי לוי: &lt;&lt; יור &gt;&gt;     אני מבקש מנציג <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> לעצור. בבקשה, פספסתי את זה. אני רגיל ביום שני לעשות את זה....</div><div class="quote-box">...לק מהדברים שאנחנו חייבים לעשות.  בבקשה, <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>, קצר וקולע.   &lt;&lt; דובר_המשך &gt;&gt; יובל וורגן: &lt;&lt; דובר_המשך &gt;&gt;...</div><div class="quote-box">...-ראש, מצטער על המעבר החד. אני ראש צוות ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>. נמצאת איתי כאן אוריאנה אלמסי שכתבה שורת מסמכים בנושא גיוס...</div><div class="quote-box">...ידוע, חלה על בני 18. בהתאם לזה, ביקשנו ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> מהלמ&quot;ס לבצע עבורנו עיבוד נתונים מיוחד שבאמצעותו אנחנו מציגי...</div><div class="quote-box">...ל מה היעד.  עכשיו, התייחסתי פה להצגה של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> - -   &lt;&lt; דובר &gt;&gt; שרון ניר (ישראל ביתנו): &lt;&lt; דובר &gt;&gt;     לכא...</div><div class="quote-box">...מיקי לוי: &lt;&lt; יור &gt;&gt;     מיכאל, הטבלה של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>. אני רוצה טבלאות מצה&quot;ל.   &lt;&lt; דובר_המשך &gt;&gt; מיכאל מרדכי ביטון...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250107"><small>7 בינואר 2025<br><b>12:00</b></small></td>
+                    <td class="text-end"><b>הוועדה לענייני ביקורת המדינה</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2227/sessions/2226346" target="_blank" class="text-dark text-decoration-none">שירות חרדים בצה"ל - דוח ביקורת שנתי 62</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5396330.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך של המ.מ.מ - מודלי גיוס לצבא בישראל ובעולם סקירת חלופות</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5396337.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך של המ.מ.מ - גיוס חרדים לצה"ל - נתונים מדווחים והאתגרים באיסופם</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5396342.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך של המ.מ.מ - תעסוקת חרדים - מבט על</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5396344.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך של המ.מ.מ - נתונים על מתנדבי השירות הלאומי-אזרחי</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5431604.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך של המ.מ.מ - גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5599879.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="11"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal235">11 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal233" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה המיוחדת לענייני הצעירים</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...ל מי שהגיעו לכאן. אני אתן למאיר איזנקוט מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, מחלקת המחקר של הכנסת. הכנסתם לנו דוח מחקר במיוחד – קודם כו...</div><div class="quote-box">...&lt; אורח &gt;&gt;    שלום לכולם. שמי מאיר. אני מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת. כתבנו מחקר, מסמך קצר, על השפעות של חלק מהצעדים של...</div><div class="quote-box">...ה מאות שקלים בחודש, כמו שהביאו במסמך של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>. אני חושב שזה נכון. כולל דרך עליות מחירים – ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> העריכו שכ...</div><div class="quote-box">...חושב שזה נכון. כולל דרך עליות מחירים – ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> העריכו שכלל צעדי המיסוי יביאו לעלייה של אחוז בערך במדד המחי...</div><div class="quote-box">...כח הגירעון והצפי לגדילתו, הוועדה קיבלה מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת חישוב לפיו צפויה פגיעה שנתית בסך של כ-5,661 למשפחה...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250107"><small>7 בינואר 2025<br><b>12:00</b></small></td>
+                    <td class="text-end"><b>הוועדה המיוחדת לענייני הצעירים</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2234/sessions/2226292" target="_blank" class="text-dark text-decoration-none">השלכות יוקר המחייה לשנת 2025 על משקי בית צעירים</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_ci_mmm_5396925.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - תיאור וניתוח ההצעה להעלאת דמי ביטוח לאומי – מסמך מעודכן</a><a href="https://fs.knesset.gov.il/25\Committees\25_ci_mmm_5396928.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - ניתוח שוק השכירות של צעירים ושל משפחות צעירות</a><a href="https://fs.knesset.gov.il/25\Committees\25_ci_mmm_5396932.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - פעילות צהרוני ניצנים בשנת הלימודים תשפ''ה</a><a href="https://fs.knesset.gov.il/25\Committees\25_ci_mmm_5424017.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - השפעת צעדי הממשלה על משפחות צעירות</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5720018.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="5"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal233">5 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal204" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת הכנסת</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...&gt;&gt;   אבל לא רק היושב ראש, לי יש שאלות, ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> מעביר שאלות.    &lt;&lt; יור &gt;&gt; היו&quot;ר אופיר כץ: &lt;&lt; יור &gt;&gt;   כמו ש...</div><div class="quote-box">...הזאת כלפי האזרח, ואנחנו יודעים, הודות ל<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת שגם כתבו לנו את ההערות, והם אומרים את זה גם, בסופו...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250113"><small>13 בינואר 2025<br><b>09:30</b></small></td>
+                    <td class="text-end"><b>ועדת הכנסת</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2211/sessions/2226820" target="_blank" class="text-dark text-decoration-none">1. חוק הביטוח הלאומי (תיקון מס' 252 והוראת שעה), התשפ"ה–2025 2. הצעת חוק התוכנית הכלכלית (תיקוני חקיקה ליישום המדיניות הכלכלית לשנת התקציב 2025), התשפ"ה-2024 3. חוק להשגת יעדי התקציב וליישום המדיניות הכלכלית לשנת התקציב 2025 (תיקוני חקיקה), התשפ"ה–2025 4. חוק להסדרה של הצבת כוורות, האבקה וייצור דבש, התשפ"ה–2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5514387.pdf" target="_blank" class="doc-link">📄 טבלת הצעת חוק ההסדרים לשנת 2025 - הערות מרכז המחקר והמידע</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5720085.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="2"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal204">2 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal201" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לענייני ביקורת המדינה</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...אני כבר מקדים את הסיכום שלי. תודה רבה. <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, בבקשה, קצר, קולע.   &lt;&lt; אורח &gt;&gt; מיכל לרר: &lt;&lt; אורח &gt;&gt;     בו...</div><div class="quote-box">...לרר: &lt;&lt; אורח &gt;&gt;     בוקר טוב. מיכל לרר, <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת. אני אציג בקצרה כמה דברים שמאוד מתכתבים עם הדברים...</div><div class="quote-box">...(שקף: הדרך למיצוי זכויות בפועל). הציגו מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> את התהליך של מיצוי הזכויות. גם היום, הרוב המוחלט של תהליך מ...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250113"><small>13 בינואר 2025<br><b>10:00</b></small></td>
+                    <td class="text-end"><b>הוועדה לענייני ביקורת המדינה</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2227/sessions/2226622" target="_blank" class="text-dark text-decoration-none">אי -מיצוי של זכויות חברתיות - ביקורת מעקב (דוח שנתי 72א)</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5442666.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מ.מ.מ כנסת - מדיניות מיצוי זכויות אקטיבי</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5561521.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="3"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal201">3 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal187" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת הכנסת</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...עיף 10. אנחנו ביקשנו, כל כך הרבה פניות, וה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> ביקש ופנה גם לאוצר וגם למשרד הבריאות לקבל תשובות כדי לדון ב...</div><div class="quote-box">...העברנו תשובה מפורטת לכל השאלות שהועברו מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>.  &lt;&lt; דובר &gt;&gt; מיכל מרים וולדיגר (הציונות הדתית): &lt;&lt; דובר &gt;&gt;...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250114"><small>14 בינואר 2025<br><b>11:00</b></small></td>
+                    <td class="text-end"><b>ועדת הכנסת</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2211/sessions/2226946" target="_blank" class="text-dark text-decoration-none">1. פניית חה"כ עידן רול בבקשה לקבוע כי פרש מסיעת יש עתיד, לפי סעיף 61 לחוק הכנסת 2. הצעת חוק התוכנית הכלכלית (תיקוני חקיקה ליישום המדיניות הכלכלית לשנת התקציב 2025), התשפ"ה-2024 3. חוק להשגת יעדי התקציב וליישום המדיניות הכלכלית לשנת התקציב 2025 (תיקוני חקיקה), התשפ"ה–2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5514367.pdf" target="_blank" class="doc-link">📄 טבלת הצעת חוק ההסדרים לשנת 2025 - הערות מרכז המחקר והמידע</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5761250.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="2"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal187">2 אזכורים</button></td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250114"><small>14 בינואר 2025<br><b>11:00</b></small></td>
+                    <td class="text-end"><b>ועדת החוץ והביטחון</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2216/sessions/2226796" target="_blank" class="text-dark text-decoration-none">הצעת חוק שירות ביטחון (תיקון מס' 26) (שילוב תלמידי ישיבות), התשפ"ב-2022</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5559142.pdf" target="_blank" class="doc-link">📄 גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים, מרכז המחקר והמידע</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5520398.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <div class="modal fade" id="modal176" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לביטחון לאומי</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...י תקלה ולהבא היא תתוקן.  יש גם סקירה של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> ואני מניחה שנשמע אותה עכשיו.   &lt;&lt; אורח &gt;&gt; נורית יחימוביץ כה...</div><div class="quote-box">...הדיווחים מאז הארכת הוראת השעה. המסמך של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> כלל רק את הדיווח החמישי. הייתה טעות סופר בדיווח הרביעי. אני...</div><div class="quote-box">...לה אבל זה לא משנה. זה גם מופיע במסמך של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>.   &lt;&lt; יור &gt;&gt; היו&quot;ר צביקה פוגל: &lt;&lt; יור &gt;&gt;   אתה אומר האם זה...</div><div class="quote-box">...ל בצו שופט. אנחנו כן רואים גם בדיווח של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> שיש השפעה בין תקופה של שנה לבין תקופה של ארבעה וחצי חודשים...</div><div class="quote-box">...נתונים מועברים – יהודית וקרן – בצורה בה <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> באמת רוצה אותם כדי שיוכל לנתח אותם עבורנו. אני לא חושד במרכ...</div><div class="quote-box">...די שיוכל לנתח אותם עבורנו. אני לא חושד ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> שהוא מסיט את הנתונים לרעת מישהו. הוא מקבל את הנתונים ומנתח...</div><div class="quote-box">...אוד לקבל השוואה – ותעשו את זה במשותף עם <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>, המשרד והמשטרה – בין מה שהיה לפני הסמכות למצב של הסמכות. כמ...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250114"><small>14 בינואר 2025<br><b>11:00</b></small></td>
+                    <td class="text-end"><b>הוועדה לביטחון לאומי</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2229/sessions/2226675" target="_blank" class="text-dark text-decoration-none">דיווח חמישי של השר לביטחון לאומי לפי סעיף 25(ד) לפקודת סדר הדין הפלילי (מעצר וחיפוש) [נוסח חדש], התשכט-1969</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5480530.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - ניתוח מרכז המחקר והמידע את נתוני הדיווח החמישי של השר לביטחון לאומי (חיפוש ללא צו)</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5758568.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="7"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal176">7 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal166" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לביטחון לאומי</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...בנתי מה פקחים מסייעים יכולים לעשות לבד. <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת הציג לנו דוח מדהים עם נתונים ופרטים רבים מהשטח שהר...</div><div class="quote-box">...וגל: &lt;&lt; יור &gt;&gt;   הערה טובה. תודה.  מתן, <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>.   &lt;&lt; אורח &gt;&gt; מתן שחק: &lt;&lt; אורח &gt;&gt;    <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של ה...</div><div class="quote-box">...דע.   &lt;&lt; אורח &gt;&gt; מתן שחק: &lt;&lt; אורח &gt;&gt;    <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת. נתון קטן מהמסמך שפרסמנו לקראת תחילת הדיונים. השימ...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250114"><small>14 בינואר 2025<br><b>13:15</b></small></td>
+                    <td class="text-end"><b>הוועדה לביטחון לאומי</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2229/sessions/2226631" target="_blank" class="text-dark text-decoration-none">חוק לייעול האכיפה והפיקוח העירוניים ברשויות המקומיות (הוראת שעה) (תיקון מס' 15), התשפ"ה–2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\law\25_ls_mmm_5351254.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - תכנית השיטור העירוני והמועצתי - תמונת מצב. 15 בדצמבר 2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5813993.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="3"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal166">3 אזכורים</button></td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250114"><small>14 בינואר 2025<br><b>14:30</b></small></td>
+                    <td class="text-end"><b>ועדת החינוך התרבות והספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2212/sessions/2226523" target="_blank" class="text-dark text-decoration-none">הצעת חוק התקנת מצלמות לשם הגנה על פעוטות במעונות יום לפעוטות (תיקון), התשפ"ד-2024</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5468850.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ - אלימות בגירים כלפי ילדים בגיל הרך במסגרות חינוכיות - יולי 2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5741825.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <div class="modal fade" id="modal151" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לביטחון לאומי</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...ל בהקראה ונשמע את מתן עם הנתונים שנאספו ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>.  יש לי הרבה שעות ייעוץ משפט של הייעוץ המשפטי לוועדה ואני י...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250115"><small>15 בינואר 2025<br><b>08:30</b></small></td>
+                    <td class="text-end"><b>הוועדה לביטחון לאומי</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2229/sessions/2226630" target="_blank" class="text-dark text-decoration-none">חוק לייעול האכיפה והפיקוח העירוניים ברשויות המקומיות (הוראת שעה) (תיקון מס' 15), התשפ"ה–2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\law\25_ls_mmm_5351254.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - תכנית השיטור העירוני והמועצתי - תמונת מצב. 15 בדצמבר 2024</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5486913.pptx" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - יישום תכנית השיטור העירוני והמועצתי – טיפול יחידות האכיפה באירועים משטרתיים. 15 בינואר 2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5520531.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="1"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal151">1 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal133" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת החינוך התרבות והספורט</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...ורח &gt;&gt; רוני בן דוד: &lt;&lt; אורח &gt;&gt;    במסמך ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> מצוין שבמדינת ויקטוריה באוסטרליה יש החרגה של מלכודות חרקים...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250120"><small>20 בינואר 2025<br><b>09:00</b></small></td>
+                    <td class="text-end"><b>ועדת החינוך התרבות והספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2212/sessions/2226981" target="_blank" class="text-dark text-decoration-none">הצעת חוק איסור לכידת בעלי חיים באמצעות מלכודות אסורות, התשפ"ה-2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5513948.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ - איסורים והגבלות על לכידת בעלי חיים באמצעות מלכודות - יולי 2024</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5513949.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ - הערכת שימוש במלכודות דבק בישראל - אוגוסט 2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5741950.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="1"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal133">1 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal131" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לענייני ביקורת המדינה</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...בית מכיוון שאין להם מסגרת?  לפי הדוח של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, משנת 2010 אמנם, דווח שמשרד החינוך הקים ועדת ערר. האם הוועד...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250120"><small>20 בינואר 2025<br><b>09:30</b></small></td>
+                    <td class="text-end"><b>הוועדה לענייני ביקורת המדינה</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2227/sessions/2226989" target="_blank" class="text-dark text-decoration-none">בדיקת הטענות לאפליה על רקע עדתי בסמינרים במגזר החרדי - בקשה לחוו"ד לפי סעיף 21 לחוק מבקר המדינה</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5514756.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך המ.מ.מ - אפליה עדתית בסמינרים</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5954448.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="1"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal131">1 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal113" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת הכלכלה</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">..., ולא רק מחלקת משאבים. קראתי את הדוח של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, שמדבר על עלייה מתמדת במקום המכובד של מדינת בטבלת יוקר המחי...</div><div class="quote-box">...על הנתון הזה של המדד, שעלה ב-15.5% לפי ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, אבל המילקי קפץ ב-200% – מ-2.5 שקלים לכמעט 4.90 שקלים. אז מ...</div><div class="quote-box">...הלמ&quot;ס – חלק מהנתונים מופיעים גם בדוח של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> – המחירים עלו ב-1.7% במהלך השנה, כשמדד המחירים לצרכן ומדד מ...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250120"><small>20 בינואר 2025<br><b>12:45</b></small></td>
+                    <td class="text-end"><b>ועדת הכלכלה</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2214/sessions/2226877" target="_blank" class="text-dark text-decoration-none">הצעה לדיון מהיר בנושא: "רשתות השיווק ויצרניות המזון מעלות מחירים בעשרות אחוזים תוך ניצול מצוקת אזרחי ישראל והעמקת יוקר המחייה"</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5519419.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - ניתוח השינוי במדדי המחירים של מוצרי מזון וצריכה מהירה</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5814158.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="3"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal113">3 אזכורים</button></td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250121"><small>21 בינואר 2025<br><b>10:30</b></small></td>
+                    <td class="text-end"><b>ועדת החינוך התרבות והספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2212/sessions/2226755" target="_blank" class="text-dark text-decoration-none">השלכות הפשיעה בחברה הערבית על צעירים במערכת החינוך - לציון יום המאבק בפשיעה ובאלימות בחברה הערבית</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5513973.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ - פשיעה בקרב בני נוער במזרח ירושלים - דצמבר 2024</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5513980.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ- היפגעות ילדים ונוער מנשק חם - מרץ 2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5741998.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <div class="modal fade" id="modal96" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת החינוך התרבות והספורט</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...גיטלין: &lt;&lt; דובר &gt;&gt;     תודה רבה. אילה מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת חקרה את הנושא עבורנו כדי שתהיה לנו תשתית עובדתית ל...</div><div class="quote-box">...ה אליהו: &lt;&lt; דובר &gt;&gt;     בסדר גמור. אני מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת. לבקשת הייעוץ המשפטי לוועדה הכנו סקירה קצרה. אנחנו...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250121"><small>21 בינואר 2025<br><b>12:00</b></small></td>
+                    <td class="text-end"><b>ועדת החינוך התרבות והספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2212/sessions/2226986" target="_blank" class="text-dark text-decoration-none">חוק יום לציון עליית יהודי תימן לישראל ולהנצחת זכרם של הנספים בדרך לישראל, התשפ"ה–2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5514026.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מרכז המחקר והמידע - עליית יהודי תימן עם קום המדינה</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5600212.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="2"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal96">2 אזכורים</button></td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250121"><small>21 בינואר 2025<br><b>14:00</b></small></td>
+                    <td class="text-end"><b>ועדת הבריאות</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2231/sessions/2226736" target="_blank" class="text-dark text-decoration-none">טיפול במחלת הקרוהן והקוליטיס בפריפריה</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5513322.pdf" target="_blank" class="doc-link">📄 מסמך מטעם מרכז המחקר והמידע של הכנסת בנושא שכיחותן של מחלות מעי דלקתיות בישראל</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5754231.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <div class="modal fade" id="modal84" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת משנה לתוכניות הלימודים במזרח ירושלים והפיקוח עליהן</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...וער שפשעו. והנקודה השלישית – יש מצגת של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> על כל הנתונים.  אז אתם יודעים מה? בואו נראה את המצגת כדבר ר...</div><div class="quote-box">...חד שערכה הלשכה המרכזית לסטטיסטיקה לבקשת <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת, והם מתייחסים לקטינים בגיל אחריות פלילית מגיל 12-1...</div><div class="quote-box">...דובר &gt;&gt; יובל וורגן: &lt;&lt; דובר &gt;&gt;     אני מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark>, אני ביחד עם מריה אבל אותה גייסתי לענייני הפשיעה ואני נמצא...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250121"><small>21 בינואר 2025<br><b>14:30</b></small></td>
+                    <td class="text-end"><b>ועדת משנה לתוכניות הלימודים במזרח ירושלים והפיקוח עליהן</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2473/sessions/2226757" target="_blank" class="text-dark text-decoration-none">החלטת ממשלה 880 : טיוטת כללי קליטת מורים במזרח ירושלים ע״י הגף להערכת תארים, ויצירת מנגנון לשיתוף נתונים בין משרדים אודות פשיעה לאומנית בקרב תלמידים</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5514071.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מרכז המחקר והמידע - החינוך הערבי במזרח ירושלים - היבטים נבחרים</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5514068.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ - פשיעה בקרב בני נוער במזרח ירושלים - דצמבר 2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5675594.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="3"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal84">3 אזכורים</button></td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250122"><small>22 בינואר 2025<br><b>09:00</b></small></td>
+                    <td class="text-end"><b>הוועדה לענייני ביקורת המדינה</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2227/sessions/2225195" target="_blank" class="text-dark text-decoration-none">החינוך החרדי והפיקוח עליו, דוח שנתי 70ב</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5249552.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מ.מ.מ כנסת - השכלת מורים חרדים - 12.8.2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5926840.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <div class="modal fade" id="modal74" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת החינוך התרבות והספורט</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...עדה וגם פניתי לקיים דיון על זה. הזמנתי מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> שלנו, הם עושים עבודה נפלאה. יש נתונים ויציג לנו אסף. אני מא...</div><div class="quote-box">...ראשית, אני מודה לך על הדיון הזה. ושנית, ל<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, כמו שאמרת קודם, זה מאוד משמעותי, זה באמת נותן מעטפת מאוד ט...</div><div class="quote-box">...גם לדברים שעלו על הפרשנות של הנתונים של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>.   נתחיל מהמגמה על פני שנים, אנחנו רואים מ-2010 שהיו בערך 2...</div><div class="quote-box">...ח &gt;&gt;    חבר הכנסת, אני יובל, אני עם אסף מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>. גם אנחנו הצגנו את התואר הראשון של ה-1.7. מה שאורי שכח להגי...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250122"><small>22 בינואר 2025<br><b>09:30</b></small></td>
+                    <td class="text-end"><b>ועדת החינוך התרבות והספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2212/sessions/2227006" target="_blank" class="text-dark text-decoration-none">הצעה לדיון מהיר בנושא: "הצורך הדחוף לצמצום פערים בהשכלה גבוהה של יהודי אתיופיה ופיקוח על מלגות לבני הקהילה"</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5481790.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - השתלבות יוצאי אתיופיה בלימודים אקדמיים</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5532945.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מצגת מממ יוצאי אתיופיה בהשכלה הגבוהה</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5814905.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="4"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal74">4 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal65" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת הבריאות</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...רח &gt;&gt;   חברת הכנסת לזימי, כשאומרת נציגת ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> שיש נתון, זה חשוב להגיד שזה לא מדויק. יש טענה שנמצאת בבוררו...</div><div class="quote-box">...תמר, תודה רבה. זה גם חשש שהועלה בדוח של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> וזה נושא שאנחנו נדון בו כשנגיע אליו. תודה רבה על הצעת הדברי...</div><div class="quote-box">...ת ביחס למדדי האיכות.   נשאלנו גם על ידי <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת מה הצפי שלנו להשפעה של המהלך הזה על התורים בקהילה....</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250127"><small>27 בינואר 2025<br><b>09:00</b></small></td>
+                    <td class="text-end"><b>ועדת הבריאות</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2231/sessions/2227073" target="_blank" class="text-dark text-decoration-none">חוק התחשבנות בין בתי חולים לקופות חולים (בריאות הנפש), התשפ"ה-2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5561535.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מטעם מרכז המחקר והמידע של הכנסת בנושא תיאור וניתוח השינוי המוצע במודל ההתחשבנות בין קופות החולים לבתי החולים לבריאות הנפש</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5956826.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="3"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal65">3 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal61" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת החינוך התרבות והספורט</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...יב: &lt;&lt; יור &gt;&gt;   אני רק אגיד שאני ביקשתי מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> להכין מסמך, יש מסמך שנמצא בחומרי הרקע של הוועדה סביב בחינת...</div><div class="quote-box">...ה יכול לגשת לקרוא את המסמך, מסמך מעמיק. ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> עשה פה עבודה נהדרת ותמיד יכולים להיות מקרים ספציפיים שפספסו...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250127"><small>27 בינואר 2025<br><b>10:00</b></small></td>
+                    <td class="text-end"><b>ועדת החינוך התרבות והספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2212/sessions/2227144" target="_blank" class="text-dark text-decoration-none">1. הצעת חוק זכויות הסטודנט (תיקון - העדפה מתקנת ללוחמים), התשפ"ג-2022 2. הצעת חוק תגמול למשרתים בשירות צבאי או אזרחי באקדמיה, התשפ"ה-2024</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5560107.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מממ - ינואר 2025 - עדכון נתונים על סטודנטים משרתי מילואים</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5560138.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ- העדפה מתקנת לימודי רפואה - ינואר 2025</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_6048269.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="2"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal61">2 אזכורים</button></td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250127"><small>27 בינואר 2025<br><b>11:00</b></small></td>
+                    <td class="text-end"><b>ועדת החוץ והביטחון</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2216/sessions/2227512" target="_blank" class="text-dark text-decoration-none">הצעת חוק שירות ביטחון (תיקון מס' 26) (שילוב תלמידי ישיבות), התשפ"ב-2022</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\law\25_ls_bk_5540738.pdf" target="_blank" class="doc-link">📄 גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים, מרכז המחקר והמידע</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5690707.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <div class="modal fade" id="modal50" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת החינוך התרבות והספורט</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...מיכה בטרור בקמפוסים, וגם הייתה פנייה של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> למשטרה ולפרקליטות כדי לקבל נתונים, כדי להבין בסופו של דבר א...</div><div class="quote-box">...&lt;&lt; יור &gt;&gt; היו&quot;ר יוסף טייב: &lt;&lt; יור &gt;&gt;   ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, בבקשה.    &lt;&lt; אורח &gt;&gt; אסף וינינגר: &lt;&lt; אורח &gt;&gt;   אני אתייחס...</div><div class="quote-box">...משטרת ישראל, מהמשרד לביטחון פנים, כמובן שה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> מביא נתונים. אני מודע לכך שקיימים נתונים בצורה כזו או אחרת,...</div><div class="quote-box">..., אני האמת מופתע שמשטרת ישראל לא העבירה ל<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>.   מי שמכיר אותי, אני עומד כחומה בצורה בצד ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> ואני פניתי...</div><div class="quote-box">...מי שמכיר אותי, אני עומד כחומה בצורה בצד ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> ואני פניתי גם ליו&quot;ר הכנסת שלא ייתכן שכשיש פנייה מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> לא מ...</div><div class="quote-box">...תי גם ליו&quot;ר הכנסת שלא ייתכן שכשיש פנייה מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> לא מעבירים לנו את הנתונים, וגם אם מעבירים לא מעבירים בזמן....</div><div class="quote-box">...שמשטרת ישראל עדכנה אותי שאין פילוח כזה, ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> בדיון הקודם ציין שלעמדתו יש את הפילוח הזה, עשינו בדיקה נוספ...</div><div class="quote-box">...אנחנו הצגנו פה בפעם הקודמת וגם שלחתי ל<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> עם סימוכין מכל המוסדות האקדמיים בישראל שהשיבו לנו, מעל 180...</div><div class="quote-box">...זה הגיע בוודאות, גם השיבו לי למייל הזה מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>.    &lt;&lt; דובר &gt;&gt; לימור סון הר מלך (עוצמה יהודית): &lt;&lt; דובר &gt;&gt;...</div><div class="quote-box">...נחנו כבר יודעים, אבל גם של המל&quot;ג וגם של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, נתתם את מספרי התלונות ואני לא הבנתי כי אני יודעת שבחלק מהת...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250127"><small>27 בינואר 2025<br><b>12:00</b></small></td>
+                    <td class="text-end"><b>ועדת החינוך התרבות והספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2212/sessions/2227358" target="_blank" class="text-dark text-decoration-none">הצעת חוק זכויות הסטודנט (תיקון מס' 10), התשפ"ה–2025</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5541041.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מממ - נתונים על עבירות הסתה לטרור והזדהות עם ארגון טרור, אוקטובר 2023</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5541044.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מממ - נתונים על עבירות הסתה לטרור או אלימות ועבירות על רקע גזעני, דצמבר 2024</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5535018.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - הסדרת פעילות תאי סטודנטים באוניברסיטאות-מממ, דצמבר 2024</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5927144.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="10"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal50">10 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal49" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת הבריאות</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...ולים כללית שהם עומדים על 50% ומשהו. דוח ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> שהציגו לנו החברים מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> מדברים על אפליה קשה מאוד ברמת השיר...</div><div class="quote-box">...50% ומשהו. דוח ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> שהציגו לנו החברים מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> מדברים על אפליה קשה מאוד ברמת השירות. אם אני זוכר את המספרי...</div><div class="quote-box">...ר &gt;&gt;   אני באמת מופתע שהיא לא מודעת לזה שה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> הציג לגבי רשות התחרות שהיום השירות הוא בניגוד להנחה שאת חוש...</div><div class="quote-box">...ת התרופה, אחד מיני 2,000 בתי מרקחת, כמו שה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> ציינו, בוודאי שכוח הקנייה שלה יורד.    &lt;&lt; יור &gt;&gt; היו&quot;ר יונת...</div><div class="quote-box">...וד): &lt;&lt; דובר &gt;&gt;   לא, הוא אומר שזה ירד. ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> הציג שחברים בקופת חולים כללית הם הכי מקופחים בפער אדיר, אי...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250127"><small>27 בינואר 2025<br><b>12:00</b></small></td>
+                    <td class="text-end"><b>ועדת הבריאות</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2231/sessions/2227040" target="_blank" class="text-dark text-decoration-none">1. הצעת חוק ביטוח בריאות ממלכתי (תיקון - ניפוק תכשיר מרשם שניתן במרשם אלקטרוני או ידני בתנאי הסדר בכל בתי המרקחת), התשפ"ד-2024 2. הצעת חוק ביטוח בריאות ממלכתי (תיקון - תשלום בעד תכשיר מרשם בבית מרקחת שאין לו הסדר עם קופת חולים), התשפ"ג-2023 3. הצעת חוק ביטוח בריאות ממלכתי (תיקון - השתתפות עצמית ברכישת תכשיר מרשם מבית מרקחת שאינו בהסדר עם קופת החולים), התשפ"ג-2023 4. הצעת חוק ביטוח בריאות ממלכתי (תיקון - השתתפות עצמית ברכישת תכשיר מרשם מבית מרקחת שאינו בהסדר עם קופת החולים), התשפ"ג-2023</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5540298.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מטעם מרכז המחקר והמידע של הכנסת בנושא פריסת בתי המרקחת בישראל ונגישותם למבוטחי קופות החולים</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5540290.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מטעם מרכז המחקר והמידע של הכנסת בנושא ניתוח מכירת תרופות מרשם באמצעות בתי מרקחת פרטיים</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5956703.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="5"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal49">5 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal38" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - הוועדה לענייני ביקורת המדינה</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...ת אחרות בכנסת שעסקו בנושא, ונשלחו פניות מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> למשרד החוץ, משרד התפוצות והמאבק באנטישמיות, מערך ההסברה במש...</div><div class="quote-box">...הנציגים לדעת מדוע לא נענו השאלות שהופנו מה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>. אני בטוח שתכף נשמע שכל משרד עושה ועושה, אבל כנראה שלא מספי...</div><div class="quote-box">...יחס לנושאים האלה, לאחר מכן נשמע את נציג ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> ולאחר מכן את המשתתפים האחרים. אני מבקש לתת קרדיט להסתדרות ה...</div><div class="quote-box">...&lt;&lt; יור &gt;&gt;     תודה רבה. רוני הרשקוביץ, ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, בבקשה.   &lt;&lt; אורח &gt;&gt; רוני הרשקוביץ: &lt;&lt; אורח &gt;&gt;     תודה רבה...</div><div class="quote-box">....   אני לגמרי מסכים עם הדברים שאמר נציג ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark>, יש בהחלט שיפור מאוד משמעותי מאז המלחמה בשותפות שלנו עם המש...</div><div class="quote-box">...זה מאוד מאוד חשוב. אני אענה לפי הסדר של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> והפערים החסרים שהם העלו. אני מאוד מסכימה עם הדברים שעלו. בה...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250128"><small>28 בינואר 2025<br><b>11:00</b></small></td>
+                    <td class="text-end"><b>הוועדה לענייני ביקורת המדינה</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2227/sessions/2227523" target="_blank" class="text-dark text-decoration-none">המאבק הדיפלומטי-תקשורתי בתנועת החרמות ובגילויי האנטישמיות בחו"ל (דוח שנתי 66ג)</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5567033.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מ.מ.מ כנסת - סוגיות בתחום ההסברה</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5642854.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="6"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal38">6 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal36" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת הכנסת</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...לא ארחיב, התייחסתי לזה, ויש גם מסמך של ה<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">ממ&quot;מ</mark> שמונח בפניכם שהחסינות כבר היום היא מאוד רחבה בכנסת. אלו דבר...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250128"><small>28 בינואר 2025<br><b>11:00</b></small></td>
+                    <td class="text-end"><b>ועדת הכנסת</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2211/sessions/2227287" target="_blank" class="text-dark text-decoration-none">הצעת חוק חסינות חברי הכנסת, זכויותיהם וחובותיהם (תיקון -אישור הכנסת לפתיחה בהליך פלילי או אזרחי), התשפ"ה-2024</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\law\25_ls_mmm_5567507.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - חסינות פרלמנטרית ופתיחה בחקירה פלילית נגד חבר פרלמנט בשל התבטאויותיו - סקירה משווה</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5849531.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="1"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal36">1 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal21" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת משנה לספורט</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...שאני מציג אותה, אלא נתונים של מחקר שערך <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת, שמתבססים בין השאר על מחקר של הפיס. הם מדברים על 1...</div><div class="quote-box">...ורח &gt;&gt;    זה מחקר שנערך ומאוגד במסמך של <mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת.    &lt;&lt; יור &gt;&gt; היו&quot;ר סימון דוידסון: &lt;&lt; יור &gt;&gt;    וו...</div><div class="quote-box">...אורח &gt;&gt;    נורית, ראש תחום ביטחון פנים ב<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> של הכנסת. האמת היא שאני לא מכירה את התרשים הזה.    &lt;&lt; אורח...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250128"><small>28 בינואר 2025<br><b>14:00</b></small></td>
+                    <td class="text-end"><b>ועדת משנה לספורט</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2467/sessions/2227362" target="_blank" class="text-dark text-decoration-none">ועמ"ש ספורט - הימורים בלתי חוקיים בספורט</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5560173.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מסמך מממ- טיפול בנפגעי הימורים - ינואר 2022</a><a href="https://fs.knesset.gov.il/25\Committees\25_cs_mmm_5560172.pdf" target="_blank" class="doc-link">📄 מסמך של מרכז המחקר והמידע של הכנסת - מממ - הימורים לא חוקיים בישראל נתונים ומדיניות - אוקטובר 2022</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5715593.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="3"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal21">3 אזכורים</button></td>
+                </tr>
+                <div class="modal fade" id="modal19" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">ציטוטים - ועדת הבריאות</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-end bg-light"><div class="quote-box">...&lt;&lt; יור &gt;&gt;     תודה רבה, דוקטור.   לנעם מ<mark style="background-color: #ffeb3b; color: black; font-weight: bold; padding: 0 4px; border-radius: 4px; border: 1px solid #ffd600;">מרכז המחקר והמידע</mark> יש שאלה. בבקשה.   &lt;&lt; אורח &gt;&gt; נעם גרינברג: &lt;&lt; אורח &gt;&gt;     שא...</div></div>
+                    </div>
+                  </div>
+                </div>
+                <tr>
+                    <td class="text-end" data-sort="20250128"><small>28 בינואר 2025<br><b>14:00</b></small></td>
+                    <td class="text-end"><b>ועדת הבריאות</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2231/sessions/2227041" target="_blank" class="text-dark text-decoration-none">דרישה לפי סעיף 111(ה) לכינוס הוועדה בנושא: "התמודדות מערכת הבריאות עם מחלת המיגרנה והשפעותיה" (הדרישה הוגשה על ידי חברי הכנסת חילי טרופר, טטיאנה מזרסקי, מירב בן ארי, אחמד טיבי, רון כץ וירון לוי).</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5513326.pdf" target="_blank" class="doc-link">📄 מסמך מטעם מרכז המחקר והמידע של הכנסת בנושא מיגרנה שכיחותה והטיפול בה</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5613664.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="1"><button class="mention-btn" data-bs-toggle="modal" data-bs-target="#modal19">1 אזכורים</button></td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250129"><small>29 בינואר 2025<br><b>09:00</b></small></td>
+                    <td class="text-end"><b>ועדת הבריאות</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2231/sessions/2227072" target="_blank" class="text-dark text-decoration-none">הצעה לדיון מהיר בנושא: "טיפול לא אחיד ופערים מדאיגים בין פריפריה למרכז במענה למקרי שבץ בישראל"</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\Committees\25_cs_bg_5494851.pdf" target="_blank" class="doc-link">📄 מסמך מטעם מרכז המחקר והמידע של הכנסת בנושא המרכזים לטיפול בשבץ מוחי בישראל</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5765877.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+                <tr>
+                    <td class="text-end" data-sort="20250130"><small>30 בינואר 2025<br><b>11:00</b></small></td>
+                    <td class="text-end"><b>ועדת החוץ והביטחון</b></td>
+                    <td class="text-end"><a href="https://main.knesset.gov.il/APPS/committees/2216/sessions/2227518" target="_blank" class="text-dark text-decoration-none">הצעת חוק שירות ביטחון (תיקון מס' 26) (שילוב תלמידי ישיבות), התשפ"ב-2022</a></td>
+                    <td class="text-end"><a href="https://fs.knesset.gov.il/25\law\25_ls_bk_5540738.pdf" target="_blank" class="doc-link">📄 גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים, מרכז המחקר והמידע</a></td>
+                    <td class="text-center"><a href="https://fs.knesset.gov.il/25\Committees\25_ptv_5722347.doc" target="_blank" class="text-danger fs-4"><i class="fas fa-file-word"></i></a></td>
+                    <td class="text-center" data-sort="0">-</td>
+                </tr>
+            </tbody></table></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('table.sortable th').forEach(th => th.addEventListener('click', (() => {
+        const table = th.closest('table');
+        const tbody = table.querySelector('tbody');
+        const index = Array.from(th.parentNode.children).indexOf(th);
+        const lastIndex = table.dataset.lastSortIndex;
+        let ascending = table.dataset.lastSortAsc === "true";
+        if (lastIndex == index) ascending = !ascending; else ascending = false;
+        const rows = Array.from(tbody.querySelectorAll('tr')).sort((a, b) => {
+            let valA = a.children[index].dataset.sort || a.children[index].innerText.trim();
+            let valB = b.children[index].dataset.sort || b.children[index].innerText.trim();
+            const numA = parseFloat(valA); const numB = parseFloat(valB);
+            if (!isNaN(numA) && !isNaN(numB)) return ascending ? numA - numB : numB - numA;
+            return ascending ? valA.localeCompare(valB, 'he') : valB.localeCompare(valA, 'he');
+        });
+        table.dataset.lastSortIndex = index;
+        table.dataset.lastSortAsc = ascending;
+        tbody.append(...rows);
+    })));
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.map(function (t) { return new bootstrap.Tooltip(t) });
+</script>
+</body></html>
