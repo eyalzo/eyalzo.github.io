@@ -1,34 +1,105 @@
+import pandas as pd
+import json
+from IPython.display import HTML, display
 
+# 1. הגדרת ה-ID של הקובץ והפיכתו לקישור CSV
+file_id = '14XeOz-9kXnV4amzKGTFwKNblHv4jY2SY'
+url = f'https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv'
+
+try:
+    # 2. קריאת הנתונים
+    df = pd.read_csv(url)
+    
+    # --- שלב הטיוב והסינון ---
+    
+    # א. סינון גורמים זרים
+    exclude_list = ['ecprd', 'oecd', 'ipu', 'פרלמנט זר']
+    mask_exclude = df['גורם מבקש [לקוח]'].str.contains('|'.join(exclude_list), case=False, na=False)
+    df = df[~mask_exclude].copy()
+    
+    # ב. טיפול בתאריכים וחילוץ שנה
+    df['תאריך הבקשה'] = pd.to_datetime(df['תאריך הבקשה'], errors='coerce')
+    df = df.dropna(subset=['תאריך הבקשה'])
+    df['year'] = df['תאריך הבקשה'].dt.year.astype(int)
+    
+    # ג. לוגיקת סטטוס
+    df['status_final'] = df['סטטוס הבקשה'].fillna('אחר')
+    df.loc[df['תאריך מסירה בפועל'].notna(), 'status_final'] = 'בוצע'
+    
+    def merge_status(s):
+        if s == 'בוצע': return 'בוצע'
+        if s in ['נסגר ביוזמת היחידה', 'בוטל ביוזמת גורם מבקש']: return 'נסגר או בוטל'
+        if s in ['בביצוע', 'לפני ביצוע', 'ממתין לאישור ראש צוות']: return 'בביצוע'
+        return s
+    df['status_final'] = df['status_final'].apply(merge_status)
+    
+    # ד. טיפול בסיווג לקוח (סדר עדיפות מחייב לפי הנחיות מעודכנות)
+    col_client = 'סיווג לקוח ‏(גורם מבקש [לקוח]) ‏(תיק לקוח)'
+    col_requester = 'גורם מבקש [לקוח]'
+    col_initiated = 'מסמך יזום'
+
+    def classify_client_logic(row):
+        client = str(row[col_client])
+        req = str(row[col_requester])
+        init = str(row[col_initiated])
+        
+        # 1. עדיפות ראשונה: שימור ועדה וח"כ מהסיווג המקורי
+        if "ועדה" in client: return "ועדה"
+        if "ח" in client and "כ" in client: return "ח\"כ"
+        
+        # 2. עדיפות שנייה: גורם מבקש = כל חברי הכנסת
+        if req == "כל חברי הכנסת": return "ח\"כ"
+        
+        # 3. עדיפות שלישית: כלל יזומים (דורס סיווגים אחרים שאינם ועדה/ח"כ)
+        if init == "כן" and req == "מרכז המחקר והמידע": return "יזומים"
+            
+        # 4. עדיפות רביעית: מיזוג יחידה פנימית (כולל ייעוץ משפטי)
+        if client in ["יועץ משפטי", "ייעוץ משפטי", "יחידה פנימית"]: return "יחידה פנימית"
+        
+        # 5. ברירת מחדל
+        return "אחר"
+
+    df['client_type_final'] = df.apply(classify_client_logic, axis=1)
+    
+    # ה. אגרגציות לדשבורד
+    summary = df.groupby(['year', 'status_final', 'client_type_final']).size().reset_index(name='count')
+    json_data = summary.to_dict(orient='records')
+    
+    min_year, max_year = int(summary['year'].min()), int(summary['year'].max())
+    total_requests = int(summary['count'].sum())
+
+    # --- יצירת ה-HTML ---
+    html_template = f"""
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; }
-        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 1250px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 15px; }
-        .filters { background: #f8fafc; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
-        .kpi-card { background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; text-align: center; }
-        .kpi-val { font-size: 24px; font-weight: bold; color: #1a73e8; }
-        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .full-chart { grid-column: span 2; border: 1px solid #eee; border-radius: 10px; padding: 10px; }
-        input[type="range"] { width: 200px; cursor: pointer; }
+        body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; }}
+        .container {{ background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 1250px; margin: auto; }}
+        .header {{ display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 15px; }}
+        .filters {{ background: #f8fafc; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0; }}
+        .kpi-row {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }}
+        .kpi-card {{ background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; text-align: center; }}
+        .kpi-val {{ font-size: 24px; font-weight: bold; color: #1a73e8; }}
+        .charts-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }}
+        .full-chart {{ grid-column: span 2; border: 1px solid #eee; border-radius: 10px; padding: 10px; }}
+        input[type="range"] {{ width: 200px; cursor: pointer; }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h2 style="margin:0">דשבורד בקשות מידע - כנסת ישראל (14,199 בקשות)</h2>
+            <h2 style="margin:0">דשבורד בקשות מידע - כנסת ישראל ({total_requests:,} בקשות)</h2>
             <button style="background:#1a73e8; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer" onclick="downloadHTML()">הורד דשבורד</button>
         </div>
 
         <div class="filters">
-            <span>מ- <span id="minL" style="color:#1a73e8; font-weight:bold">1999</span></span>
-            <input type="range" id="minS" min="1999" max="2025" value="1999">
-            <input type="range" id="maxS" min="1999" max="2025" value="2025">
-            <span>עד <span id="maxL" style="color:#1a73e8; font-weight:bold">2025</span></span>
+            <span>מ- <span id="minL" style="color:#1a73e8; font-weight:bold">{min_year}</span></span>
+            <input type="range" id="minS" min="{min_year}" max="{max_year}" value="{min_year}">
+            <input type="range" id="maxS" min="{min_year}" max="{max_year}" value="{max_year}">
+            <span>עד <span id="maxL" style="color:#1a73e8; font-weight:bold">{max_year}</span></span>
         </div>
 
         <div class="kpi-row">
@@ -39,39 +110,36 @@
         </div>
 
         <div class="charts-grid">
-            <div id="barChart" class="full-chart" style="height: 350px;"></div>
+            <div id="barChart" class="full-chart" style="height: 400px;"></div>
             <div id="pieStatus" style="height: 450px; border:1px solid #eee; border-radius:10px"></div>
             <div id="pieClient" style="height: 450px; border:1px solid #eee; border-radius:10px"></div>
-            <div id="semChart" class="full-chart" style="height: 500px;"></div>
         </div>
     </div>
 
     <script>
-        const data = [{"year": 1999, "status_final": "בוצע", "client_type_final": "ועדה", "count": 1}, {"year": 2000, "status_final": "בוצע", "client_type_final": "ועדה", "count": 93}, {"year": 2000, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 14}, {"year": 2000, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 5}, {"year": 2001, "status_final": "בוצע", "client_type_final": "אחר", "count": 3}, {"year": 2001, "status_final": "בוצע", "client_type_final": "ועדה", "count": 322}, {"year": 2001, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 82}, {"year": 2001, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 23}, {"year": 2001, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 1}, {"year": 2002, "status_final": "בוצע", "client_type_final": "אחר", "count": 11}, {"year": 2002, "status_final": "בוצע", "client_type_final": "ועדה", "count": 312}, {"year": 2002, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 94}, {"year": 2002, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 31}, {"year": 2003, "status_final": "בוצע", "client_type_final": "אחר", "count": 1}, {"year": 2003, "status_final": "בוצע", "client_type_final": "ועדה", "count": 372}, {"year": 2003, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 169}, {"year": 2003, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 38}, {"year": 2003, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 1}, {"year": 2004, "status_final": "בוצע", "client_type_final": "אחר", "count": 6}, {"year": 2004, "status_final": "בוצע", "client_type_final": "ועדה", "count": 424}, {"year": 2004, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 155}, {"year": 2004, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 35}, {"year": 2004, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 1}, {"year": 2004, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 1}, {"year": 2005, "status_final": "בוצע", "client_type_final": "אחר", "count": 15}, {"year": 2005, "status_final": "בוצע", "client_type_final": "ועדה", "count": 246}, {"year": 2005, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 155}, {"year": 2005, "status_final": "בוצע", "client_type_final": "יזומים", "count": 2}, {"year": 2005, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 24}, {"year": 2006, "status_final": "בוצע", "client_type_final": "אחר", "count": 1}, {"year": 2006, "status_final": "בוצע", "client_type_final": "ועדה", "count": 302}, {"year": 2006, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 221}, {"year": 2006, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 41}, {"year": 2006, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 21}, {"year": 2006, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 14}, {"year": 2006, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 3}, {"year": 2007, "status_final": "בוצע", "client_type_final": "ועדה", "count": 313}, {"year": 2007, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 237}, {"year": 2007, "status_final": "בוצע", "client_type_final": "יזומים", "count": 1}, {"year": 2007, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 33}, {"year": 2007, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 33}, {"year": 2007, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 69}, {"year": 2007, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 14}, {"year": 2008, "status_final": "בוצע", "client_type_final": "ועדה", "count": 205}, {"year": 2008, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 150}, {"year": 2008, "status_final": "בוצע", "client_type_final": "יזומים", "count": 1}, {"year": 2008, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 33}, {"year": 2008, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 21}, {"year": 2008, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 87}, {"year": 2008, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 7}, {"year": 2009, "status_final": "בוצע", "client_type_final": "ועדה", "count": 255}, {"year": 2009, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 231}, {"year": 2009, "status_final": "בוצע", "client_type_final": "יזומים", "count": 1}, {"year": 2009, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 30}, {"year": 2009, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 26}, {"year": 2009, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 69}, {"year": 2009, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 1}, {"year": 2010, "status_final": "בוצע", "client_type_final": "ועדה", "count": 308}, {"year": 2010, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 205}, {"year": 2010, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 32}, {"year": 2010, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 30}, {"year": 2010, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 59}, {"year": 2010, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 6}, {"year": 2011, "status_final": "בוצע", "client_type_final": "ועדה", "count": 201}, {"year": 2011, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 191}, {"year": 2011, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 25}, {"year": 2011, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 18}, {"year": 2011, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 81}, {"year": 2012, "status_final": "בוצע", "client_type_final": "ועדה", "count": 146}, {"year": 2012, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 128}, {"year": 2012, "status_final": "בוצע", "client_type_final": "יזומים", "count": 1}, {"year": 2012, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 22}, {"year": 2012, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 19}, {"year": 2012, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 53}, {"year": 2012, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 3}, {"year": 2013, "status_final": "בוצע", "client_type_final": "ועדה", "count": 212}, {"year": 2013, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 325}, {"year": 2013, "status_final": "בוצע", "client_type_final": "יזומים", "count": 1}, {"year": 2013, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 28}, {"year": 2013, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 7}, {"year": 2013, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 12}, {"year": 2013, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 3}, {"year": 2014, "status_final": "בוצע", "client_type_final": "ועדה", "count": 147}, {"year": 2014, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 206}, {"year": 2014, "status_final": "בוצע", "client_type_final": "יזומים", "count": 1}, {"year": 2014, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 32}, {"year": 2014, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 7}, {"year": 2014, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 35}, {"year": 2014, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 3}, {"year": 2015, "status_final": "בוצע", "client_type_final": "ועדה", "count": 206}, {"year": 2015, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 312}, {"year": 2015, "status_final": "בוצע", "client_type_final": "יזומים", "count": 5}, {"year": 2015, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 36}, {"year": 2015, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 15}, {"year": 2015, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 69}, {"year": 2015, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 2}, {"year": 2016, "status_final": "בוצע", "client_type_final": "ועדה", "count": 207}, {"year": 2016, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 305}, {"year": 2016, "status_final": "בוצע", "client_type_final": "יזומים", "count": 4}, {"year": 2016, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 26}, {"year": 2016, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 20}, {"year": 2016, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 43}, {"year": 2017, "status_final": "בוצע", "client_type_final": "ועדה", "count": 181}, {"year": 2017, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 202}, {"year": 2017, "status_final": "בוצע", "client_type_final": "יזומים", "count": 6}, {"year": 2017, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 44}, {"year": 2017, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 18}, {"year": 2017, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 45}, {"year": 2017, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 1}, {"year": 2017, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 1}, {"year": 2018, "status_final": "בוצע", "client_type_final": "ועדה", "count": 165}, {"year": 2018, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 151}, {"year": 2018, "status_final": "בוצע", "client_type_final": "יזומים", "count": 21}, {"year": 2018, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 60}, {"year": 2018, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 16}, {"year": 2018, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 42}, {"year": 2018, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 5}, {"year": 2018, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 9}, {"year": 2019, "status_final": "בוצע", "client_type_final": "ועדה", "count": 35}, {"year": 2019, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 120}, {"year": 2019, "status_final": "בוצע", "client_type_final": "יזומים", "count": 47}, {"year": 2019, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 44}, {"year": 2019, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 7}, {"year": 2019, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 24}, {"year": 2019, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 16}, {"year": 2019, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 8}, {"year": 2020, "status_final": "בוצע", "client_type_final": "אחר", "count": 1}, {"year": 2020, "status_final": "בוצע", "client_type_final": "ועדה", "count": 289}, {"year": 2020, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 287}, {"year": 2020, "status_final": "בוצע", "client_type_final": "יזומים", "count": 26}, {"year": 2020, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 40}, {"year": 2020, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 15}, {"year": 2020, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 59}, {"year": 2020, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 10}, {"year": 2020, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 2}, {"year": 2021, "status_final": "בוצע", "client_type_final": "ועדה", "count": 225}, {"year": 2021, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 261}, {"year": 2021, "status_final": "בוצע", "client_type_final": "יזומים", "count": 30}, {"year": 2021, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 57}, {"year": 2021, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 18}, {"year": 2021, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 31}, {"year": 2021, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 10}, {"year": 2021, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 6}, {"year": 2022, "status_final": "בביצוע", "client_type_final": "ועדה", "count": 1}, {"year": 2022, "status_final": "בוצע", "client_type_final": "ועדה", "count": 152}, {"year": 2022, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 177}, {"year": 2022, "status_final": "בוצע", "client_type_final": "יזומים", "count": 76}, {"year": 2022, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 34}, {"year": 2022, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 10}, {"year": 2022, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 42}, {"year": 2022, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 2}, {"year": 2022, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 7}, {"year": 2023, "status_final": "בביצוע", "client_type_final": "ועדה", "count": 3}, {"year": 2023, "status_final": "בביצוע", "client_type_final": "ח\"כ", "count": 1}, {"year": 2023, "status_final": "בביצוע", "client_type_final": "יזומים", "count": 3}, {"year": 2023, "status_final": "בוצע", "client_type_final": "ועדה", "count": 380}, {"year": 2023, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 221}, {"year": 2023, "status_final": "בוצע", "client_type_final": "יזומים", "count": 61}, {"year": 2023, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 64}, {"year": 2023, "status_final": "מוקפא", "client_type_final": "יחידה פנימית", "count": 1}, {"year": 2023, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 23}, {"year": 2023, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 49}, {"year": 2023, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 6}, {"year": 2023, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 4}, {"year": 2024, "status_final": "בביצוע", "client_type_final": "ועדה", "count": 5}, {"year": 2024, "status_final": "בביצוע", "client_type_final": "ח\"כ", "count": 6}, {"year": 2024, "status_final": "בביצוע", "client_type_final": "יזומים", "count": 1}, {"year": 2024, "status_final": "בוצע", "client_type_final": "אחר", "count": 1}, {"year": 2024, "status_final": "בוצע", "client_type_final": "ועדה", "count": 295}, {"year": 2024, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 197}, {"year": 2024, "status_final": "בוצע", "client_type_final": "יזומים", "count": 53}, {"year": 2024, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 61}, {"year": 2024, "status_final": "מוקפא", "client_type_final": "יחידה פנימית", "count": 1}, {"year": 2024, "status_final": "ממתין למידע מהלקוח", "client_type_final": "ועדה", "count": 1}, {"year": 2024, "status_final": "ממתין למידע מהלקוח", "client_type_final": "ח\"כ", "count": 1}, {"year": 2024, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 14}, {"year": 2024, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 19}, {"year": 2024, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 4}, {"year": 2024, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 4}, {"year": 2025, "status_final": "בביצוע", "client_type_final": "ועדה", "count": 47}, {"year": 2025, "status_final": "בביצוע", "client_type_final": "ח\"כ", "count": 52}, {"year": 2025, "status_final": "בביצוע", "client_type_final": "יזומים", "count": 7}, {"year": 2025, "status_final": "בביצוע", "client_type_final": "יחידה פנימית", "count": 2}, {"year": 2025, "status_final": "בוצע", "client_type_final": "אחר", "count": 44}, {"year": 2025, "status_final": "בוצע", "client_type_final": "ועדה", "count": 280}, {"year": 2025, "status_final": "בוצע", "client_type_final": "ח\"כ", "count": 151}, {"year": 2025, "status_final": "בוצע", "client_type_final": "יזומים", "count": 73}, {"year": 2025, "status_final": "בוצע", "client_type_final": "יחידה פנימית", "count": 32}, {"year": 2025, "status_final": "בתהליך מול דברי הכנסת", "client_type_final": "ועדה", "count": 2}, {"year": 2025, "status_final": "ממתין למידע מהלקוח", "client_type_final": "ח\"כ", "count": 3}, {"year": 2025, "status_final": "נסגר או בוטל", "client_type_final": "ועדה", "count": 15}, {"year": 2025, "status_final": "נסגר או בוטל", "client_type_final": "ח\"כ", "count": 16}, {"year": 2025, "status_final": "נסגר או בוטל", "client_type_final": "יזומים", "count": 3}, {"year": 2025, "status_final": "נסגר או בוטל", "client_type_final": "יחידה פנימית", "count": 3}];
-        const semData = [{"semester": "1999ב", "count": 1}, {"semester": "2000א", "count": 13}, {"semester": "2000ב", "count": 99}, {"semester": "2001א", "count": 171}, {"semester": "2001ב", "count": 260}, {"semester": "2002א", "count": 273}, {"semester": "2002ב", "count": 175}, {"semester": "2003א", "count": 258}, {"semester": "2003ב", "count": 323}, {"semester": "2004א", "count": 363}, {"semester": "2004ב", "count": 259}, {"semester": "2005א", "count": 230}, {"semester": "2005ב", "count": 212}, {"semester": "2006א", "count": 210}, {"semester": "2006ב", "count": 393}, {"semester": "2007א", "count": 346}, {"semester": "2007ב", "count": 354}, {"semester": "2008א", "count": 341}, {"semester": "2008ב", "count": 163}, {"semester": "2009א", "count": 296}, {"semester": "2009ב", "count": 317}, {"semester": "2010א", "count": 360}, {"semester": "2010ב", "count": 280}, {"semester": "2011א", "count": 231}, {"semester": "2011ב", "count": 285}, {"semester": "2012א", "count": 265}, {"semester": "2012ב", "count": 107}, {"semester": "2013א", "count": 306}, {"semester": "2013ב", "count": 282}, {"semester": "2014א", "count": 251}, {"semester": "2014ב", "count": 180}, {"semester": "2015א", "count": 225}, {"semester": "2015ב", "count": 420}, {"semester": "2016א", "count": 345}, {"semester": "2016ב", "count": 260}, {"semester": "2017א", "count": 284}, {"semester": "2017ב", "count": 214}, {"semester": "2018א", "count": 281}, {"semester": "2018ב", "count": 188}, {"semester": "2019א", "count": 163}, {"semester": "2019ב", "count": 138}, {"semester": "2020א", "count": 325}, {"semester": "2020ב", "count": 404}, {"semester": "2021א", "count": 178}, {"semester": "2021ב", "count": 460}, {"semester": "2022א", "count": 342}, {"semester": "2022ב", "count": 159}, {"semester": "2023א", "count": 522}, {"semester": "2023ב", "count": 294}, {"semester": "2024א", "count": 357}, {"semester": "2024ב", "count": 306}, {"semester": "2025א", "count": 362}, {"semester": "2025ב", "count": 368}];
-        const eventData = [{"d": "2003-02-17", "l": "השבעת כנסת 16", "sem": "2003א"}, {"d": "2006-04-17", "l": "השבעת כנסת 17", "sem": "2006א"}, {"d": "2006-07-12", "l": "לבנון השנייה", "sem": "2006ב"}, {"d": "2008-12-27", "l": "עופרת יצוקה", "sem": "2008ב"}, {"d": "2009-02-24", "l": "השבעת כנסת 18", "sem": "2009א"}, {"d": "2012-11-14", "l": "עמוד ענן", "sem": "2012ב"}, {"d": "2013-02-05", "l": "השבעת כנסת 19", "sem": "2013א"}, {"d": "2014-07-08", "l": "צוק איתן", "sem": "2014ב"}, {"d": "2014-12-08", "l": "פיזור כנסת 19", "sem": "2014ב"}, {"d": "2015-03-31", "l": "השבעת כנסת 20", "sem": "2015א"}, {"d": "2018-12-26", "l": "פיזור כנסת 20", "sem": "2018ב"}, {"d": "2019-04-30", "l": "השבעת כנסת 21", "sem": "2019א"}, {"d": "2019-05-30", "l": "פיזור כנסת 21", "sem": "2019א"}, {"d": "2019-10-03", "l": "השבעת כנסת 22", "sem": "2019ב"}, {"d": "2019-12-12", "l": "פיזור כנסת 22", "sem": "2019ב"}, {"d": "2020-02-27", "l": "פרוץ הקורונה", "sem": "2020א"}, {"d": "2020-03-16", "l": "השבעת כנסת 23", "sem": "2020א"}, {"d": "2020-12-23", "l": "פיזור כנסת 23", "sem": "2020ב"}, {"d": "2021-04-06", "l": "השבעת כנסת 24", "sem": "2021א"}, {"d": "2021-05-10", "l": "שומר החומות", "sem": "2021א"}, {"d": "2022-06-30", "l": "פיזור כנסת 24", "sem": "2022א"}, {"d": "2022-11-15", "l": "השבעת כנסת 25", "sem": "2022ב"}, {"d": "2023-10-07", "l": "חרבות ברזל", "sem": "2023ב"}];
-
+        const data = {json.dumps(json_data, ensure_ascii=False)};
         const minS = document.getElementById('minS'), maxS = document.getElementById('maxS');
         const minL = document.getElementById('minL'), maxL = document.getElementById('maxL');
 
-        function update() {
+        function update() {{
             let v1 = parseInt(minS.value), v2 = parseInt(maxS.value);
-            if (v1 > v2) { if (this === minS) maxS.value = v1; else minS.value = v2; v1 = parseInt(minS.value); v2 = parseInt(maxS.value); }
+            if (v1 > v2) {{ if (this === minS) maxS.value = v1; else minS.value = v2; v1 = parseInt(minS.value); v2 = parseInt(maxS.value); }}
             minL.innerText = v1; maxL.innerText = v2;
 
             const filtered = data.filter(d => d.year >= v1 && d.year <= v2);
             let t=0, d_count=0, p=0, c=0;
-            const yearsMap = {}, statusMap = {}, clientMap = {};
+            const yearsMap = {{}}, statusMap = {{}}, clientMap = {{}};
 
-            filtered.forEach(item => {
+            filtered.forEach(item => {{
                 t += item.count;
                 if (item.status_final === 'בוצע') d_count += item.count;
                 else if (item.status_final === 'בביצוע') p += item.count;
                 else if (item.status_final === 'נסגר או בוטל') c += item.count;
+                
                 yearsMap[item.year] = (yearsMap[item.year] || 0) + item.count;
                 statusMap[item.status_final] = (statusMap[item.status_final] || 0) + item.count;
                 clientMap[item.client_type_final] = (clientMap[item.client_type_final] || 0) + item.count;
-            });
+            }});
 
             document.getElementById('kTotal').innerText = t.toLocaleString();
             document.getElementById('kDone').innerText = d_count.toLocaleString();
@@ -80,59 +148,52 @@
 
             // 1. בר שנתי
             const xY = Object.keys(yearsMap).sort();
-            Plotly.newPlot('barChart', [{
+            Plotly.newPlot('barChart', [{{
                 x: xY, y: xY.map(y => yearsMap[y]), type: 'bar', text: xY.map(y => yearsMap[y]),
-                textposition: 'inside', marker: {color: '#1a73e8'}
-            }], { title: 'התפלגות שנתית לכמות המשימות', xaxis: {tickformat: 'd'} });
+                textposition: 'inside', marker: {{color: '#1a73e8'}}
+            }}], {{ title: 'התפלגות שנתית לכמות המשימות', xaxis: {{tickformat: 'd'}} }});
 
             // 2. עוגת סטטוס
             const sLabels = Object.keys(statusMap);
-            Plotly.newPlot('pieStatus', [{
+            Plotly.newPlot('pieStatus', [{{
                 labels: sLabels, values: sLabels.map(l => statusMap[l]), type: 'pie', hole: 0.4,
-                marker: {colors: sLabels.map(l => l==='בוצע'?'#28a745':(l==='נסגר או בוטל'?'#dc3545':null))},
+                marker: {{colors: sLabels.map(l => l==='בוצע'?'#28a745':(l==='נסגר או בוטל'?'#dc3545':null))}},
                 textinfo: 'value+percent'
-            }], { title: 'התפלגות סטאטוס המשימות', legend: {orientation:'h', y:-0.1} });
+            }}], {{ title: 'התפלגות סטאטוס המשימות', legend: {{orientation:'h', y:-0.1}} }});
 
-            // 3. עוגת לקוחות (ללא מקרא, אחוז מעוגל 1)
+            // 3. עוגת לקוחות (Donut, ללא Legend, אחוז מעוגל לספרה אחת)
             const cLabels = Object.keys(clientMap);
-            Plotly.newPlot('pieClient', [{
-                labels: cLabels, values: cLabels.map(l => clientMap[l]), type: 'pie', hole: 0.5,
-                textinfo: 'label+value+percent', texttemplate: '%{label}<br>%{value}<br>%{percent:.1%}',
-                showlegend: false, domain: { x: [0.1, 0.9] }
-            }], { title: 'התפלגות משימות לפי סוגי לקוחות' });
+            Plotly.newPlot('pieClient', [{{
+                labels: cLabels, values: cLabels.map(l => clientMap[l]), 
+                type: 'pie', hole: 0.5,
+                textinfo: 'label+value+percent', 
+                texttemplate: '%{{label}}<br>%{{value}}<br>%{{percent:.1%}}',
+                showlegend: false, 
+                domain: {{ x: [0.1, 0.9] }}
+            }}], {{ 
+                title: 'התפלגות משימות לפי סוגי לקוחות',
+                margin: {{ t: 50, b: 20, l: 20, r: 20 }}
+            }});
+        }}
 
-            // 4. גרף מחציות (חציוני) עם אירועים
-            const fSem = semData.filter(d => { let y=parseInt(d.semester.substring(0,4)); return y>=v1 && y<=v2; });
-            const sLabelsArr = fSem.map(d => d.semester);
-            const sValuesArr = fSem.map(d => d.count);
-
-            const ann = eventData.filter(e => { let y=parseInt(e.sem.substring(0,4)); return y>=v1 && y<=v2; })
-                                .map((e, i) => ({
-                x: e.sem, y: sValuesArr[sLabelsArr.indexOf(e.sem)], text: e.l, showarrow: true,
-                arrowhead: 2, ax: 0, ay: -40 - (i % 4 * 25), font: {size: 10}, bgcolor: 'white'
-            }));
-
-            Plotly.newPlot('semChart', [{
-                x: sLabelsArr, y: sValuesArr, type: 'bar', text: sValuesArr, textposition: 'auto',
-                marker: {color: '#636EFA'}
-            }], {
-                title: 'סיכום בקשות לפי מחציות (חציונים) ואירועים משמעותיים',
-                xaxis: { tickangle: -45 },
-                annotations: ann,
-                margin: { b: 100 }
-            });
-        }
-
-        function downloadHTML() {
-            const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+        function downloadHTML() {{
+            const blob = new Blob([document.documentElement.outerHTML], {{ type: 'text/html' }});
             const a = document.createElement('a');
             a.href = window.URL.createObjectURL(blob);
             a.download = 'knesset_dashboard.html';
             a.click();
-        }
+        }}
         minS.oninput = update; maxS.oninput = update;
         update();
     </script>
 </body>
 </html>
+    """
+
+    with open('dashboard.html', 'w', encoding='utf-8') as f:
+        f.write(html_template)
     
+    display(HTML(html_template))
+
+except Exception as e:
+    print(f"שגיאה בעיבוד: {{e}}")
