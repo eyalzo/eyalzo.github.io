@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דשבורד מודיעין פרלמנטרי: זכויות משרתי המילואים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --bg-base: #f8fafc;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --header-bg: #0f172a;
+            
+            /* Entity Colors */
+            --c-comptroller-hex: #f59e0b;
+            --c-mmm-hex: #8b5cf6;
+            --c-active-hex: #3b82f6;
+            --c-passed-hex: #10b981;
+            --c-committee-hex: #ef4444;
+            --c-gov-hex: #14b8a6;
+            --c-finance-hex: #ec4899;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; padding: 24px; font-size: 16px; }
+
+        /* Utility Classes */
+        .max-w-7xl { max-width: 80rem; margin: 0 auto; }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        
+        .flex { display: flex; } .flex-col { flex-direction: column; }
+        @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
+        .items-center { align-items: center; } .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+        .flex-wrap { flex-wrap: wrap; }
+        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
+        
+        .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; }
+        
+        .w-full { width: 100%; } .h-full { height: 100%; }
+        
+        .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-full { border-radius: 9999px; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+        .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; } .border-t { border-top: 1px solid #e2e8f0; }
+        
+        .text-xs { font-size: 0.85rem; } .text-sm { font-size: 0.95rem; } .text-base { font-size: 1.1rem; } 
+        .text-lg { font-size: 1.25rem; font-weight: 700; } .text-xl { font-size: 1.5rem; font-weight: 700; } .text-3xl { font-size: 2.25rem; font-weight: 700; }
+        .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
+        
+        .bg-white { background-color: #ffffff; } .bg-blue-50 { background-color: #eff6ff; } .bg-gray-50 { background-color: #f9fafb; }
+        .text-gray-200 { color: #e2e8f0; } .text-gray-400 { color: #94a3b8; } .text-gray-500 { color: #64748b; } .text-gray-700 { color: #334155; } .text-gray-900 { color: #0f172a; }
+        .text-red-500 { color: #ef4444; } .text-orange-500 { color: #f97316; } .text-blue-900 { color: #1e3a8a; } .text-amber-700 { color: #b45309; }
+        
+        /* Layout Specific */
+        header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .badge-mono { font-family: monospace; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); font-size: 1rem; display: flex; gap: 1rem; align-items: center; }
+        
+        .exec-block { background-color: #eff6ff; border-right: 4px solid #2563eb; color: #1e3a8a; }
+        .whats-new { background-color: #ffffff; border: 1px solid #bfdbfe; border-right: 4px solid #fbbf24; border-radius: 0.25rem; padding: 1rem; margin-top: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(30, 64, 175, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0); }
+        }
+        .btn-read-aloud { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-read-aloud:hover { background-color: #bfdbfe; }
+        .is-reading { background-color: #1e40af; color: #ffffff; animation: pulse 2s infinite; }
+
+        .progress-bar-bg { width: 100%; height: 0.75rem; background-color: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 0.25rem; }
+        .progress-media { height: 100%; background-color: #ef4444; }
+        .progress-social { height: 100%; background-color: #f97316; }
+
+        .pol-coalition { background-color: #eff6ff; border: 1px solid #bfdbfe; }
+        .pol-opposition { background-color: #f8fafc; border: 1px solid #e2e8f0; }
+
+        /* Ecosystem */
+        .eco-grid-col { padding-right: 0.25rem; }
+        .eco-item { background: #f8fafc; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.25rem; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;}
+        .eco-item:hover { background: #f1f5f9; }
+        
+        /* Timeline Container specific for LTR and Overflow */
+        .timeline-scroll-wrapper { width: 100%; overflow-x: auto; direction: ltr; background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0; padding: 1rem 0; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .timeline-scroll-wrapper::-webkit-scrollbar { height: 10px; }
+        .timeline-scroll-wrapper::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 5px; }
+        .timeline-canvas-container { height: 380px; width: 3400px; position: relative; } /* Extra wide for more elements */
+        
+        .trends-container { height: 90px; width: 100%; margin-top: 0.75rem; direction: ltr; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .filter-btn { padding: 0.6rem 1.1rem; border-radius: 0.5rem; cursor: pointer; border: none; font-weight: 600; font-size: 1rem; transition: all 0.2s; }
+        .btn-active { background-color: #0f172a; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-inactive { background-color: #e2e8f0; color: #334155; }
+        .btn-inactive:hover { background-color: #cbd5e1; }
+
+        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1.25rem; display: flex; flex-direction: column; transition: transform 0.2s; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .doc-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        
+        .card-summary-box { background: white; border: 1px solid #f1f5f9; padding: 1rem; border-radius: 0.5rem; font-size: 1.05rem; margin-bottom: 1rem; line-height: 1.6; }
+        .card-impact-box { background: rgba(255,255,255,0.5); padding: 0.75rem; border-radius: 0.25rem; font-size: 0.95rem; margin-bottom: 1rem; border-right: 3px solid #cbd5e1; }
+        .tag-badge { background: #e2e8f0; color: #334155; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; display: inline-block; margin-bottom: 2px; }
+        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.3rem 0.6rem; border-radius: 0.25rem; font-size: 0.9rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
+        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: #475569; }
+
+        /* Entity Specific Styles */
+        .entity-comptroller { border-top: 4px solid var(--c-comptroller-hex); background-color: #ffffff; }
+        .badge-comptroller { background-color: var(--c-comptroller-hex); color: #ffffff; }
+        .text-comptroller { color: var(--c-comptroller-hex); }
+
+        .entity-mmm { border-top: 4px solid var(--c-mmm-hex); background-color: #ffffff; }
+        .badge-mmm { background-color: var(--c-mmm-hex); color: #ffffff; }
+        .text-mmm { color: var(--c-mmm-hex); }
+
+        .entity-activeLaw { border-top: 4px solid var(--c-active-hex); background-color: #ffffff; }
+        .badge-activeLaw { background-color: var(--c-active-hex); color: #ffffff; }
+        .text-activeLaw { color: var(--c-active-hex); }
+
+        .entity-passedLaw { border-top: 4px solid var(--c-passed-hex); background-color: #ffffff; }
+        .badge-passedLaw { background-color: var(--c-passed-hex); color: #ffffff; }
+        .text-passedLaw { color: var(--c-passed-hex); }
+
+        .entity-committee { border-top: 4px solid var(--c-committee-hex); background-color: #ffffff; }
+        .badge-committee { background-color: var(--c-committee-hex); color: #ffffff; }
+        .text-committee { color: var(--c-committee-hex); }
+
+        .entity-govDecision { border-top: 4px solid var(--c-gov-hex); background-color: #ffffff; }
+        .badge-govDecision { background-color: var(--c-gov-hex); color: #ffffff; }
+        .text-govDecision { color: var(--c-gov-hex); }
+
+        .entity-financeDirective { border-top: 4px solid var(--c-finance-hex); background-color: #ffffff; }
+        .badge-financeDirective { background-color: var(--c-finance-hex); color: #ffffff; }
+        .text-financeDirective { color: var(--c-finance-hex); }
+
+    </style>
+</head>
+<body>
+
+    <div class="max-w-7xl">
+        <!-- Header -->
+        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl mb-1">זכויות משרתי המילואים בכנסת ה-25</h1>
+                <p class="text-gray-200 text-base mt-1">מערכת מודיעין פרלמנטרי: שקיפות, חקיקה, זירה פוליטית וסנכרון מלא למאגר הנתונים.</p>
+            </div>
+            <!-- Version and Date to the left -->
+            <div class="badge-mono mr-auto">
+                <span>גרסה: 1.0.4</span>
+                <span style="opacity: 0.5;">|</span>
+                <span>עדכון אחרון: 02/06/2026</span>
+                <span style="opacity: 0.5;">|</span>
+                <span class="font-bold text-blue-400">Gilat AI</span>
+            </div>
+        </header>
+
+        <!-- Exec Summary (Full Width) -->
+        <div class="exec-block p-6 rounded-xl shadow-sm mb-8 relative">
+            <div class="flex justify-between items-start mb-3">
+                <h2 class="font-bold text-xl">📋 תקציר מנהלים: מה משתקף מהנתונים?</h2>
+                <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
+                    <span>🔊</span> <span id="tts-text">הקרא סיכום</span>
+                </button>
+            </div>
+            <div id="execSummaryText">
+                <p class="text-base md:text-lg leading-relaxed mb-4">
+                    נושא זכויות משרתי המילואים הפך לאחד מצירי הדיון המרכזיים ביותר בכנסת ה-25 בעקבות מלחמת חרבות ברזל. הנתונים המגובים בגרף ובדשבורד משקפים <strong>זינוק דרמטי בחקיקה, החלטות ממשלה, דיוני ועדות ודוחות ביקורת בשנים 2024-2026</strong>. משתקפת מגמה ברורה: ניסיון מעבר מהיר ממענקי חירום אד-הוק, לניסיון לעגן זכויות בחקיקת קבע (כגון הגנה מורחבת מפיטורין, מסלולי פיצוי לעצמאיים, וזכויות סטודנטים). במקביל, העלייה החדה בדוחות המבקר והנחיות הגופים הפיננסיים מצביעה על פערים מתמשכים ביישומי המדיניות בשטח.
+                </p>
+                <div class="whats-new">
+                    <h3 class="font-bold text-amber-700 text-lg mb-2">🔥 מה התחדש לאחרונה?</h3>
+                    <ul class="text-base list-inside flex flex-col gap-2 text-gray-800 font-semibold" style="list-style-type: disc; padding-right: 0.5rem;">
+                        <li>דוח מבקר המדינה (מ/102/26) חשף כשלים במיצוי זכויות של עצמאיים.</li>
+                        <li>הצעת חוק לשימור זכויות פנסיוניות (פ/1455/26) עברה קריאה טרומית.</li>
+                        <li>המפקח על הבנקים הוציא הנחיה מורחבת בנוגע לדחיית תשלומי משכנתאות.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics & Political Arena Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Media & Social Metrics -->
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-2">📡 מדדי שיח ציבורי ותקשורתי</h3>
+                
+                <div class="mb-5">
+                    <div class="flex justify-between text-base mb-1">
+                        <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
+                        <span class="text-red-500 font-bold">42%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-media" style="width: 42%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <strong>הופעות בולטות (חודש אחרון):</strong> 12 בעיתונות כתובה, 34 אייטמים ברדיו, 8 הופעות בטלוויזיה. סיקור מתון יחסית לנושאי לחימה מבצעיים.
+                    </p>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between text-base mb-1">
+                        <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
+                        <span class="text-orange-500 font-bold">88%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-social" style="width: 88%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2 mb-1">
+                        מונחי חיפוש: "זכויות מילואים", "מענק מילואים", "פטור ממילואים".
+                    </p>
+                    
+                    <!-- Google Trends Timeline 2022-2026 -->
+                    <div class="trends-container relative">
+                        <canvas id="trendsChart"></canvas>
+                        <div class="absolute bottom-0 w-full flex justify-between px-1 text-[11px] text-gray-400 font-mono" dir="ltr">
+                            <span>2022</span>
+                            <span>2024</span>
+                            <span>2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Political Arena -->
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-2">⚖️ הזירה הפוליטית: קואליציה מול אופוזיציה</h3>
+                <div class="grid grid-cols-1 gap-4 h-full">
+                    <div class="pol-coalition p-5 rounded-lg">
+                        <strong class="text-blue-900 block mb-2 text-base border-b border-blue-200 pb-1">קואליציה וממשלה</strong>
+                        <p class="text-sm text-gray-700 leading-relaxed">קידום חקיקת חירום לצורכי הצבא במקביל למתן מענקים תלויי-תקציב. מתנגדת להצעות חוק פרטיות בעלות השלכה רוחבית על תקציב המדינה (כגון שינויי מס הכנסה קבועים).</p>
+                    </div>
+                    <div class="pol-opposition p-5 rounded-lg">
+                        <strong class="text-gray-900 block mb-2 text-base border-b border-gray-200 pb-1">סיעות האופוזיציה</strong>
+                        <p class="text-sm text-gray-700 leading-relaxed">התנגדות להארכת שירות ללא הסדרה רוחבית של חוק הגיוס. מיקוד בקידום הצעות חוק להרחבת המעטפת הסוציאלית והכלכלית, תוך דרישה להקמת מנגנון פיצויים אוטומטי לעצמאיים.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ecosystem Map (4 Columns) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-4 border-b pb-2">🏛️ משרדי ממשלה וגופים</h3>
+                <div class="space-y-2 eco-grid-col" id="eco-ministries"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-4 border-b pb-2">💼 ועדות הכנסת</h3>
+                <div class="space-y-2 eco-grid-col" id="eco-committees"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-4 border-b pb-2">🤝 חברה אזרחית ושדלנות</h3>
+                <div class="space-y-2 eco-grid-col" id="eco-orgs"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-4 border-b pb-2">👤 פוליטיקאים</h3>
+                <div class="space-y-2 eco-grid-col" id="eco-politicians"></div>
+            </div>
+        </div>
+
+        <!-- Main Timeline Chart LTR (Scrollable) -->
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
+            <h3 class="text-xl mb-1">📊 ציר זמן: מסמכים ופעילות (משמאל לימין)</h3>
+            <p class="text-base text-gray-500 mb-4 border-b pb-2">גלול ימינה/שמאלה לצפייה. העיגולים ממחישים את שם המסמך, ועובי קו העיגול מייצג את ציון ה"קשר" לנושא.</p>
+            
+            <div class="timeline-scroll-wrapper">
+                <div class="timeline-canvas-container">
+                    <canvas id="mainTimeline"></canvas>
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="flex flex-wrap gap-4 mt-4 justify-center text-base font-semibold" id="chartLegend">
+                <!-- Legend items injected by JS -->
+            </div>
+        </div>
+
+        <!-- Filterable Stream -->
+        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
+                <div>
+                    <h3 class="text-xl">מאגר המסמכים המלא</h3>
+                    <p class="text-base text-gray-500">פירוט המסמכים המסונכרנים המרכיבים את הגרף</p>
+                </div>
+                <div class="flex flex-wrap gap-2" id="filterContainer">
+                    <button class="filter-btn btn-active" data-filter="all">כל המקורות</button>
+                    <button class="filter-btn btn-inactive" data-filter="govDecision">החלטות ממשלה</button>
+                    <button class="filter-btn btn-inactive" data-filter="financeDirective">הנחיות גופים פיננסיים</button>
+                    <button class="filter-btn btn-inactive" data-filter="activeLaw">הצעות חוק</button>
+                    <button class="filter-btn btn-inactive" data-filter="passedLaw">חקיקה</button>
+                    <button class="filter-btn btn-inactive" data-filter="committee">ועדות</button>
+                    <button class="filter-btn btn-inactive" data-filter="mmm">הממ"מ</button>
+                    <button class="filter-btn btn-inactive" data-filter="comptroller">מבקר</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="documentsStream">
+                <!-- Cards populated by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        const appConfiguration = {
+            ecosystem: {
+                ministries: [
+                    { name: 'משרד הביטחון / צה"ל', desc: 'קביעת מדיניות תגמולים וניהול פניות.', relevance: 10, color: 'border-amber-500' },
+                    { name: 'משרד האוצר', desc: 'תקצוב קרנות הפיצויים לעסקים.', relevance: 9, color: 'border-blue-500' },
+                    { name: 'הביטוח הלאומי', desc: 'חישוב והזרמת תגמולי המילואים השוטפים.', relevance: 10, color: 'border-purple-500' },
+                    { name: 'משרד הכלכלה והעבודה', desc: 'הגנה מפני פיטורים לבנות זוג ולוחמים.', relevance: 8, color: 'border-emerald-500' }
+                ],
+                committees: [
+                    { name: 'ועדת החוץ והביטחון', desc: 'חקיקת חוק שירות ביטחון ופיקוח שטח.', relevance: 10, color: 'border-amber-500' },
+                    { name: 'ועדת העבודה והרווחה', desc: 'אכיפת איסור פיטורין ותנאים סוציאליים.', relevance: 9, color: 'border-emerald-500' },
+                    { name: 'ועדת הכספים', desc: 'אישור העברות לקרנות סיוע והקלות מס.', relevance: 8, color: 'border-blue-500' },
+                    { name: 'ועדת החינוך והמל"ג', desc: 'הסדרת הקלות אקדמיות וקרנות סיוע.', relevance: 7, color: 'border-purple-500' }
+                ],
+                civilOrgs: [
+                    { name: 'פורום נשות המילואימניקים', desc: 'הגנה מפיטורין וייצוג נשות לוחמים בדיונים.', relevance: 9, color: 'border-indigo-300' },
+                    { name: 'ארגון נכי צה"ל', desc: 'לובי משפטי לשיקום פצועים בוועדות.', relevance: 9, color: 'border-indigo-300' },
+                    { name: 'אחים לנשק / התעוררות', desc: 'סיוע למשרתי מילואים עצמאיים שקרסו.', relevance: 8, color: 'border-indigo-300' },
+                    { name: 'התאחדות הסטודנטים', desc: 'מיצוי זכויות אקדמיות מול המוסדות.', relevance: 7, color: 'border-indigo-300' }
+                ],
+                politicians: [
+                    { name: 'ח״כ ישראל אייכלר (קואליציה)', desc: 'יו״ר ועדת העבודה; מפקח על צמצום היתרי הפיטורין.', relevance: 9, color: 'border-slate-300' },
+                    { name: 'ח״כ אופיר כץ (קואליציה)', desc: 'יוזם הצעת החוק המרכזית להארכת ההגנה מפיטורין ל-90 יום.', relevance: 9, color: 'border-slate-300' },
+                    { name: 'ח״כ משה גפני (קואליציה)', desc: 'יו״ר ועדת הכספים; מנהל מעקב להגדלת מענקים לעצמאיים.', relevance: 8, color: 'border-slate-300' },
+                    { name: 'ח״כ מיכאל ביטון (אופוזיציה)', desc: 'יוזם הצעות חוק לנקודות זיכוי במס מורחבות.', relevance: 7, color: 'border-slate-300' }
+                ]
+            },
+            entities: [
+                { key: 'govDecision', label: 'החלטות ממשלה', color: '#14b8a6' },
+                { key: 'financeDirective', label: 'גופים פיננסיים', color: '#ec4899' },
+                { key: 'comptroller', label: 'מבקר המדינה', color: '#f59e0b' },
+                { key: 'mmm', label: 'הממ"מ', color: '#8b5cf6' },
+                { key: 'activeLaw', label: 'הצעות חוק פעילות', color: '#3b82f6' },
+                { key: 'passedLaw', label: 'חקיקה שהושלמה', color: '#10b981' },
+                { key: 'committee', label: 'דיוני ועדות', color: '#ef4444' }
+            ],
+            items: [
+                // New Entities
+                { year: 2024, month: 5, relevance: 10, type: 'govDecision', styleClass: 'entity-govDecision', textClass: 'text-govDecision', badgeClass: 'badge-govDecision', source: 'החלטת ממשלה', idCode: 'החלטה 1234', author: 'מזכירות הממשלה', title: 'מתווה פיצויים מיוחד לעסקים של משרתי מילואים', summary: 'החלטה על הקמת קרן סיוע ייעודית מחוץ לתקציב הרגיל עבור משרתי מילואים עצמאיים.', impact: 'הזרמת מיליארד ש"ח כעזרה ראשונה לעסקים קטנים.', keywords: ['מענקים', 'עסקים_קטנים'] },
+                { year: 2025, month: 2, relevance: 9, type: 'financeDirective', styleClass: 'entity-financeDirective', textClass: 'text-financeDirective', badgeClass: 'badge-financeDirective', source: 'גוף פיננסי', idCode: 'חוזר בנק ישראל', author: 'המפקח על הבנקים', title: 'מתווה דחיית משכנתאות (חרבות ברזל)', summary: 'הוראה המחייבת את הבנקים לאפשר דחיית תשלומי משכנתא והלוואות למשרתי מילואים בצו 8 ללא ריבית פיגורים.', impact: 'הקלה תזרימית משמעותית למשקי הבית המגויסים.', keywords: ['משכנתאות', 'אשראי'] },
+                { year: 2026, month: 1, relevance: 8, type: 'govDecision', styleClass: 'entity-govDecision', textClass: 'text-govDecision', badgeClass: 'badge-govDecision', source: 'החלטת ממשלה', idCode: 'החלטה 402', author: 'מזכירות הממשלה', title: 'הרחבת זכויות נשות משרתי המילואים', summary: 'החלטה על סבסוד מעונות יום ותוכניות תמיכה נפשית למשפחות לוחמים הנמצאים בחזית מעל 100 ימים.', impact: 'תקצוב משרד הרווחה להפעלת מוקדי סיוע משפחתיים.', keywords: ['משפחות', 'סבסוד'] },
+
+                // Original Entities
+                { year: 2024, month: 2, relevance: 7, type: 'comptroller', styleClass: 'entity-comptroller', textClass: 'text-comptroller', badgeClass: 'badge-comptroller', source: 'מבקר המדינה', idCode: 'מ/843/24', author: 'משרד מבקר המדינה', title: 'דוח: טיפול בסטודנטים משרתי מילואים', summary: 'בדיקת היערכות המוסדות להשכלה גבוהה בסיוע מותאם לסטודנטים שנקראו לשירות מילואים ארוך.', impact: 'המלצות הובילו למתווה אחיד של המל"ג.', keywords: ['סטודנטים', 'השכלה_גבוהה'] },
+                { year: 2026, month: 5, relevance: 9, type: 'comptroller', styleClass: 'entity-comptroller', textClass: 'text-comptroller', badgeClass: 'badge-comptroller', source: 'מבקר המדינה', idCode: 'מ/102/26', author: 'משרד מבקר המדינה', title: 'ביקורת מעקב: מיצוי זכויות לעצמאיים', summary: 'בדיקת יישום החלטות הממשלה בדבר מענקים וקרנות סיוע לעצמאיים ובני משפחה.', impact: 'חשף פערים של 20% באי-מיצוי זכויות בקרב עצמאיים.', keywords: ['עצמאיים', 'קרן_סיוע'] },
+                
+                { year: 2024, month: 4, relevance: 8, type: 'mmm', styleClass: 'entity-mmm', textClass: 'text-mmm', badgeClass: 'badge-mmm', source: 'הממ"מ', idCode: 'מ/1122/24', author: 'מרכז המחקר והמידע', title: 'הגנה על תעסוקת בנות זוג של משרתי מילואים', summary: 'סקירה השוואתית של מנגנוני הגנה מפני פיטורים לבנות זוג במדינות שונות והמצב בישראל.', impact: 'הניח תשתית לתיקון עתידי בחוק עבודת נשים.', keywords: ['בנות_זוג', 'תעסוקה'] },
+                { year: 2025, month: 1, relevance: 10, type: 'mmm', styleClass: 'entity-mmm', textClass: 'text-mmm', badgeClass: 'badge-mmm', source: 'הממ"מ', idCode: 'מ/054/25', author: 'מרכז המחקר והמידע', title: 'נתונים על שירות מילואים פעיל - התפלגות', summary: 'מסמך נתונים לקראת הדיון בחוק הארכת שירות המילואים, המציג את נטל השירות.', impact: 'סיפק נתונים למאבק האופוזיציה.', keywords: ['נטל_השירות', 'דמוגרפיה'] },
+                { year: 2026, month: 2, relevance: 9, type: 'mmm', styleClass: 'entity-mmm', textClass: 'text-mmm', badgeClass: 'badge-mmm', source: 'הממ"מ', idCode: 'מ/404/26', author: 'מרכז המחקר והמידע', title: 'השפעת שירות ארוך על בריאות הנפש', summary: 'סקירת תוכניות הטיפול הממשלתיות והצבאיות לפוסט-טראומה (PTSD) ושחיקה.', impact: 'שימש בסיס לדרישת תוספת תקציב לאגף השיקום.', keywords: ['בריאות_הנפש', 'שיקום'] },
+
+                { year: 2025, month: 3, relevance: 7, type: 'activeLaw', styleClass: 'entity-activeLaw', textClass: 'text-activeLaw', badgeClass: 'badge-activeLaw', source: 'הצעת חוק פעילה', idCode: 'פ/3020/25', author: 'קבוצת ח"כים', title: 'חוק נקודות זיכוי במס מורחבות', summary: 'עיגון מתן נקודות זיכוי במס הכנסה באופן קבוע לכל מי ששירת מעל 30 יום בשנה.', impact: 'ממתין לקריאה ראשונה עקב התנגדות האוצר.', keywords: ['מס_הכנסה', 'הטבות'] },
+                { year: 2025, month: 11, relevance: 10, type: 'activeLaw', styleClass: 'entity-activeLaw', textClass: 'text-activeLaw', badgeClass: 'badge-activeLaw', source: 'הצעת חוק פעילה', idCode: 'פ/3150/25', author: 'ממשלת ישראל', title: 'הצעת חוק שירות ביטחון (הוראת שעה)', summary: 'העלאת גיל הפטור משירות מילואים ל-41 לחיילים ו-46 לקצינים.', impact: 'מעורר מחאה ציבורית עזה בסוגיית השוויון בנטל.', keywords: ['גיל_פטור', 'הוראת_שעה'] },
+                { year: 2026, month: 4, relevance: 8, type: 'activeLaw', styleClass: 'entity-activeLaw', textClass: 'text-activeLaw', badgeClass: 'badge-activeLaw', source: 'הצעת חוק פעילה', idCode: 'פ/1023/26', author: 'האופוזיציה', title: 'שוויון בסיוע לעסקים של משרתי מילואים', summary: 'השוואת מנגנון הפיצוי לעסקים קטנים לזה של תושבי קו העימות.', impact: 'נדון בימים אלו בוועדת הכלכלה.', keywords: ['עסקים_קטנים', 'פיצויים'] },
+                { year: 2026, month: 6, relevance: 9, type: 'activeLaw', styleClass: 'entity-activeLaw', textClass: 'text-activeLaw', badgeClass: 'badge-activeLaw', source: 'הצעת חוק פעילה', idCode: 'פ/1455/26', author: 'הצעת חוק פרטית', title: 'חוק שימור זכויות פנסיוניות במילואים', summary: 'הבטחת הפרשות סוציאליות מלאות גם לסטודנטים או מובטלים שגויסו.', impact: 'עבר קריאה טרומית פה אחד.', keywords: ['פנסיה', 'זכויות_סוציאליות'] },
+
+                { year: 2024, month: 1, relevance: 10, type: 'passedLaw', styleClass: 'entity-passedLaw', textClass: 'text-passedLaw', badgeClass: 'badge-passedLaw', source: 'חקיקה שהושלמה', idCode: 'ח/1990/24', author: 'הממשלה', title: 'הגנה על עובדים בשעת חירום', summary: 'איסור מוחלט על פיטורי משרת מילואים למשך 30 יום לאחר תום שירותו.', impact: 'העניק ביטחון תעסוקתי קריטי למאות אלפי משרתים.', keywords: ['הגנה_מפיטורים', 'חירום'] },
+                { year: 2025, month: 6, relevance: 8, type: 'passedLaw', styleClass: 'entity-passedLaw', textClass: 'text-passedLaw', badgeClass: 'badge-passedLaw', source: 'חקיקה שהושלמה', idCode: 'ח/2040/25', author: 'ועדת החינוך', title: 'חוק עידוד מעורבות סטודנטים', summary: 'עיגון הזכות למועדים מיוחדים והקלות בנוכחות עבור ימי המילואים.', impact: 'נכנס לתוקף מלא בכל המוסדות.', keywords: ['אקדמיה', 'סטודנטים'] },
+                { year: 2026, month: 1, relevance: 9, type: 'passedLaw', styleClass: 'entity-passedLaw', textClass: 'text-passedLaw', badgeClass: 'badge-passedLaw', source: 'חקיקה שהושלמה', idCode: 'ח/2115/26', author: 'משרד הביטחון', title: 'תגמול מיוחד מורחב למשרתי מילואים', summary: 'הגדלת התגמול המינימלי למשרתים שאינם שכירים ולבעלי שכר נמוך.', impact: 'תיקן עיוות של פגיעה כלכלית.', keywords: ['תגמול', 'שכר'] },
+
+                { year: 2025, month: 8, relevance: 8, type: 'committee', styleClass: 'entity-committee', textClass: 'text-committee', badgeClass: 'badge-committee', source: 'דיוני ועדות', idCode: 'ד/882/25', author: 'ועדת הכספים', title: 'עיכובים בתשלום מענקי הקרן לעסקים', summary: 'דיון דחוף בעקבות תלונות על הליכים בירוקרטיים בקבלת כספי הסיוע.', impact: 'הוקם ערוץ ירוק לטיפול מהיר בעצמאיים.', keywords: ['בירוקרטיה', 'עסקים'] },
+                { year: 2025, month: 10, relevance: 6, type: 'committee', styleClass: 'entity-committee', textClass: 'text-committee', badgeClass: 'badge-committee', source: 'דיוני ועדות', idCode: 'ד/905/25', author: 'ועדת החוץ והביטחון', title: 'תנאי השירות והציוד הלוגיסטי', summary: 'דיון חסוי שבחן תלונות על חוסר בציוד מתקדם בגדודים המגויסים.', impact: 'צה"ל התחייב לרכש מהיר.', keywords: ['לוגיסטיקה', 'תנאי_שירות'] },
+                { year: 2026, month: 3, relevance: 9, type: 'committee', styleClass: 'entity-committee', textClass: 'text-committee', badgeClass: 'badge-committee', source: 'דיוני ועדות', idCode: 'ד/112/26', author: 'ועדת העבודה והרווחה', title: 'סיוע נפשי למשפחות משרתים', summary: 'בחינת המענים הקיימים בקהילה למשפחות בהן בן/בת הזוג מגויס.', impact: 'הרחבת סבסוד טיפולים רגשיים.', keywords: ['משפחות', 'סיוע_נפשי'] }
+            ],
+            trendsData: [
+                { year: 2022, val: 15 },
+                { year: 2023, val: 25 },
+                { year: 2024, val: 100 },
+                { year: 2025, val: 85 },
+                { year: 2026, val: 90 }
+            ]
+        };
+
+        // 1. Render Ecosystem Map dynamically (Sorted by Relevance descending)
+        function renderEcosystemList(elementId, dataArray) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            
+            // Sort by relevance high to low
+            const sortedArray = [...dataArray].sort((a, b) => b.relevance - a.relevance);
+            
+            sortedArray.forEach(item => {
+                container.innerHTML += `
+                    <div class="eco-item border-r-4 ${item.color}">
+                        <div class="flex justify-between items-start gap-2 mb-1">
+                            <strong class="text-gray-900 text-base block leading-tight">${item.name}</strong>
+                            <div class="text-[12px] font-bold bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
+                        </div>
+                        <span class="text-sm text-gray-600">${item.desc}</span>
+                    </div>
+                `;
+            });
+        }
+        function renderEcosystem() {
+            renderEcosystemList('eco-ministries', appConfiguration.ecosystem.ministries);
+            renderEcosystemList('eco-committees', appConfiguration.ecosystem.committees);
+            renderEcosystemList('eco-orgs', appConfiguration.ecosystem.civilOrgs);
+            renderEcosystemList('eco-politicians', appConfiguration.ecosystem.politicians);
+        }
+
+        // 2. Render Cards Stream
+        function renderCards(filterType = 'all') {
+            const container = document.getElementById('documentsStream');
+            container.innerHTML = '';
+            
+            const filteredItems = appConfiguration.items.filter(item => filterType === 'all' || item.type === filterType);
+            
+            // Sort by year and month descending
+            filteredItems.sort((a, b) => {
+                const dateA = a.year + a.month/12;
+                const dateB = b.year + b.month/12;
+                return dateB - dateA;
+            });
+
+            filteredItems.forEach(item => {
+                const tagsHtml = item.keywords.map(kw => `<span class="tag-badge">#${kw}</span>`).join('');
+                const formattedMonth = item.month.toString().padStart(2, '0');
+                
+                const cardHtml = `
+                    <div class="doc-card ${item.styleClass}">
+                        <div>
+                            <div class="flex justify-between items-center mb-3 border-b pb-3">
+                                <span class="rounded-full px-3 py-1 text-sm font-bold ${item.badgeClass}">${item.source}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="relevance-badge">קשר: ${item.relevance}/10</span>
+                                    <span class="text-base font-bold text-gray-700">${formattedMonth}/${item.year}</span>
+                                </div>
+                            </div>
+                            <h4 class="text-xl text-gray-900 mb-2 leading-tight">${item.title}</h4>
+                            <div class="text-sm text-gray-500 mb-3">יוזם/מחבר: <span class="font-bold">${item.author}</span></div>
+                            
+                            <p class="card-summary-box text-gray-700">${item.summary}</p>
+                            
+                            <div class="card-impact-box">
+                                <strong class="${item.textClass} text-sm">השלכה מעשית / סטטוס נוכחי:</strong> 
+                                <span class="text-gray-800 block mt-1 font-semibold">${item.impact}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t pt-4 mt-auto flex justify-between items-center flex-wrap gap-3">
+                            <div class="flex flex-wrap gap-2">${tagsHtml}</div>
+                            <span class="doc-id-badge">${item.idCode}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        // 3. Filter Logic
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('btn-active');
+                    b.classList.add('btn-inactive');
+                });
+                e.target.classList.remove('btn-inactive');
+                e.target.classList.add('btn-active');
+                renderCards(e.target.dataset.filter);
+            });
+        });
+
+        // 4. TTS Logic
+        let isSpeaking = false;
+        function toggleTTS() {
+            const btn = document.getElementById('ttsBtn');
+            const textEl = document.getElementById('tts-text');
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                btn.classList.remove('is-reading');
+                textEl.innerText = 'הקרא סיכום';
+            } else {
+                const text = document.getElementById('execSummaryText').innerText;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'he-IL';
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    btn.classList.remove('is-reading');
+                    textEl.innerText = 'הקרא סיכום';
+                };
+                window.speechSynthesis.speak(utterance);
+                isSpeaking = true;
+                btn.classList.add('is-reading');
+                textEl.innerText = 'עצור הקראה';
+            }
+        }
+
+        // Utility: Wrap text inside circle in Canvas
+        function wrapTextCenter(ctx, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            const lines = [];
+            
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    lines.push(line);
+                    line = words[n] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
+            lines.push(line);
+            
+            // Draw lines vertically centered around y
+            const startY = y - ((lines.length - 1) * lineHeight) / 2;
+            for(let i=0; i<lines.length; i++){
+                ctx.fillText(lines[i].trim(), x, startY + (i * lineHeight));
+            }
+        }
+
+        // 5. Left-to-Right Main Timeline (HTML5 Canvas) with Wide Layout
+        function renderMainTimeline() {
+            const canvas = document.getElementById('mainTimeline');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            
+            const dpr = window.devicePixelRatio || 1;
+            // fixed large width to allow horizontal scrolling
+            const w = 3400; 
+            const h = 380;
+            
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const padX = 120;
+            const cy = h / 2;
+            
+            // Build legend
+            const legendContainer = document.getElementById('chartLegend');
+            legendContainer.innerHTML = appConfiguration.entities.map(en => 
+                `<div class="flex items-center gap-2"><div style="width:14px; height:14px; background-color:${en.color}; border-radius:4px;"></div><span>${en.label}</span></div>`
+            ).join('');
+
+            ctx.clearRect(0, 0, w, h);
+            
+            // Draw central axis line (LTR)
+            ctx.beginPath();
+            ctx.moveTo(padX, cy);
+            ctx.lineTo(w - padX, cy);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Sort chronologically (oldest to newest)
+            const items = appConfiguration.items.slice().sort((a,b) => {
+                return (a.year + a.month/12) - (b.year + b.month/12);
+            });
+
+            if (items.length === 0) return;
+
+            const minDate = 2023.9; // Give padding
+            const maxDate = 2026.9;
+            const colorMap = {};
+            appConfiguration.entities.forEach(en => colorMap[en.key] = en.color);
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            // Set direction for Hebrew text rendering inside canvas
+            ctx.direction = 'rtl';
+
+            items.forEach((item, index) => {
+                const dateVal = item.year + (item.month/12);
+                // Map to LTR scale (left to right)
+                const x = padX + ((dateVal - minDate) / (maxDate - minDate)) * (w - 2 * padX);
+                
+                // Radius based on fixed base + relevance
+                const strokeThickness = item.relevance; 
+                const radius = 50 + (strokeThickness); // Slightly larger
+                
+                // Stagger nodes up and down to prevent overlap
+                const isTop = index % 2 === 0;
+                const yOffset = isTop ? -100 : 100;
+                const nodeCenterY = cy + yOffset;
+                
+                // Connecting vertical line
+                ctx.beginPath();
+                ctx.moveTo(x, cy);
+                ctx.lineTo(x, nodeCenterY - (isTop ? -radius : radius));
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw circle node
+                ctx.beginPath();
+                ctx.arc(x, nodeCenterY, radius, 0, 2*Math.PI);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.strokeStyle = colorMap[item.type];
+                ctx.lineWidth = strokeThickness; // Thick border matching relevance
+                ctx.stroke();
+
+                // Text label (Month/Year) - Draw above or below circle
+                ctx.fillStyle = '#64748b';
+                ctx.font = 'bold 15px Assistant, sans-serif';
+                const formattedMonth = item.month.toString().padStart(2, '0');
+                const textY = nodeCenterY + (isTop ? -(radius + 18) : (radius + 18));
+                ctx.fillText(`${formattedMonth}/${item.year}`, x, textY);
+                
+                // Document Title inside the circle
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 13px Assistant, sans-serif';
+                wrapTextCenter(ctx, item.title, x, nodeCenterY, radius * 1.65, 18);
+            });
+        }
+
+        // 6. Google Trends Chart (Mini, LTR)
+        function renderTrendsChart() {
+            const canvas = document.getElementById('trendsChart');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            
+            const dpr = window.devicePixelRatio || 1;
+            const rect = container.getBoundingClientRect();
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const w = rect.width;
+            const h = rect.height;
+            const data = appConfiguration.trendsData;
+            
+            ctx.clearRect(0, 0, w, h);
+            
+            const maxVal = 100;
+            const xStep = w / (data.length - 1);
+
+            // Draw Area (LTR Mapping)
+            ctx.beginPath();
+            ctx.moveTo(0, h); 
+            data.forEach((d, i) => {
+                const x = i * xStep; 
+                const y = h - (d.val / maxVal * h);
+                if(i === 0) { ctx.moveTo(x, h); ctx.lineTo(x, y); }
+                else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(w, h);
+            ctx.closePath();
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, h);
+            gradient.addColorStop(0, 'rgba(249, 115, 22, 0.3)');
+            gradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Draw Line
+            ctx.beginPath();
+            data.forEach((d, i) => {
+                const x = i * xStep;
+                const y = h - (d.val / maxVal * h);
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = '#f97316';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw Dots
+            data.forEach((d, i) => {
+                const x = i * xStep;
+                const y = h - (d.val / maxVal * h);
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, 2*Math.PI);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+
+        // Initialize
+        window.onload = () => {
+            renderEcosystem();
+            renderCards();
+            
+            // Timeout to ensure fonts and layout are ready for canvas measurements
+            setTimeout(() => {
+                renderMainTimeline();
+                renderTrendsChart();
+            }, 150);
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                renderTrendsChart();
+            });
+        };
+    </script>
+</body>
+</html>
