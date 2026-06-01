@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דשבורד מודיעין פרלמנטרי: חוק הגיוס ושוויון בנטל</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --bg-base: #f8fafc;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --header-bg: #0f172a;
+            
+            /* Entity Colors */
+            --c-comptroller-hex: #f59e0b;
+            --c-mmm-hex: #8b5cf6;
+            --c-active-hex: #3b82f6;
+            --c-passed-hex: #10b981;
+            --c-committee-hex: #ef4444;
+            --c-gov-hex: #14b8a6;
+            --c-finance-hex: #ec4899;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; padding: 24px; font-size: 16px; }
+
+        /* Utility Classes */
+        .max-w-7xl { max-width: 80rem; margin: 0 auto; }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        
+        .flex { display: flex; } .flex-col { flex-direction: column; }
+        @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
+        .items-center { align-items: center; } .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+        .flex-wrap { flex-wrap: wrap; }
+        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
+        
+        .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; }
+        
+        .w-full { width: 100%; } .h-full { height: 100%; }
+        
+        .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-full { border-radius: 9999px; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+        .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; } .border-t { border-top: 1px solid #e2e8f0; }
+        
+        /* Typography adjustments per request (Larger fonts) */
+        .text-xs { font-size: 0.9rem; } .text-sm { font-size: 1rem; } .text-base { font-size: 1.15rem; } 
+        .text-lg { font-size: 1.35rem; font-weight: 700; } .text-xl { font-size: 1.6rem; font-weight: 700; } .text-3xl { font-size: 2.5rem; font-weight: 700; }
+        .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
+        
+        .bg-white { background-color: #ffffff; } .bg-blue-50 { background-color: #eff6ff; } .bg-gray-50 { background-color: #f9fafb; }
+        .text-gray-200 { color: #e2e8f0; } .text-gray-400 { color: #94a3b8; } .text-gray-500 { color: #64748b; } .text-gray-700 { color: #334155; } .text-gray-900 { color: #0f172a; }
+        .text-red-500 { color: #ef4444; } .text-orange-500 { color: #f97316; } .text-blue-900 { color: #1e3a8a; } .text-amber-700 { color: #b45309; }
+        
+        /* Layout Specific */
+        header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .badge-mono { font-family: monospace; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; display: flex; gap: 1rem; align-items: center; }
+        
+        .exec-block { background-color: #eff6ff; border-right: 4px solid #2563eb; color: #1e3a8a; }
+        .whats-new { background-color: #ffffff; border: 1px solid #bfdbfe; border-right: 4px solid #fbbf24; border-radius: 0.25rem; padding: 1.25rem; margin-top: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(30, 64, 175, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0); }
+        }
+        .btn-read-aloud { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-read-aloud:hover { background-color: #bfdbfe; }
+        .is-reading { background-color: #1e40af; color: #ffffff; animation: pulse 2s infinite; }
+
+        .progress-bar-bg { width: 100%; height: 0.85rem; background-color: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 0.25rem; }
+        .progress-media { height: 100%; background-color: #ef4444; }
+        .progress-social { height: 100%; background-color: #f97316; }
+
+        .pol-coalition { background-color: #eff6ff; border: 1px solid #bfdbfe; }
+        .pol-opposition { background-color: #f8fafc; border: 1px solid #e2e8f0; }
+
+        /* Ecosystem */
+        .eco-grid-col { padding-right: 0.25rem; }
+        .eco-item { background: #f8fafc; padding: 0.85rem; margin-bottom: 0.5rem; border-radius: 0.25rem; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;}
+        .eco-item:hover { background: #f1f5f9; }
+        
+        /* Timeline Container specific for LTR and Overflow */
+        .timeline-scroll-wrapper { width: 100%; overflow-x: auto; direction: ltr; background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0; padding: 1.5rem 0; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .timeline-scroll-wrapper::-webkit-scrollbar { height: 12px; }
+        .timeline-scroll-wrapper::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+        .timeline-canvas-container { height: 420px; width: 3400px; position: relative; } /* Extra wide & tall for more elements */
+        
+        .trends-container { height: 100px; width: 100%; margin-top: 0.75rem; direction: ltr; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .filter-btn { padding: 0.7rem 1.2rem; border-radius: 0.5rem; cursor: pointer; border: none; font-weight: 600; font-size: 1.05rem; transition: all 0.2s; }
+        .btn-active { background-color: #0f172a; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-inactive { background-color: #e2e8f0; color: #334155; }
+        .btn-inactive:hover { background-color: #cbd5e1; }
+
+        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.2s; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .doc-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        
+        .card-summary-box { background: white; border: 1px solid #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; font-size: 1.1rem; margin-bottom: 1rem; line-height: 1.6; }
+        .card-impact-box { background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 0.25rem; font-size: 1rem; margin-bottom: 1rem; border-right: 4px solid #cbd5e1; }
+        .tag-badge { background: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 4px; font-size: 0.95rem; display: inline-block; margin-bottom: 2px; }
+        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 1rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
+        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 1rem; color: #475569; }
+
+        /* Entity Specific Styles */
+        .entity-comptroller { border-top: 5px solid var(--c-comptroller-hex); background-color: #ffffff; }
+        .badge-comptroller { background-color: var(--c-comptroller-hex); color: #ffffff; }
+        .text-comptroller { color: var(--c-comptroller-hex); }
+
+        .entity-mmm { border-top: 5px solid var(--c-mmm-hex); background-color: #ffffff; }
+        .badge-mmm { background-color: var(--c-mmm-hex); color: #ffffff; }
+        .text-mmm { color: var(--c-mmm-hex); }
+
+        .entity-activeLaw { border-top: 5px solid var(--c-active-hex); background-color: #ffffff; }
+        .badge-activeLaw { background-color: var(--c-active-hex); color: #ffffff; }
+        .text-activeLaw { color: var(--c-active-hex); }
+
+        .entity-passedLaw { border-top: 5px solid var(--c-passed-hex); background-color: #ffffff; }
+        .badge-passedLaw { background-color: var(--c-passed-hex); color: #ffffff; }
+        .text-passedLaw { color: var(--c-passed-hex); }
+
+        .entity-committee { border-top: 5px solid var(--c-committee-hex); background-color: #ffffff; }
+        .badge-committee { background-color: var(--c-committee-hex); color: #ffffff; }
+        .text-committee { color: var(--c-committee-hex); }
+
+        .entity-govDecision { border-top: 5px solid var(--c-gov-hex); background-color: #ffffff; }
+        .badge-govDecision { background-color: var(--c-gov-hex); color: #ffffff; }
+        .text-govDecision { color: var(--c-gov-hex); }
+
+        .entity-financeDirective { border-top: 5px solid var(--c-finance-hex); background-color: #ffffff; }
+        .badge-financeDirective { background-color: var(--c-finance-hex); color: #ffffff; }
+        .text-financeDirective { color: var(--c-finance-hex); }
+
+    </style>
+</head>
+<body>
+
+    <div class="max-w-7xl">
+        <!-- Header -->
+        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl mb-1">זירת המודיעין הפרלמנטרי: חוק הגיוס והסדרת פטור תלמידי ישיבות</h1>
+                <p class="text-gray-200 text-base mt-2">מערכת מודיעין פרלמנטרי: שקיפות, חקיקה, החלטות ממשלה, פסיקות בג"ץ והנחיות פיננסיות.</p>
+            </div>
+            <!-- Version and Date to the left -->
+            <div class="badge-mono mr-auto">
+                <span>גרסה: 2.1.0</span>
+                <span style="opacity: 0.5;">|</span>
+                <span>עדכון אחרון: 02/06/2026</span>
+                <span style="opacity: 0.5;">|</span>
+                <span class="font-bold text-blue-400">Gilat AI</span>
+            </div>
+        </header>
+
+        <!-- Exec Summary (Full Width) -->
+        <div class="exec-block p-6 rounded-xl shadow-sm mb-8 relative">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="font-bold text-xl md:text-3xl">📋 תקציר מנהלים: סטאטוס משבר הגיוס</h2>
+                <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
+                    <span>🔊</span> <span id="tts-text">הקרא סיכום</span>
+                </button>
+            </div>
+            <div id="execSummaryText">
+                <p class="text-base md:text-xl leading-relaxed mb-4 text-blue-900 font-semibold">
+                    סוגיית גיוס בני הישיבות הגיעה לנקודת רתיחה חסרת תקדים בכנסת ה-25. עקב צורכי כוח האדם הדחופים של מערכת הביטחון ופסיקות בג"ץ ההיסטוריות שביטלו את ההסדרים הקודמים, המערכת הפוליטית מצויה בסחרור. הנתונים בדשבורד מציגים התנגשות חזיתית: מחד, מערכת הביטחון והאוצר מטילים סנקציות כלכליות חריפות (עצירת תקציבים וסבסוד מעונות), ומאידך, הקואליציה מנסה להעביר את "חוק שירות ביטחון החדש" הקובע יעדי גיוס מדורגים בניסיון למנוע את פירוק הממשלה.
+                </p>
+                <div class="whats-new">
+                    <h3 class="font-bold text-amber-700 text-xl mb-3">🔥 מה התחדש לאחרונה?</h3>
+                    <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" style="list-style-type: disc; padding-right: 0.5rem;">
+                        <li>בג"ץ פסק באופן סופי על עצירת כלל התקציבים לישיבות שאינן עומדות ביעדי הגיוס.</li>
+                        <li>הוראת היועמ"ש והחשב הכללי לחסום באופן מיידי סבסוד מעונות יום למלש"בים עריקים.</li>
+                        <li>ועדת החוץ והביטחון מקיימת דיונים מרתוניים תחת אולטימטום לאישור חוק הגיוס לקריאה שנייה ושלישית.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics & Political Arena Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Media & Social Metrics -->
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
+                
+                <div class="mb-5">
+                    <div class="flex justify-between text-lg mb-2">
+                        <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
+                        <span class="text-red-500 font-bold">95%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-media" style="width: 95%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <strong>הופעות בולטות (חודש אחרון):</strong> פותח מהדורות יומי. מאות אייטמים בפריים טיים בערוצי החדשות. נושא פוליטי וחברתי מוביל ללא עוררין.
+                    </p>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between text-lg mb-2">
+                        <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
+                        <span class="text-orange-500 font-bold">100% (שיא)</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-social" style="width: 100%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2 mb-2">
+                        מונחי חיפוש: "חוק הגיוס", "בג"ץ הגיוס", "תקציבי הישיבות", "צווי גיוס".
+                    </p>
+                    
+                    <!-- Google Trends Timeline 2022-2026 -->
+                    <div class="trends-container relative">
+                        <canvas id="trendsChart"></canvas>
+                        <div class="absolute bottom-0 w-full flex justify-between px-1 text-[13px] text-gray-400 font-mono font-bold" dir="ltr">
+                            <span>2022</span>
+                            <span>2024</span>
+                            <span>2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Political Arena -->
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-3">⚖️ הזירה הפוליטית: קואליציה מול אופוזיציה</h3>
+                <div class="grid grid-cols-1 gap-4 h-full">
+                    <div class="pol-coalition p-5 rounded-lg">
+                        <strong class="text-blue-900 block mb-3 text-lg border-b border-blue-200 pb-2">קואליציה וממשלה</strong>
+                        <p class="text-base text-gray-700 leading-relaxed font-semibold">אילוץ משפטי להעברת חוק תוך שמירה על שלמות הממשלה. קידום חוק עם יעדי גיוס מדורגים באחוזים (ללא סנקציות פליליות אישיות), תוך ניסיון למצוא מעקפים תקציביים להחלטות בג"ץ דרך סבסוד עקיף.</p>
+                    </div>
+                    <div class="pol-opposition p-5 rounded-lg">
+                        <strong class="text-gray-900 block mb-3 text-lg border-b border-gray-200 pb-2">סיעות האופוזיציה</strong>
+                        <p class="text-base text-gray-700 leading-relaxed font-semibold">דרישה ל"שירות שווה לכולם" מבוסס יעדים דרסטיים (סנקציות כלכליות ופליליות למשתמטים ולראשי ישיבות). תמיכה פומבית בהנחיות הייעוץ המשפטי ובפסיקות בג"ץ לעצירת מימון הדרגתית אך מהירה.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ecosystem Map (4 Columns) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2">🏛️ משרדי ממשלה ורגולטורים</h3>
+                <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2">💼 ועדות הכנסת</h3>
+                <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2">🤝 חברה אזרחית ובג"ץ</h3>
+                <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2">👤 אישים רלוונטיים</h3>
+                <div class="space-y-3 eco-grid-col" id="eco-politicians"></div>
+            </div>
+        </div>
+
+        <!-- Main Timeline Chart LTR (Scrollable) -->
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
+            <h3 class="text-2xl mb-2">📊 ציר זמן אקטיבי: מסמכים והחלטות (משמאל לימין)</h3>
+            <p class="text-lg text-gray-500 mb-5 border-b pb-3 font-semibold">גלול ימינה/שמאלה לצפייה. העיגולים ממחישים את שם המסמך, ועובי קו העיגול מייצג את רמת ה"קשר" (Relevance).</p>
+            
+            <div class="timeline-scroll-wrapper">
+                <div class="timeline-canvas-container">
+                    <canvas id="mainTimeline"></canvas>
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="flex flex-wrap gap-5 mt-5 justify-center text-lg font-bold" id="chartLegend">
+                <!-- Legend items injected by JS -->
+            </div>
+        </div>
+
+        <!-- Filterable Stream -->
+        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
+                <div>
+                    <h3 class="text-2xl mb-1">מאגר המסמכים המלא (מסונן לפי "קשר")</h3>
+                    <p class="text-lg text-gray-500">כלל המסמכים, ממוינים מגבוה לנמוך לפי עוצמת הקשר לנושא חוק הגיוס.</p>
+                </div>
+                <div class="flex flex-wrap gap-2" id="filterContainer">
+                    <button class="filter-btn btn-active" data-filter="all">כל המקורות</button>
+                    <button class="filter-btn btn-inactive" data-filter="govDecision">פסיקות והחלטות</button>
+                    <button class="filter-btn btn-inactive" data-filter="financeDirective">הנחיות פיננסיות</button>
+                    <button class="filter-btn btn-inactive" data-filter="activeLaw">הצעות חוק</button>
+                    <button class="filter-btn btn-inactive" data-filter="passedLaw">חקיקה (עברה)</button>
+                    <button class="filter-btn btn-inactive" data-filter="committee">ועדות</button>
+                    <button class="filter-btn btn-inactive" data-filter="mmm">הממ"מ</button>
+                    <button class="filter-btn btn-inactive" data-filter="comptroller">מבקר המדינה</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="documentsStream">
+                <!-- Cards populated by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        const appConfiguration = {
+            ecosystem: {
+                ministries: [
+                    { name: 'משרד הביטחון (אגא"ס)', desc: 'גיבוש צורכי כוח האדם ושליחת צווי גיוס לחרדים.', relevance: 10, color: 'border-amber-500' },
+                    { name: 'היועצת המשפטית לממשלה', desc: 'מתן חוות דעת משפטיות החוסמות את המימון למוסדות מתוקצבים.', relevance: 10, color: 'border-blue-500' },
+                    { name: 'משרד האוצר (החשכ"ל)', desc: 'יישום הסנקציות בפועל - עצירת תמיכות כספיות מתקציב המדינה.', relevance: 9, color: 'border-emerald-500' },
+                    { name: 'משרד העבודה / החינוך', desc: 'שלילת סבסוד מעונות יום ותקצוב מוסדות תורניים.', relevance: 8, color: 'border-purple-500' }
+                ],
+                committees: [
+                    { name: 'ועדת החוץ והביטחון', desc: 'הזירה המרכזית: מכינה את חוק הגיוס וקובעת את יעדי השירות.', relevance: 10, color: 'border-amber-500' },
+                    { name: 'ועדת הכספים', desc: 'ניסיונות אישור של תקציבי עוקף-בג"ץ למוסדות החרדיים.', relevance: 9, color: 'border-blue-500' },
+                    { name: 'ועדת החוקה, חוק ומשפט', desc: 'דיונים נלווים בנוגע לסמכויות הייעוץ המשפטי סביב החוק.', relevance: 7, color: 'border-emerald-500' },
+                    { name: 'הוועדה לביקורת המדינה', desc: 'דיונים סביב דוחות המבקר על היעדר שילוב חרדים בצבא.', relevance: 8, color: 'border-purple-500' }
+                ],
+                civilOrgs: [
+                    { name: 'התנועה לאיכות השלטון', desc: 'מגישת העתירות המרכזיות לבג"ץ לעצירת התקציבים וחובת גיוס.', relevance: 10, color: 'border-indigo-300' },
+                    { name: 'אחים לנשק', desc: 'הובלת המחאה הציבורית והפגנות הענק סביב "שוויון בנטל".', relevance: 9, color: 'border-indigo-300' },
+                    { name: 'ועד הישיבות', desc: 'הגוף המרכז את המאבק המשפטי והפוליטי מטעם המוסדות החרדים.', relevance: 9, color: 'border-indigo-300' },
+                    { name: 'פורום קהלת / המכון הישראלי לדמוקרטיה', desc: 'כתיבת מתווי פשרה ומחקרים על שילוב בשוק התעסוקה.', relevance: 7, color: 'border-indigo-300' }
+                ],
+                politicians: [
+                    { name: 'שר הביטחון / הרמטכ"ל', desc: 'דורשים חקיקה בהסכמה רחבה תוך דרישה לתוספת מאסיבית של סד"כ.', relevance: 10, color: 'border-slate-300' },
+                    { name: 'ח"כ יולי אדלשטיין', desc: 'יו"ר ועדת חו"ב: מנהל את דיוני חוק הגיוס ומעכב את האישור ללא הסכמה.', relevance: 10, color: 'border-slate-300' },
+                    { name: 'ההנהגה החרדית (גולדקנופף/דרעי)', desc: 'מפעילים אולטימטום לפירוק הממשלה ללא פתרון תקציבי וחקיקתי.', relevance: 9, color: 'border-slate-300' },
+                    { name: 'ראשי האופוזיציה (לפיד/גנץ)', desc: 'מסרבים לפשרות וקוראים להחלת חוק שירות חובה באופן גורף.', relevance: 8, color: 'border-slate-300' }
+                ]
+            },
+            entities: [
+                { key: 'govDecision', label: 'פסיקות והחלטות ממשלה', color: '#14b8a6' },
+                { key: 'financeDirective', label: 'הנחיות פיננסיות וייעוץ משפטי', color: '#ec4899' },
+                { key: 'comptroller', label: 'מבקר המדינה', color: '#f59e0b' },
+                { key: 'mmm', label: 'הממ"מ', color: '#8b5cf6' },
+                { key: 'activeLaw', label: 'הצעות חוק', color: '#3b82f6' },
+                { key: 'passedLaw', label: 'חקיקה (עברה)', color: '#10b981' },
+                { key: 'committee', label: 'דיוני ועדות', color: '#ef4444' }
+            ],
+            items: [
+                { year: 2024, month: 3, relevance: 10, type: 'govDecision', styleClass: 'entity-govDecision', textClass: 'text-govDecision', badgeClass: 'badge-govDecision', source: 'בית המשפט העליון (בג"ץ)', idCode: 'בג"ץ 102/24', author: 'הרכב בג"ץ', title: 'פסיקה היסטורית: ביטול הסדר תורתו אומנותו ועצירת תקציבים', summary: 'בג"ץ פסק פה אחד כי בהיעדר מסגרת חוקית, המדינה חייבת לגייס את תלמידי הישיבות וכי יש להפסיק לאלתר את התמיכות הכספיות למוסדות שתלמידיהם לא התייצבו לצווי הגיוס.', impact: 'הקפאה מיידית של מאות מיליוני שקלים מתקציב המדינה וזעזוע בקואליציה.', keywords: ['בג"ץ', 'עצירת_תקציב', 'תורתו_אומנותו'] },
+                { year: 2024, month: 7, relevance: 9, type: 'passedLaw', styleClass: 'entity-passedLaw', textClass: 'text-passedLaw', badgeClass: 'badge-passedLaw', source: 'חקיקה שהושלמה', idCode: 'ס"ח 3105', author: 'משרד הביטחון', title: 'חוק שירות ביטחון: הארכת שירות החובה והמילואים', summary: 'העברת חוק המאריך את שירות החובה בסדיר ל-36 חודשים ומרחיב משמעותית את נטל ימי המילואים, על רקע המלחמה והיעדר חוק גיוס למגזר החרדי.', impact: 'הגברת הזעם הציבורי סביב "השוויון בנטל" עקב העמסת האוכלוסיה המשרתת.', keywords: ['שירות_חובה', 'מילואים', 'נטל_השירות'] },
+                { year: 2025, month: 1, relevance: 9, type: 'financeDirective', styleClass: 'entity-financeDirective', textClass: 'text-financeDirective', badgeClass: 'badge-financeDirective', source: 'הנחיה משפטית-פיננסית', idCode: 'הנחיית יועמ"שית 01/25', author: 'היועצת המשפטית לממשלה', title: 'חסימת סבסוד מעונות יום למלש"בים עריקים', summary: 'הוראה מחייבת למשרד העבודה ולחשב הכללי, הקובעת כי אברכים המחויבים בגיוס אינם זכאים לסבסוד מדינה למעונות היום של ילדיהם, בניגוד להחלטת הממשלה.', impact: 'פגיעה כלכלית ישירה באלפי משקי בית חרדיים; החמרה במשבר הפוליטי.', keywords: ['מעונות_יום', 'סנקציות_כלכליות', 'ייעוץ_משפטי'] },
+                { year: 2025, month: 5, relevance: 8, type: 'govDecision', styleClass: 'entity-govDecision', textClass: 'text-govDecision', badgeClass: 'badge-govDecision', source: 'החלטת ממשלה', idCode: 'החלטה 544', author: 'מזכירות הממשלה', title: 'אישור מתווה יעדי הגיוס של משרד הביטחון', summary: 'הממשלה מאשרת מסמך מדיניות המציב יעד גיוס של 4,800 מתגייסים חרדים לשנת הגיוס הקרובה, תוך בניית מסגרות שירות ייעודיות מחמירות.', impact: 'הוגש לבג"ץ כמסמך מנחה לצורך הוצאת צווי הגיוס הראשוניים.', keywords: ['יעדי_גיוס', 'החלטת_ממשלה'] },
+                { year: 2025, month: 8, relevance: 8, type: 'comptroller', styleClass: 'entity-comptroller', textClass: 'text-comptroller', badgeClass: 'badge-comptroller', source: 'מבקר המדינה', idCode: 'דוח 75א', author: 'משרד מבקר המדינה', title: 'הערכות צה"ל לקליטת עשרות אלפי מתגייסים חרדים', summary: 'ביקורת עומק שחושפת חוסר מוכנות לוגיסטית, מחסור במפקדים המתאימים למסלולים מותאמים, ופערים בהקמת מחנות קליטה נפרדים.', impact: 'שימש טיעון הגנה בידי צה"ל לעיכוב הוצאת הצווים הגורפת.', keywords: ['מוכנות_צה"ל', 'תשתיות', 'שילוב_חרדים'] },
+                { year: 2025, month: 11, relevance: 10, type: 'committee', styleClass: 'entity-committee', textClass: 'text-committee', badgeClass: 'badge-committee', source: 'דיוני ועדות', idCode: 'פרוטוקול חו"ב 18', author: 'ועדת החוץ והביטחון', title: 'הקפאת חוק הגיוס הממשלתי בוועדה', summary: 'יו"ר הוועדה ח"כ אדלשטיין מכריז על הפסקת ההצבעות על סעיפי חוק הגיוס בשל פערים מהותיים מול מערכת הביטחון ואי-הסכמה על הסנקציות הפליליות.', impact: 'תקיעת החקיקה; הממשלה נותרת ללא מענה חוקי מול בג"ץ.', keywords: ['ועדת_חו"ב', 'הקפאת_חקיקה', 'משבר'] },
+                { year: 2026, month: 1, relevance: 7, type: 'mmm', styleClass: 'entity-mmm', textClass: 'text-mmm', badgeClass: 'badge-mmm', source: 'הממ"מ', idCode: 'מסמך 2026-01-A', author: 'מרכז המחקר והמידע', title: 'ההשלכות הכלכליות של אי-השתלבות תעסוקתית', summary: 'מסמך הבוחן את אובדן התוצר השנתי (המוערך במיליארדי שקלים) הנובע מהעלאת גיל הפטור מגיוס ל-35, המונעת השתלבות גברים חרדים בשוק העבודה בטווח הקצר.', impact: 'סופק לחברי ועדת הכספים בדיוני תקציב המדינה.', keywords: ['שוק_התעסוקה', 'כלכלה', 'גיל_פטור'] },
+                { year: 2026, month: 2, relevance: 10, type: 'activeLaw', styleClass: 'entity-activeLaw', textClass: 'text-activeLaw', badgeClass: 'badge-activeLaw', source: 'הצעת חוק פעילה', idCode: 'פ/244/26', author: 'ועדת שרים לחקיקה (ממשלתי)', title: 'חוק שירות ביטחון (שילוב תלמידי ישיבות) - גרסה מעודכנת', summary: 'הצעת החוק הממשלתית הרשמית שמנסה להסדיר יעדים קבועים למשך עשור, סנקציות מוסדיות בלבד (ללא פליליות), ומימון מעקף לישיבות דרך משרד החינוך.', impact: 'החוק עבר קריאה ראשונה בעור שיניו ונמצא תחת דיונים סוערים בכנסת.', keywords: ['חוק_הגיוס', 'סנקציות_מוסדיות', 'יעדים'] },
+                { year: 2026, month: 3, relevance: 8, type: 'financeDirective', styleClass: 'entity-financeDirective', textClass: 'text-financeDirective', badgeClass: 'badge-financeDirective', source: 'הנחיה משפטית-פיננסית', idCode: 'חוזר חשכ"ל 3/2026', author: 'משרד האוצר - החשב הכללי', title: 'שלילת הנחות בארנונה ועצירת סיוע בשכר דירה למשתמטים', summary: 'הוראה לרשויות המקומיות ולמשרד השיכון כי צעיר המחויב בגיוס שהוצאה נגדו פקודת מעצר לא יהיה זכאי לאישורי תמיכה תקציביים מהמדינה הקשורים למגורים.', impact: 'החרפה חסרת תקדים של הלחץ הכלכלי האישי על בני הישיבות.', keywords: ['ארנונה', 'שכר_דירה', 'סנקציות_אישיות'] },
+                { year: 2026, month: 4, relevance: 7, type: 'activeLaw', styleClass: 'entity-activeLaw', textClass: 'text-activeLaw', badgeClass: 'badge-activeLaw', source: 'הצעת חוק פעילה', idCode: 'פ/890/26', author: 'האופוזיציה (יש עתיד / המחנה הממלכתי)', title: 'הצעת חוק "שירות ישראלי באחריות מקיפה"', summary: 'הצעת חוק נגדית הדורשת גיוס חובה לכל אזרח בגיל 18 (למעט פטורים רפואיים), תוך הפעלת מנגנון של שירות לאומי-אזרחי קשוח למסרבים, בגיבוי סנקציות פליליות.', impact: 'נדחתה בקריאה טרומית אך מהווה את דרישת הסף של האופוזיציה.', keywords: ['שירות_אזרחי', 'חובה_כללית', 'אופוזיציה'] },
+                { year: 2026, month: 4, relevance: 9, type: 'mmm', styleClass: 'entity-mmm', textClass: 'text-mmm', badgeClass: 'badge-mmm', source: 'הממ"מ', idCode: 'מסמך 2026-04-B', author: 'מרכז המחקר והמידע', title: 'ניתוח נתוני ההתייצבות לצווי הגיוס (2024-2026)', summary: 'מסמך כמותי חושף כי מתוך 12,000 צווי גיוס שנשלחו למגזר החרדי בשנתיים האחרונות, פחות מ-15% התייצבו בלשכות הגיוס, בניגוד לתחזיות הממשלה.', impact: 'ערער את בסיס האמון בוועדת חוץ וביטחון ביכולת ליישם "יעדי התנדבות".', keywords: ['צווי_גיוס', 'נתוני_התייצבות', 'עריקות'] },
+                { year: 2026, month: 5, relevance: 9, type: 'committee', styleClass: 'entity-committee', textClass: 'text-committee', badgeClass: 'badge-committee', source: 'דיוני ועדות', idCode: 'פרוטוקול כספים 412', author: 'ועדת הכספים', title: 'עימות חריף על ניסיונות עקיפת ההקפאה של בג"ץ', summary: 'דיון שבו נציגי הייעוץ המשפטי חסמו ניסיון של יו"ר הוועדה להעביר עשרות מיליוני שקלים ל"חינוך העצמאי" בטענה כי מדובר במימון עוקף לבני ישיבות המחויבים בגיוס.', impact: 'הפסקת ישיבת הוועדה ואיום של המפלגות החרדיות לא להצביע עם הממשלה.', keywords: ['ועדת_כספים', 'מימון_עוקף', 'תקציב'] },
+                { year: 2026, month: 6, relevance: 10, type: 'committee', styleClass: 'entity-committee', textClass: 'text-committee', badgeClass: 'badge-committee', source: 'דיוני ועדות', idCode: 'פרוטוקול חו"ב 80', author: 'ועדת החוץ והביטחון', title: 'דיון אולטימטום מול שר הביטחון והרמטכ"ל', summary: 'ישיבת חירום. הרמטכ"ל מציג בוועדה כי הצבא חסר 15 גדודי חי"ר כדי לבצע את משימותיו הרב-זירתיות, ודורש חקיקה הקובעת חובת גיוס ללא תרגילים חשבונאיים.', impact: 'משבר פוליטי אקוטי, שר הביטחון מודיע שלא יתמוך בחוק אם הנתונים אינם ריאליים.', keywords: ['רמטכ"ל', 'צרכי_הצבא', 'משבר_אקוטי'] }
+            ],
+            trendsData: [
+                { year: 2022, val: 20 },
+                { year: 2023, val: 35 },
+                { year: 2024, val: 100 },
+                { year: 2025, val: 95 },
+                { year: 2026, val: 100 }
+            ]
+        };
+
+        // 1. Render Ecosystem Map dynamically (Sorted by Relevance descending)
+        function renderEcosystemList(elementId, dataArray) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            
+            const sortedArray = [...dataArray].sort((a, b) => b.relevance - a.relevance);
+            
+            sortedArray.forEach(item => {
+                container.innerHTML += `
+                    <div class="eco-item border-r-4 ${item.color}">
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <strong class="text-gray-900 text-lg block leading-tight">${item.name}</strong>
+                            <div class="text-[13px] font-bold bg-gray-200 text-gray-700 px-2 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
+                        </div>
+                        <span class="text-base text-gray-600 font-semibold">${item.desc}</span>
+                    </div>
+                `;
+            });
+        }
+        function renderEcosystem() {
+            renderEcosystemList('eco-ministries', appConfiguration.ecosystem.ministries);
+            renderEcosystemList('eco-committees', appConfiguration.ecosystem.committees);
+            renderEcosystemList('eco-orgs', appConfiguration.ecosystem.civilOrgs);
+            renderEcosystemList('eco-politicians', appConfiguration.ecosystem.politicians);
+        }
+
+        // 2. Render Cards Stream (Sorted by Relevance Descending, then by Date)
+        function renderCards(filterType = 'all') {
+            const container = document.getElementById('documentsStream');
+            container.innerHTML = '';
+            
+            const filteredItems = appConfiguration.items.filter(item => filterType === 'all' || item.type === filterType);
+            
+            // Sort by RELEVANCE high to low, then by year/month descending if tied.
+            filteredItems.sort((a, b) => {
+                if (b.relevance !== a.relevance) {
+                    return b.relevance - a.relevance;
+                }
+                const dateA = a.year + a.month/12;
+                const dateB = b.year + b.month/12;
+                return dateB - dateA;
+            });
+
+            filteredItems.forEach(item => {
+                const tagsHtml = item.keywords.map(kw => `<span class="tag-badge">#${kw}</span>`).join('');
+                const formattedMonth = item.month.toString().padStart(2, '0');
+                
+                const cardHtml = `
+                    <div class="doc-card ${item.styleClass}">
+                        <div>
+                            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                                <span class="rounded-full px-4 py-1 text-base font-bold ${item.badgeClass}">${item.source}</span>
+                                <div class="flex items-center gap-4">
+                                    <span class="relevance-badge bg-gray-100">🔗 קשר: ${item.relevance}/10</span>
+                                    <span class="text-lg font-bold text-gray-700">${formattedMonth}/${item.year}</span>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl text-gray-900 mb-3 leading-tight">${item.title}</h4>
+                            <div class="text-base text-gray-500 mb-3">מקור/מחבר: <span class="font-bold text-gray-800">${item.author}</span></div>
+                            
+                            <p class="card-summary-box text-gray-800 font-semibold">${item.summary}</p>
+                            
+                            <div class="card-impact-box">
+                                <strong class="${item.textClass} text-base block mb-1">השלכה מעשית / סטטוס נוכחי:</strong> 
+                                <span class="text-gray-900 block mt-1 font-bold">${item.impact}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t pt-4 mt-auto flex justify-between items-center flex-wrap gap-3">
+                            <div class="flex flex-wrap gap-2">${tagsHtml}</div>
+                            <span class="doc-id-badge">${item.idCode}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        // 3. Filter Logic
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('btn-active');
+                    b.classList.add('btn-inactive');
+                });
+                e.target.classList.remove('btn-inactive');
+                e.target.classList.add('btn-active');
+                renderCards(e.target.dataset.filter);
+            });
+        });
+
+        // 4. TTS Logic
+        let isSpeaking = false;
+        function toggleTTS() {
+            const btn = document.getElementById('ttsBtn');
+            const textEl = document.getElementById('tts-text');
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                btn.classList.remove('is-reading');
+                textEl.innerText = 'הקרא סיכום';
+            } else {
+                const text = document.getElementById('execSummaryText').innerText;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'he-IL';
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    btn.classList.remove('is-reading');
+                    textEl.innerText = 'הקרא סיכום';
+                };
+                window.speechSynthesis.speak(utterance);
+                isSpeaking = true;
+                btn.classList.add('is-reading');
+                textEl.innerText = 'עצור הקראה';
+            }
+        }
+
+        // Utility: Wrap text inside circle in Canvas
+        function wrapTextCenter(ctx, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            const lines = [];
+            
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    lines.push(line);
+                    line = words[n] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
+            lines.push(line);
+            
+            const startY = y - ((lines.length - 1) * lineHeight) / 2;
+            for(let i=0; i<lines.length; i++){
+                ctx.fillText(lines[i].trim(), x, startY + (i * lineHeight));
+            }
+        }
+
+        // 5. Left-to-Right Main Timeline (HTML5 Canvas)
+        function renderMainTimeline() {
+            const canvas = document.getElementById('mainTimeline');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            
+            const dpr = window.devicePixelRatio || 1;
+            const w = 3400; 
+            const h = 420;
+            
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const padX = 140;
+            const cy = h / 2;
+            
+            // Build legend
+            const legendContainer = document.getElementById('chartLegend');
+            legendContainer.innerHTML = appConfiguration.entities.map(en => 
+                `<div class="flex items-center gap-2"><div style="width:16px; height:16px; background-color:${en.color}; border-radius:4px;"></div><span>${en.label}</span></div>`
+            ).join('');
+
+            ctx.clearRect(0, 0, w, h);
+            
+            // Draw central axis line (LTR)
+            ctx.beginPath();
+            ctx.moveTo(padX, cy);
+            ctx.lineTo(w - padX, cy);
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            // Timeline MUST be sorted chronologically to display left-to-right correctly.
+            const items = appConfiguration.items.slice().sort((a,b) => {
+                return (a.year + a.month/12) - (b.year + b.month/12);
+            });
+
+            if (items.length === 0) return;
+
+            const minDate = 2023.9; 
+            const maxDate = 2026.9;
+            const colorMap = {};
+            appConfiguration.entities.forEach(en => colorMap[en.key] = en.color);
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.direction = 'rtl';
+
+            items.forEach((item, index) => {
+                const dateVal = item.year + (item.month/12);
+                const x = padX + ((dateVal - minDate) / (maxDate - minDate)) * (w - 2 * padX);
+                
+                const strokeThickness = item.relevance; 
+                const radius = 55 + (strokeThickness * 1.5); // Larger circles based on relevance
+                
+                const isTop = index % 2 === 0;
+                const yOffset = isTop ? -110 : 110;
+                const nodeCenterY = cy + yOffset;
+                
+                ctx.beginPath();
+                ctx.moveTo(x, cy);
+                ctx.lineTo(x, nodeCenterY - (isTop ? -radius : radius));
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(x, nodeCenterY, radius, 0, 2*Math.PI);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.strokeStyle = colorMap[item.type];
+                ctx.lineWidth = strokeThickness; 
+                ctx.stroke();
+
+                ctx.fillStyle = '#475569';
+                ctx.font = 'bold 16px Assistant, sans-serif';
+                const formattedMonth = item.month.toString().padStart(2, '0');
+                const textY = nodeCenterY + (isTop ? -(radius + 22) : (radius + 22));
+                ctx.fillText(`${formattedMonth}/${item.year}`, x, textY);
+                
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 15px Assistant, sans-serif';
+                wrapTextCenter(ctx, item.title, x, nodeCenterY, radius * 1.7, 20);
+            });
+        }
+
+        // 6. Google Trends Chart (Mini, LTR)
+        function renderTrendsChart() {
+            const canvas = document.getElementById('trendsChart');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            
+            const dpr = window.devicePixelRatio || 1;
+            const rect = container.getBoundingClientRect();
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const w = rect.width;
+            const h = rect.height;
+            const data = appConfiguration.trendsData;
+            
+            ctx.clearRect(0, 0, w, h);
+            
+            const maxVal = 100;
+            const xStep = w / (data.length - 1);
+
+            // Draw Area (LTR Mapping)
+            ctx.beginPath();
+            ctx.moveTo(0, h); 
+            data.forEach((d, i) => {
+                const x = i * xStep; 
+                const y = h - (d.val / maxVal * h);
+                if(i === 0) { ctx.moveTo(x, h); ctx.lineTo(x, y); }
+                else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(w, h);
+            ctx.closePath();
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, h);
+            gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
+            gradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Draw Line
+            ctx.beginPath();
+            data.forEach((d, i) => {
+                const x = i * xStep;
+                const y = h - (d.val / maxVal * h);
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = '#f97316';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw Dots
+            data.forEach((d, i) => {
+                const x = i * xStep;
+                const y = h - (d.val / maxVal * h);
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2*Math.PI);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+
+        // Initialize
+        window.onload = () => {
+            renderEcosystem();
+            renderCards();
+            
+            setTimeout(() => {
+                renderMainTimeline();
+                renderTrendsChart();
+            }, 200);
+            
+            window.addEventListener('resize', () => {
+                renderTrendsChart();
+            });
+        };
+    </script>
+</body>
+</html>
