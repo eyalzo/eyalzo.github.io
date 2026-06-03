@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סדר היום הפרלמנטרי</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --bg-base: #f8fafc;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --header-bg: #0f172a;
+            
+            /* Entity Colors */
+            --c-comptroller-hex: #f59e0b;
+            --c-mmm-hex: #8b5cf6;
+            --c-active-hex: #3b82f6;
+            --c-passed-hex: #10b981;
+            --c-committee-hex: #ef4444;
+            --c-gov-hex: #14b8a6;
+            --c-finance-hex: #ec4899;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; padding: 24px; font-size: 16px; }
+
+        /* Utility Classes */
+        .max-w-7xl { max-width: 80rem; margin: 0 auto; }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+
+        .flex { display: flex; } .flex-col { flex-direction: column; }
+        @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
+        .items-center { align-items: center; } .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+        .flex-wrap { flex-wrap: wrap; }
+        .flex-grow { flex-grow: 1; }
+        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+        .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-auto { margin-top: auto; }
+
+        .w-full { width: 100%; } .h-full { height: 100%; }
+
+        .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-full { border-radius: 9999px; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; } .border-t { border-top: 1px solid #e2e8f0; }
+        .border-t-4 { border-top-width: 4px; }
+
+        /* Typography */
+        .text-xs { font-size: 0.85rem; } .text-sm { font-size: 0.95rem; } .text-base { font-size: 1.15rem; }
+        .text-lg { font-size: 1.35rem; font-weight: 700; } .text-xl { font-size: 1.6rem; font-weight: 700; } .text-3xl { font-size: 2.5rem; font-weight: 700; }
+        .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
+        .text-\[0\.7rem\] { font-size: 0.7rem; } /* Custom tiny font */
+
+        .bg-white { background-color: #ffffff; } .bg-blue-50 { background-color: #eff6ff; } .bg-gray-50 { background-color: #f9fafb; }
+        .text-gray-200 { color: #e2e8f0; } .text-gray-400 { color: #94a3b8; } .text-gray-500 { color: #64748b; } .text-gray-700 { color: #334155; } .text-gray-900 { color: #0f172a; }
+        .text-red-500 { color: #ef4444; } .text-orange-500 { color: #f97316; } .text-blue-900 { color: #1e3a8a; } .text-amber-700 { color: #b45309; }
+        .text-blue-600 { color: #2563eb; } .text-blue-800 { color: #1e40af; }
+        .border-blue-500 { border-color: #3b82f6; }
+
+        /* Landing Cards Specific Styles */
+        .landing-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-top: 4px solid #3b82f6;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+        .landing-card:hover {
+            background-color: #eff6ff;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            transform: translateY(-4px);
+            border-color: #93c5fd;
+            border-top-color: #2563eb;
+        }
+
+        /* Favorites Button */
+        .fav-btn {
+            position: absolute;
+            top: 1.25rem;
+            left: 1.25rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        .fav-btn:hover {
+            transform: scale(1.2);
+        }
+
+        /* Layout Specific */
+        header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .badge-mono { font-family: monospace; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; display: flex; gap: 1rem; align-items: center; }
+
+        .exec-block { background-color: #eff6ff; border-right: 4px solid #2563eb; color: #1e3a8a; }
+        .whats-new { background-color: #ffffff; border: 1px solid #bfdbfe; border-right: 4px solid #fbbf24; border-radius: 0.25rem; padding: 1.25rem; margin-top: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(30, 64, 175, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0); }
+        }
+        .btn-read-aloud, .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-read-aloud:hover, .btn-back:hover { background-color: #bfdbfe; }
+        .is-reading { background-color: #1e40af; color: #ffffff; animation: pulse 2s infinite; }
+
+        .progress-bar-bg { width: 100%; height: 0.85rem; background-color: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 0.25rem; }
+        .progress-media { height: 100%; background-color: #ef4444; }
+        .progress-social { height: 100%; background-color: #f97316; }
+
+        .pol-coalition { background-color: #eff6ff; border: 1px solid #bfdbfe; }
+        .pol-opposition { background-color: #f8fafc; border: 1px solid #e2e8f0; }
+
+        .eco-grid-col { padding-right: 0.25rem; }
+        .eco-item { background: #f8fafc; padding: 0.85rem; margin-bottom: 0.5rem; border-radius: 0.25rem; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;}
+        .eco-item:hover { background: #f1f5f9; }
+
+        .timeline-scroll-wrapper { width: 100%; overflow-x: auto; direction: ltr; background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0; padding: 1.5rem 0; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .timeline-scroll-wrapper::-webkit-scrollbar { height: 12px; }
+        .timeline-scroll-wrapper::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+        .timeline-canvas-container { height: 420px; width: 3500px; position: relative; }
+
+        .trends-container { height: 100px; width: 100%; margin-top: 0.75rem; direction: ltr; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .filter-btn { padding: 0.7rem 1.2rem; border-radius: 0.5rem; cursor: pointer; border: none; font-weight: 600; font-size: 1.05rem; transition: all 0.2s; }
+        .btn-active { background-color: #0f172a; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-inactive { background-color: #e2e8f0; color: #334155; }
+        .btn-inactive:hover { background-color: #cbd5e1; }
+
+        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.2s; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .doc-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        .card-summary-box { background: white; border: 1px solid #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; font-size: 1.1rem; margin-bottom: 1rem; line-height: 1.6; }
+        .card-impact-box { background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 0.25rem; font-size: 1rem; margin-bottom: 1rem; border-right: 4px solid #cbd5e1; }
+        .tag-badge { background: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 4px; font-size: 0.95rem; display: inline-block; margin-bottom: 2px; }
+        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 1rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
+        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 1rem; color: #475569; }
+
+        /* Entity Colors */
+        .entity-comptroller { border-top: 5px solid var(--c-comptroller-hex); }
+        .badge-comptroller { background-color: var(--c-comptroller-hex); color: #ffffff; }
+        .text-comptroller { color: var(--c-comptroller-hex); }
+
+        .entity-mmm { border-top: 5px solid var(--c-mmm-hex); }
+        .badge-mmm { background-color: var(--c-mmm-hex); color: #ffffff; }
+        .text-mmm { color: var(--c-mmm-hex); }
+
+        .entity-activeLaw { border-top: 5px solid var(--c-active-hex); }
+        .badge-activeLaw { background-color: var(--c-active-hex); color: #ffffff; }
+        .text-activeLaw { color: var(--c-active-hex); }
+
+        .entity-passedLaw { border-top: 5px solid var(--c-passed-hex); }
+        .badge-passedLaw { background-color: var(--c-passed-hex); color: #ffffff; }
+        .text-passedLaw { color: var(--c-passed-hex); }
+
+        .entity-committee { border-top: 5px solid var(--c-committee-hex); }
+        .badge-committee { background-color: var(--c-committee-hex); color: #ffffff; }
+        .text-committee { color: var(--c-committee-hex); }
+
+        .entity-govDecision { border-top: 5px solid var(--c-gov-hex); }
+        .badge-govDecision { background-color: var(--c-gov-hex); color: #ffffff; }
+        .text-govDecision { color: var(--c-gov-hex); }
+
+        .entity-financeDirective { border-top: 5px solid var(--c-finance-hex); }
+        .badge-financeDirective { background-color: var(--c-finance-hex); color: #ffffff; }
+        .text-financeDirective { color: var(--c-finance-hex); }
+
+        #error-message { display: none; background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; text-align: center; }
+
+    </style>
+</head>
+<body>
+
+    <div id="landing-page" class="max-w-7xl mt-8">
+
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl mb-1">סדר היום הפרלמנטרי</h1>
+                <p class="text-gray-200 text-base mt-1">יש לבחור נושא מעקב מהרשימה מטה:</p>
+                <div class="text-[0.7rem] text-gray-400 mt-2 max-w-lg leading-tight" style="opacity: 0.8;">
+                    <strong>הבהרה:</strong> מערכת זו מבוססת מודל שפה ונוצרה להדגמה בלבד. המידע אינו רשמי או עובדתי.
+                </div>
+            </div>
+            <div class="badge-mono mr-auto">
+                <span class="font-semibold">מערכת ליבה גרסה 1.5.0</span>
+                <span style="opacity: 0.5; margin: 0 0.5rem;">|</span>
+                <span class="font-bold text-blue-400">Gilat AI</span>
+            </div>
+        </header>
+
+        <div id="error-message"></div>
+
+        <div id="landing-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+    </div>
+
+    <div id="dashboard-page" class="max-w-7xl" style="display: none;">
+        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl mb-1" id="d-title">בטעינה...</h1>
+                <p class="text-gray-200 text-base mt-2" id="d-subtitle">בטעינה...</p>
+            </div>
+            <div class="flex items-center gap-4 mr-auto flex-wrap">
+                <button class="btn-back" onclick="returnToMenu()">חזרה לתפריט 🏠</button>
+                <div class="badge-mono">
+                    <span>גרסה: <span id="d-version">-</span></span>
+                    <span style="opacity: 0.5;">|</span>
+                    <span>עדכון אחרון: <span id="d-date">-</span></span>
+                    <span style="opacity: 0.5;">|</span>
+                    <span class="font-bold text-blue-400">Gilat AI</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="exec-block p-6 rounded-xl shadow-sm mb-8 relative">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="font-bold text-xl md:text-3xl" id="d-exec-title">📋 תקציר מנהלים</h2>
+                <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
+                    <span>🔊</span> <span id="tts-text">הקראת סיכום</span>
+                </button>
+            </div>
+            <div id="execSummaryWrapper">
+                <p class="text-base md:text-xl leading-relaxed mb-4 text-blue-900 font-semibold" id="d-exec-text"></p>
+                <div class="whats-new">
+                    <h3 class="font-bold text-amber-700 text-xl mb-3" id="d-whatsnew-title">🔥 מה התחדש לאחרונה?</h3>
+                    <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;">
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
+                <div class="mb-5">
+                    <div class="flex justify-between text-lg mb-2">
+                        <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
+                        <span class="text-red-500 font-bold" id="d-media-val"></span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-media" id="d-media-bar" style="width: 0%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2" id="d-media-text"></p>
+                </div>
+                <div>
+                    <div class="flex justify-between text-lg mb-2">
+                        <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
+                        <span class="text-orange-500 font-bold" id="d-social-val"></span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-social" id="d-social-bar" style="width: 0%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2 mb-2" id="d-social-text"></p>
+                    <div class="trends-container relative">
+                        <canvas id="trendsChart"></canvas>
+                        <div class="absolute bottom-0 w-full flex justify-between px-1 text-[13px] text-gray-400 font-mono font-bold" dir="ltr">
+                            <span>2022</span><span>2024</span><span>2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-3">⚖️ הזירה הפוליטית: קואליציה מול אופוזיציה</h3>
+                <div class="grid grid-cols-1 gap-4 h-full">
+                    <div class="pol-coalition p-5 rounded-lg">
+                        <strong class="text-blue-900 block mb-3 text-lg border-b border-blue-200 pb-2" id="d-coal-title"></strong>
+                        <p class="text-base text-gray-700 leading-relaxed font-semibold" id="d-coal-text"></p>
+                    </div>
+                    <div class="pol-opposition p-5 rounded-lg">
+                        <strong class="text-gray-900 block mb-3 text-lg border-b border-gray-200 pb-2" id="d-opp-title"></strong>
+                        <p class="text-base text-gray-700 leading-relaxed font-semibold" id="d-opp-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-1"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-2"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-3"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-4"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-politicians"></div>
+            </div>
+        </div>
+
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
+            <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
+            <p class="text-lg text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub"></p>
+            <div class="timeline-scroll-wrapper">
+                <div class="timeline-canvas-container">
+                    <canvas id="mainTimeline"></canvas>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-5 mt-5 justify-center text-lg font-bold" id="chartLegend"></div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
+                <div>
+                    <h3 class="text-2xl mb-1">מאגר המסמכים המלא</h3>
+                    <p class="text-lg text-gray-500">מסונן וממוין לפי עוצמת הקשר (Relevance).</p>
+                </div>
+                <div class="flex flex-wrap gap-2" id="filterContainer">
+                    </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="documentsStream"></div>
+        </div>
+    </div>
+
+    <script>
+        let isSpeaking = false;
+
+        // Helper functions for Cookies
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        // Fix future dates and return corrected date string
+        function getCorrectedDate(dateStr) {
+            if (!dateStr || dateStr === "לא ידוע") return dateStr;
+            const parts = dateStr.split('/');
+            if (parts.length !== 3) return dateStr;
+
+            const updateDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            const today = new Date();
+
+            // Set to midnight for comparison
+            today.setHours(0,0,0,0);
+            updateDate.setHours(0,0,0,0);
+
+            if (updateDate > today) {
+                // If future date, force to today's date
+                const dd = String(today.getDate()).padStart(2, '0');
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const yyyy = today.getFullYear();
+                return `${dd}/${mm}/${yyyy}`;
+            }
+            return dateStr;
+        }
+
+        // Updated Function: Flame icon only if EXACTLY today
+        function isRecentlyUpdated(dateStr) {
+            if (!dateStr || dateStr === "לא ידוע") return false;
+            // Expecting DD/MM/YYYY format
+            const parts = dateStr.split('/');
+            if (parts.length !== 3) return false;
+
+            const updateDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            const today = new Date();
+
+            // Compare precisely day, month, and year
+            return updateDate.getDate() === today.getDate() &&
+                   updateDate.getMonth() === today.getMonth() &&
+                   updateDate.getFullYear() === today.getFullYear();
+        }
+
+        // Toggle Favorite function
+        window.toggleFav = function(event, id, btnEl) {
+            event.stopPropagation(); // Prevents loading the dashboard when clicking the heart
+            let favs = [];
+            const cookieStr = getCookie('parl_favs');
+            if (cookieStr) favs = JSON.parse(cookieStr);
+
+            if (favs.includes(id)) {
+                favs = favs.filter(f => f !== id);
+                btnEl.innerText = '🤍';
+                btnEl.setAttribute('title', 'הוספה למועדפים');
+            } else {
+                favs.push(id);
+                btnEl.innerText = '❤️';
+                btnEl.setAttribute('title', 'הסרה ממועדפים');
+            }
+            setCookie('parl_favs', JSON.stringify(favs), 365); // Save for 1 year
+        };
+
+        // Bootstrapping App and History
+        window.onload = async () => {
+            try {
+                const response = await fetch('manifest.json');
+                if (!response.ok) throw new Error("Failed fetching manifest");
+                const manifest = await response.json();
+
+                // Fetch the lastUpdate date automatically from each JSON file
+                const dashboardsWithDates = await Promise.all(manifest.dashboards.map(async (d) => {
+                    try {
+                        const fileRes = await fetch(d.file);
+                        const fileData = await fileRes.json();
+                        // Get and correct the date if it's in the future
+                        const correctedDate = getCorrectedDate(fileData.meta.lastUpdate);
+                        return { ...d, lastUpdate: correctedDate };
+                    } catch (e) {
+                        return { ...d, lastUpdate: "לא ידוע" }; // Fallback if file isn't ready
+                    }
+                }));
+
+                renderLanding(dashboardsWithDates);
+
+                // Initialize state for the back button
+                history.replaceState({ view: 'menu' }, "", window.location.pathname);
+
+            } catch (e) {
+                console.error("Error loading manifest:", e);
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').innerHTML = `
+                    <strong>שגיאת אבטחה בטעינת הקבצים (CORS)</strong><br><br>
+                    נראה שהקובץ נפתח ישירות מהתיקייה המקומית. דפדפנים חוסמים טעינת קובצי JSON באופן מקומי מטעמי אבטחה.<br>
+                    כדי להפעיל את המערכת, יש להריץ אותה דרך שרת מקומי (למשל תוסף Live Server ב-VS Code או הטרמינל).
+                `;
+            }
+        };
+
+        // Listen for Browser Back/Forward buttons
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.view === 'dashboard') {
+                loadDashboard(event.state.fileUrl, false); // false = don't add to history again
+            } else {
+                returnToMenu(false); // return to menu without adding history
+            }
+        });
+
+        function renderLanding(dashboards) {
+            let favs = [];
+            const cookieStr = getCookie('parl_favs');
+            if (cookieStr) favs = JSON.parse(cookieStr);
+
+            const container = document.getElementById('landing-grid');
+            container.innerHTML = dashboards.map(d => {
+                const isFav = favs.includes(d.id);
+                const isRecent = isRecentlyUpdated(d.lastUpdate);
+                const flameIcon = isRecent ? '<span title="עודכן היום!" class="text-xl">🔥</span>' : '';
+
+                return `
+                <div class="landing-card" onclick="loadDashboard('${d.file}')">
+                    <button class="fav-btn" onclick="toggleFav(event, '${d.id}', this)" title="${isFav ? 'הסרה ממועדפים' : 'הוספה למועדפים'}">
+                        ${isFav ? '❤️' : '🤍'}
+                    </button>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900 border-b pb-2" style="padding-left: 2.5rem;">${d.title}</h3>
+                    <p class="text-gray-600 text-lg mb-4 flex-grow leading-relaxed">${d.description}</p>
+                    <div class="mt-auto pt-3 border-t text-sm font-semibold text-gray-500 flex items-center gap-2">
+                        <span>🕒 עודכן:</span>
+                        <span class="text-gray-800 flex items-center gap-1">${d.lastUpdate} ${flameIcon}</span>
+                    </div>
+                </div>
+            `}).join('');
+
+            document.getElementById('landing-page').style.display = 'block';
+            document.getElementById('dashboard-page').style.display = 'none';
+        }
+
+        function returnToMenu(pushHistory = true) {
+            if (isSpeaking) toggleTTS(); // Stop TTS if returning
+            document.getElementById('dashboard-page').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'block';
+            window.scrollTo(0,0);
+
+            if (pushHistory) {
+                history.pushState({ view: 'menu' }, "", window.location.pathname);
+            }
+        }
+
+        async function loadDashboard(fileUrl, pushHistory = true) {
+            try {
+                const response = await fetch(fileUrl);
+                const data = await response.json();
+
+                // Set global data for functions
+                window.appConfiguration = data.appConfiguration;
+
+                // Populate DOM Map
+                document.getElementById('d-title').innerText = data.meta.title;
+                document.getElementById('d-subtitle').innerText = data.meta.subtitle;
+                document.getElementById('d-version').innerText = data.meta.version;
+
+                // Set corrected date in the dashboard top bar
+                document.getElementById('d-date').innerText = getCorrectedDate(data.meta.lastUpdate);
+
+                document.getElementById('d-exec-title').innerText = data.execSummary.title;
+                document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
+                document.getElementById('d-whatsnew-title').innerText = data.execSummary.whatsNewTitle;
+                document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(i => `<li>${i}</li>`).join('');
+
+                document.getElementById('d-media-val').innerText = data.metrics.media.scoreLabel;
+                document.getElementById('d-media-bar').style.width = data.metrics.media.score + '%';
+                document.getElementById('d-media-text').innerHTML = data.metrics.media.text;
+
+                document.getElementById('d-social-val').innerText = data.metrics.social.scoreLabel;
+                document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
+                document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
+
+                document.getElementById('d-coal-title').innerText = data.arena.coalition.title;
+                document.getElementById('d-coal-text').innerHTML = data.arena.coalition.text;
+                document.getElementById('d-opp-title').innerText = data.arena.opposition.title;
+                document.getElementById('d-opp-text').innerHTML = data.arena.opposition.text;
+
+                document.getElementById('eco-title-1').innerText = data.layoutStrings.ecosystemTitles[0];
+                document.getElementById('eco-title-2').innerText = data.layoutStrings.ecosystemTitles[1];
+                document.getElementById('eco-title-3').innerText = data.layoutStrings.ecosystemTitles[2];
+                document.getElementById('eco-title-4').innerText = data.layoutStrings.ecosystemTitles[3];
+
+                document.getElementById('d-timeline-title').innerText = data.layoutStrings.timelineTitle;
+                document.getElementById('d-timeline-sub').innerText = data.layoutStrings.timelineSubtitle;
+
+                // Build Filters dynamically
+                const filterContainer = document.getElementById('filterContainer');
+                filterContainer.innerHTML = `<button class="filter-btn btn-active" data-filter="all">כל המקורות</button>` +
+                    data.appConfiguration.entities.map(e => `<button class="filter-btn btn-inactive" data-filter="${e.key}">${e.label}</button>`).join('');
+
+                // Render components
+                renderEcosystem();
+                renderCards('all'); // default
+
+                // Add filter events
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => {
+                            b.classList.remove('btn-active'); b.classList.add('btn-inactive');
+                        });
+                        e.target.classList.remove('btn-inactive'); e.target.classList.add('btn-active');
+                        renderCards(e.target.dataset.filter);
+                    });
+                });
+
+                // Show page
+                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('dashboard-page').style.display = 'block';
+                window.scrollTo(0,0);
+
+                // Add to Browser History (so Back button works)
+                if (pushHistory) {
+                    const hashName = fileUrl.replace('data_', '').replace('.json', '');
+                    history.pushState({ view: 'dashboard', fileUrl: fileUrl }, "", "#" + hashName);
+                }
+
+                setTimeout(() => {
+                    renderMainTimeline();
+                    renderTrendsChart();
+                }, 200);
+
+            } catch (e) {
+                console.error("Error fetching specific dashboard data", e);
+                alert("אירעה שגיאה בטעינת נתוני הדשבורד.");
+            }
+        }
+
+        // Ecosystem Render
+        function renderEcosystemList(elementId, dataArray) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            const sortedArray = [...dataArray].sort((a, b) => b.relevance - a.relevance);
+            sortedArray.forEach(item => {
+                container.innerHTML += `
+                    <div class="eco-item border-r-4 ${item.color}">
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <strong class="text-gray-900 text-lg block leading-tight">${item.name}</strong>
+                            <div class="text-[13px] font-bold bg-gray-200 text-gray-700 px-2 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
+                        </div>
+                        <span class="text-base text-gray-600 font-semibold">${item.desc}</span>
+                    </div>
+                `;
+            });
+        }
+        function renderEcosystem() {
+            renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries);
+            renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees);
+            renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs);
+            renderEcosystemList('eco-politicians', window.appConfiguration.ecosystem.politicians);
+        }
+
+// Cards Render
+        function renderCards(filterType = 'all') {
+            const container = document.getElementById('documentsStream');
+            container.innerHTML = '';
+
+            const filteredItems = window.appConfiguration.items.filter(item => filterType === 'all' || item.type === filterType);
+            filteredItems.sort((a, b) => {
+                if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+                return (b.year + b.month/12) - (a.year + a.month/12);
+            });
+
+            filteredItems.forEach(item => {
+                const tagsHtml = item.keywords.map(kw => `<span class="tag-badge">#${kw}</span>`).join('');
+                const formattedMonth = item.month.toString().padStart(2, '0');
+
+                // הוספת מנגנון קישור: אם יש לינק, הפוך את התגית ללחיצה
+                let idBadgeHtml = `<span class="doc-id-badge">${item.idCode}</span>`;
+                if (item.link) {
+                    idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.8rem">🔗</span></a>`;
+                }
+
+                const cardHtml = `
+                    <div class="doc-card ${item.styleClass}">
+                        <div>
+                            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                                <span class="rounded-full px-4 py-1 text-base font-bold ${item.badgeClass}">${item.source}</span>
+                                <div class="flex items-center gap-4">
+                                    <span class="relevance-badge bg-gray-100">🔗 קשר: ${item.relevance}/10</span>
+                                    <span class="text-lg font-bold text-gray-700">${formattedMonth}/${item.year}</span>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl text-gray-900 mb-3 leading-tight">${item.title}</h4>
+                            <div class="text-base text-gray-500 mb-3">מקור/מחבר: <span class="font-bold text-gray-800">${item.author}</span></div>
+                            <p class="card-summary-box text-gray-800 font-semibold">${item.summary}</p>
+                            <div class="card-impact-box">
+                                <strong class="${item.textClass} text-base block mb-1">השלכה מעשית / סטטוס נוכחי:</strong>
+                                <span class="text-gray-900 block mt-1 font-bold">${item.impact}</span>
+                            </div>
+                        </div>
+                        <div class="border-t pt-4 mt-auto flex justify-between items-center flex-wrap gap-3">
+                            <div class="flex flex-wrap gap-2">${tagsHtml}</div>
+                            ${idBadgeHtml}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        // TTS
+        function toggleTTS() {
+            const btn = document.getElementById('ttsBtn');
+            const textEl = document.getElementById('tts-text');
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                btn.classList.remove('is-reading');
+                textEl.innerText = 'הקראת סיכום';
+            } else {
+                const text = document.getElementById('d-exec-text').innerText;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'he-IL';
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    btn.classList.remove('is-reading');
+                    textEl.innerText = 'הקראת סיכום';
+                };
+                window.speechSynthesis.speak(utterance);
+                isSpeaking = true;
+                btn.classList.add('is-reading');
+                textEl.innerText = 'עצירת הקראה';
+            }
+        }
+
+        // Canvas Text Wrapper
+        function wrapTextCenter(ctx, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = ''; const lines = [];
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+                    lines.push(line); line = words[n] + ' ';
+                } else { line = testLine; }
+            }
+            lines.push(line);
+            const startY = y - ((lines.length - 1) * lineHeight) / 2;
+            for(let i=0; i<lines.length; i++){ ctx.fillText(lines[i].trim(), x, startY + (i * lineHeight)); }
+        }
+
+        // Timeline Render
+        function renderMainTimeline() {
+            const canvas = document.getElementById('mainTimeline');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const w = 3500; const h = 420;
+            canvas.width = w * dpr; canvas.height = h * dpr;
+            ctx.scale(dpr, dpr);
+            const padX = 150; const cy = h / 2;
+            
+            const legendContainer = document.getElementById('chartLegend');
+            legendContainer.innerHTML = window.appConfiguration.entities.map(en => 
+                `<div class="flex items-center gap-2"><div style="width:16px; height:16px; background-color:${en.color}; border-radius:4px;"></div><span>${en.label}</span></div>`
+            ).join('');
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.beginPath(); ctx.moveTo(padX, cy); ctx.lineTo(w - padX, cy);
+            ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 6; ctx.stroke();
+
+            const items = window.appConfiguration.items.slice().sort((a,b) => (a.year + a.month/12) - (b.year + b.month/12));
+            if (items.length === 0) return;
+
+            const dates = items.map(i => i.year + i.month/12);
+            const minDate = Math.min(...dates) - 0.2; 
+            const maxDate = Math.max(...dates) + 0.2;
+            const colorMap = {};
+            window.appConfiguration.entities.forEach(en => colorMap[en.key] = en.color);
+
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = 'rtl';
+
+            items.forEach((item, index) => {
+                const dateVal = item.year + (item.month/12);
+                const x = padX + ((dateVal - minDate) / (maxDate - minDate)) * (w - 2 * padX);
+                const radius = 55 + (item.relevance * 1.5);
+                const isTop = index % 2 === 0;
+                const nodeCenterY = cy + (isTop ? -110 : 110);
+                
+                ctx.beginPath(); ctx.moveTo(x, cy); ctx.lineTo(x, nodeCenterY - (isTop ? -radius : radius));
+                ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 3; ctx.stroke();
+
+                ctx.beginPath(); ctx.arc(x, nodeCenterY, radius, 0, 2*Math.PI);
+                ctx.fillStyle = '#ffffff'; ctx.fill();
+                ctx.strokeStyle = colorMap[item.type]; ctx.lineWidth = item.relevance; ctx.stroke();
+
+                ctx.fillStyle = '#475569'; ctx.font = 'bold 16px Assistant, sans-serif';
+                ctx.fillText(`${item.month.toString().padStart(2, '0')}/${item.year}`, x, nodeCenterY + (isTop ? -(radius + 22) : (radius + 22)));
+                
+                ctx.fillStyle = '#0f172a'; ctx.font = 'bold 15px Assistant, sans-serif';
+                wrapTextCenter(ctx, item.title, x, nodeCenterY, radius * 1.7, 20);
+            });
+        }
+
+        // Trends Render
+        function renderTrendsChart() {
+            const canvas = document.getElementById('trendsChart');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            if(!container) return;
+            const dpr = window.devicePixelRatio || 1;
+            const rect = container.getBoundingClientRect();
+            if(rect.width === 0) return; // Not visible
+            
+            canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            const w = rect.width; const h = rect.height;
+            const data = window.appConfiguration.trendsData;
+            
+            ctx.clearRect(0, 0, w, h);
+            const maxVal = 100; const xStep = w / (data.length - 1);
+
+            ctx.beginPath(); ctx.moveTo(0, h); 
+            data.forEach((d, i) => {
+                const x = i * xStep; const y = h - (d.val / maxVal * h);
+                if(i === 0) { ctx.moveTo(x, h); ctx.lineTo(x, y); } else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(w, h); ctx.closePath();
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, h);
+            gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
+            gradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
+            ctx.fillStyle = gradient; ctx.fill();
+
+            ctx.beginPath();
+            data.forEach((d, i) => {
+                const x = i * xStep; const y = h - (d.val / maxVal * h);
+                if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.stroke();
+            
+            data.forEach((d, i) => {
+                const x = i * xStep; const y = h - (d.val / maxVal * h);
+                ctx.beginPath(); ctx.arc(x, y, 5, 0, 2*Math.PI);
+                ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if(document.getElementById('dashboard-page').style.display === 'block') renderTrendsChart();
+        });
+    </script>
+</body>
+</html>

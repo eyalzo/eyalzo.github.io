@@ -1,0 +1,223 @@
+{
+  "meta": {
+    "title": "יוקר המחיה ומשבר הדיור (הכנסת ה-25)",
+    "subtitle": "סדר היום הפרלמנטרי - הסתייגות: זוהי דוגמה עיצובית ולא תוכן רשמי.",
+    "version": "1.2.0",
+    "lastUpdate": "04/06/2026"
+  },
+  "execSummary": {
+    "title": "📋 תקציר מנהלים: הזינוק ביוקר המחיה",
+    "text": "עליית מחירי המזון, הריבית הגבוהה ומחירי הדיור המאמירים מהווים חזית מאבק מרכזית בכנסת. הנתונים מצביעים על חקיקה אינטנסיבית של ועדת הכלכלה לפירוק מונופולים בשוק המזון, לצד מאבקים בין משרד האוצר למשרד הכלכלה סביב רפורמת 'מה שטוב לאירופה טוב לישראל'. במקביל, הקיפאון בהתחלות הבנייה יצר לחץ אדיר על שוק השכירות, מה שהוביל לדוחות ביקורת חריפים ולהתערבות של בנק ישראל.",
+    "whatsNewTitle": "🔥 מה התחדש לאחרונה?",
+    "whatsNewItems": [
+      "מרכז המחקר והמידע של הכנסת פרסם דוח מקיף על דפוסי הדיור של הצעירים בישראל.",
+      "בנק ישראל הותיר את הריבית על כנה (4.5%) עקב אינפלציה דביקה במחירי השכירות.",
+      "ועדת הכלכלה אישרה לקריאה שנייה ושלישית את 'חוק שקיפות המחירים ברשתות'."
+    ]
+  },
+  "metrics": {
+    "media": {
+      "score": 90,
+      "scoreLabel": "90%",
+      "text": "<strong>הופעות בולטות (חודש אחרון):</strong> כתבות תחקיר על פערי תיווך בחקלאות, סיקור חרמות צרכנים על חברות מזון גדולות, ודיווחי נדל\"ן."
+    },
+    "social": {
+      "score": 96,
+      "scoreLabel": "96%",
+      "text": "מונחי חיפוש: \"מדד המחירים לצרכן\", \"ריבית בנק ישראל\", \"קבוצות רכישה\", \"חרם צרכנים\"."
+    }
+  },
+  "arena": {
+    "coalition": {
+      "title": "קואליציה וממשלה",
+      "text": "דוחפת לרפורמות ייבוא רחבות להפחתת רגולציה ומכסים (רפורמת 'מה שטוב לאירופה טוב לישראל'). שרי האוצר והכלכלה מאשימים לעיתים תכופות את רשתות השיווק והיבואנים הבלעדיים בחמדנות, במקביל לניסיונות לשחרר קרקעות לבנייה מואצת דרך רמ\"י."
+    },
+    "opposition": {
+      "title": "סיעות האופוזיציה",
+      "text": "תוקפות את הממשלה על כך שצעדיה משרתים את הטייקונים ולא מחלחלים לצרכן. מקדמות חקיקה להקפאת שכר דירה, ביטול מע\"מ על מוצרי יסוד, ומבקרות את הקיצוצים הרוחביים שפוגעים במעמד הביניים."
+    }
+  },
+  "layoutStrings": {
+    "ecosystemTitles": ["🏛️ משרדי ממשלה ורגולטורים", "💼 ועדות הכנסת", "🤝 צרכנות ושדלנות", "👤 מקבלי החלטות"],
+    "timelineTitle": "📊 ציר זמן: חקיקה, רגולציה וכלכלה (גלילה ימינה/שמאלה)",
+    "timelineSubtitle": "העיגולים ממחישים את שם המסמך, ועובי קו העיגול מייצג את רמת ה\"קשר\" (Relevance) לנושא."
+  },
+  "appConfiguration": {
+    "ecosystem": {
+      "ministries": [
+        { "name": "משרד הכלכלה והתעשייה", "desc": "אחראי על רפורמות הייבוא, מכון התקנים והמאבק בריכוזיות שוק המזון.", "relevance": 10, "color": "border-amber-500" },
+        { "name": "משרד האוצר / רשות המסים", "desc": "קביעת מדיניות מיסוי (בלו, מע\"מ) ותקצוב סובסידיות.", "relevance": 10, "color": "border-blue-500" },
+        { "name": "רשות התחרות", "desc": "אכיפה וקנסות כנגד מונופולים, קרטלים ויבואנים בלעדיים.", "relevance": 9, "color": "border-purple-500" },
+        { "name": "בנק ישראל", "desc": "שליטה באינפלציה דרך הריבית ורגולציה על משכנתאות.", "relevance": 8, "color": "border-emerald-500" }
+      ],
+      "committees": [
+        { "name": "ועדת הכלכלה", "desc": "זירת החקיקה המרכזית בנושאי הגנת הצרכן, ייבוא ורשתות שיווק.", "relevance": 10, "color": "border-amber-500" },
+        { "name": "ועדת הכספים", "desc": "אישור תקנות מיסוי, מכסים וקרנות סיוע למשכנתאות.", "relevance": 9, "color": "border-blue-500" },
+        { "name": "ועדת הפנים / ועדת הפריפריה", "desc": "אישור חוקי תכנון ובנייה מואצים כדי להגדיל את היצע הדירות.", "relevance": 8, "color": "border-emerald-500" },
+        { "name": "הוועדה לביקורת המדינה", "desc": "דיונים על כשלי פיקוח ממשלתיים בשוק המזון והדיור.", "relevance": 7, "color": "border-purple-500" }
+      ],
+      "civilOrgs": [
+        { "name": "לובי 99", "desc": "הלובי הציבורי הנלחם בטייקונים, קרטלי הבנקים והמזון בוועדות.", "relevance": 10, "color": "border-indigo-300" },
+        { "name": "המועצה הישראלית לצרכנות", "desc": "ייצוג הצרכנים, הגשת תובענות ייצוגיות והשוואות מחירים.", "relevance": 9, "color": "border-indigo-300" },
+        { "name": "התאחדות הקבלנים בוני הארץ", "desc": "מייצגים את יזמי הנדל\"ן; דורשים סיוע בהבאת עובדים זרים והפחתת רגולציה.", "relevance": 9, "color": "border-indigo-300" },
+        { "name": "ארגוני קמעונאים ויבואנים", "desc": "פועלים למניעת חקיקה מחמירה שעלולה לפגוע ברווחיות הרשתות.", "relevance": 8, "color": "border-indigo-300" }
+      ],
+      "politicians": [
+        { "name": "ח\"כ דוד ביטן", "desc": "יו\"ר ועדת הכלכלה: מוביל קו תקיף נגד רשתות המזון והבנקים.", "relevance": 10, "color": "border-slate-300" },
+        { "name": "השר ניר ברקת", "desc": "שר הכלכלה: יוזם חוק 'מה שטוב לאירופה' ומדיניות שיימינג למונופולים.", "relevance": 9, "color": "border-slate-300" },
+        { "name": "השר בצלאל סמוטריץ'", "desc": "שר האוצר: מוביל את המדיניות המאקרו-כלכלית, הורדות מכסים ומאבק באינפלציה.", "relevance": 9, "color": "border-slate-300" },
+        { "name": "ח\"כ נעמה לזימי / ולדימיר בליאק", "desc": "אופוזיציה: מקדמים חקיקה סוציאל-דמוקרטית ופיקוח על דמי השכירות.", "relevance": 7, "color": "border-slate-300" }
+      ]
+    },
+    "entities": [
+      { "key": "govDecision", "label": "החלטות ממשלה", "color": "#14b8a6" },
+      { "key": "financeDirective", "label": "רגולטורים ובנק ישראל", "color": "#ec4899" },
+      { "key": "comptroller", "label": "מבקר המדינה", "color": "#f59e0b" },
+      { "key": "mmm", "label": "הממ\"מ", "color": "#8b5cf6" },
+      { "key": "activeLaw", "label": "הצעות חוק", "color": "#3b82f6" },
+      { "key": "passedLaw", "label": "חקיקה (עברה)", "color": "#10b981" },
+      { "key": "committee", "label": "דיוני ועדות", "color": "#ef4444" }
+    ],
+    "items": [
+        {
+          "year": 2024, "month": 3, "relevance": 10, "type": "passedLaw", "styleClass": "entity-passedLaw", "textClass": "text-passedLaw", "badgeClass": "badge-passedLaw",
+          "source": "חקיקה שהושלמה",
+          "idCode": "ס\"ח 3108",
+          "link": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawBill.aspx?t=lawsuggestionssearch&lawitemid=2215830",
+          "author": "משרד הכלכלה",
+          "title": "חוק 'מה שטוב לאירופה טוב לישראל' (חלק א')",
+          "summary": "רפורמת ענק המבטלת את הצורך בתקינה ישראלית ייחודית לעשרות מוצרי צריכה חשמליים ומוצרי קוסמטיקה, ומאפשרת ייבוא על בסיס תקן אירופאי בלבד.",
+          "impact": "הוזלה מסוימת במוצרי הפארם, אך נתקל בקשיי יישום בירוקרטיים.",
+          "keywords": ["רפורמת_ייבוא", "מכון_התקנים", "יוקר_המחיה"]
+        },
+        {
+          "year": 2024, "month": 6, "relevance": 9, "type": "financeDirective", "styleClass": "entity-financeDirective", "textClass": "text-financeDirective", "badgeClass": "badge-financeDirective",
+          "source": "בנק ישראל",
+          "idCode": "הודעת הנגיד 6/24",
+          "link": "https://www.boi.org.il/he/NewsAndPublications/PressReleases/Pages/26-06-2024.aspx",
+          "author": "הוועדה המוניטרית",
+          "title": "העלאת ריבית לבלימת עליית מחירי הדיור",
+          "summary": "בנק ישראל מעלה את הריבית בניסיון לקרר את האינפלציה ואת שוק המשכנתאות הרותח.",
+          "impact": "הכבדת נטל ההחזרים על משקי הבית בסכום ממוצע של 800 ש\"ח בחודש.",
+          "keywords": ["ריבית", "משכנתא", "אינפלציה"]
+        },
+        {
+          "year": 2025, "month": 4, "relevance": 9, "type": "comptroller", "styleClass": "entity-comptroller", "textClass": "text-comptroller", "badgeClass": "badge-comptroller",
+          "source": "מבקר המדינה",
+          "idCode": "דוח 75 - חטיבת כלכלה",
+          "link": "https://www.mevaker.gov.il/he/Reports/Pages/default.aspx",
+          "author": "משרד מבקר המדינה",
+          "title": "טיפול הממשלה במחירי שכר הדירה",
+          "summary": "דוח קשה הקובע כי אין למדינה נתונים אמיתיים על שוק השכירות, היעדר אכיפה על דירות מפוצלות, וכישלון פרויקט 'דירה להשכיר' ביצירת שוק מוסדי.",
+          "impact": "הקמת צוות בין-משרדי דחוף לעדכון חוק שכירות הוגנת.",
+          "keywords": ["שכר_דירה", "דיור", "מבקר_המדינה"]
+        },
+        {
+          "year": 2025, "month": 11, "relevance": 10, "type": "mmm", "styleClass": "entity-mmm", "textClass": "text-mmm", "badgeClass": "badge-mmm",
+          "source": "הממ\"מ",
+          "idCode": "מ/8390",
+          "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8390&businessType=1",
+          "author": "מרכז המחקר והמידע",
+          "title": "ניתוח השינויים במדדי המחירים של מוצרי המזון",
+          "summary": "המסמך כולל נתונים על השינוי במדדים של מחיר המזון לצרכן, מחיר תפוקה של תעשיית המזון ליעדים מקומיים ומחירי סחורות בעולם.",
+          "impact": "חשף כי עליות המחירים בישראל היו חדות מאלה שבעולם, וסייע לדחוף את רפורמת הייבוא.",
+          "keywords": ["מדד_המחירים", "מחירי_מזון", "כלכלה"]
+        },
+        {
+          "year": 2025, "month": 11, "relevance": 9, "type": "mmm", "styleClass": "entity-mmm", "textClass": "text-mmm", "badgeClass": "badge-mmm",
+          "source": "הממ\"מ",
+          "idCode": "מ/8409",
+          "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8409&businessType=1",
+          "author": "מרכז המחקר והמידע",
+          "title": "כלי מדיניות להעלאת רמת התחרות בשוק הבנקאות",
+          "summary": "במסמך מוצגים נתונים ומדדים על רמת התחרות והריכוזיות בשוק הבנקאות וסקירה של כלי מדיניות להגברת התחרות מול מונופול הבנקים הגדולים.",
+          "impact": "הוביל לדיונים בוועדת הכספים להחלת מיסוי מיוחד על רווחי היתר של הבנקים.",
+          "keywords": ["בנקים", "תחרות", "ריכוזיות"]
+        },
+        {
+          "year": 2025, "month": 12, "relevance": 9, "type": "activeLaw", "styleClass": "entity-activeLaw", "textClass": "text-activeLaw", "badgeClass": "badge-activeLaw",
+          "source": "הצעת חוק פעילה",
+          "idCode": "פ/1850/25",
+          "link": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawBill.aspx?t=lawsuggestionssearch&lawitemid=2215888",
+          "author": "קואליציה ואופוזיציה",
+          "title": "חוק הגבלת כוחם של יבואנים בלעדיים",
+          "summary": "איסור על יבואן רשמי גדול להתקשר בחוזה בלעדיות ארוך טווח, ומתן אפשרות לייבוא מקביל חופשי של מותגים בינלאומיים בולטים.",
+          "impact": "עבר קריאה ראשונה לאחר מאבק אגרסיבי של לוביסטים מטעם היבואנים.",
+          "keywords": ["יבואן_רשמי", "ייבוא_מקביל", "תחרות"]
+        },
+        {
+          "year": 2026, "month": 1, "relevance": 9, "type": "mmm", "styleClass": "entity-mmm", "textClass": "text-mmm", "badgeClass": "badge-mmm",
+          "source": "הממ\"מ",
+          "idCode": "מ/8526",
+          "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8526&businessType=1",
+          "author": "מרכז המחקר והמידע",
+          "title": "השפעות יבוא מוצרי חקלאות על המחירים לצרכן ועל הייצור המקומי",
+          "summary": "המסמך מכיל תיאור של השפעות הייבוא על הכלכלה, נתונים על הכנסות ממכסים, ייצור מקומי ויבוא פירות וירקות וניתוח ההשפעה על החקלאים מול החיסכון לצרכנים.",
+          "impact": "עורר ויכוח עז בוועדת הכלכלה האם הורדות המכסים באמת התגלגלו לכיסו של הצרכן.",
+          "keywords": ["חקלאות", "ייבוא", "מכס"]
+        },
+        {
+          "year": 2026, "month": 2, "relevance": 10, "type": "mmm", "styleClass": "entity-mmm", "textClass": "text-mmm", "badgeClass": "badge-mmm",
+          "source": "הממ\"מ",
+          "idCode": "מ/8486",
+          "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8486&businessType=1",
+          "author": "מרכז המחקר והמידע",
+          "title": "השינוי בדפוסי הדיור של אוכלוסיית הצעירים",
+          "summary": "מחירי הדירות עלו בשנים האחרונות משמעותית יותר מהשכר הממוצע. הנתונים מגלים כי בשנת 2024 כ-27% מהצעירים בני 25–34 נאלצו לחזור לגור עם ההורים.",
+          "impact": "ציטוטים מהמסמך הפכו לוויראליים ברשתות החברתיות ודרבנו יוזמות לסיוע במשכנתאות לזוגות צעירים.",
+          "keywords": ["דיור", "צעירים", "משכנתא"]
+        },
+        {
+          "year": 2026, "month": 2, "relevance": 7, "type": "committee", "styleClass": "entity-committee", "textClass": "text-committee", "badgeClass": "badge-committee",
+          "source": "דיוני ועדות",
+          "idCode": "פרוטוקול כספים 510",
+          "link": "https://main.knesset.gov.il/Activity/committees/Economics/Pages/CommitteeTVarchive.aspx",
+          "author": "ועדת הכספים",
+          "title": "השלכות הקיפאון בנדל\"ן על קבלנים",
+          "summary": "דיון חירום לבקשת התאחדות הקבלנים עקב קריסת עשרות חברות ביצוע בשל עלויות מימון כבדות ומחסור חמור של פועלי בניין.",
+          "impact": "אישור תקנות מהירות להבאת חברות בנייה זרות ופועלים מהודו.",
+          "keywords": ["קבלנים", "עובדים_זרים", "נדל\"ן"]
+        },
+        {
+          "year": 2026, "month": 3, "relevance": 10, "type": "financeDirective", "styleClass": "entity-financeDirective", "textClass": "text-financeDirective", "badgeClass": "badge-financeDirective",
+          "source": "הנחיה רגולטורית",
+          "idCode": "החלטת הממונה 3/26",
+          "link": "https://www.gov.il/he/departments/publications/reports/competition_auth_2026",
+          "author": "רשות התחרות",
+          "title": "הכרזה על 'שופרסל' ו-'דיפלומט' כמונופול אזורי",
+          "summary": "מהלך אגרסיבי של הממונה על התחרות המגביל את שטחי המדף שחברות אלו יכולות לתפוס ברשתות מסוימות על מנת לפנות מקום ליצרנים קטנים.",
+          "impact": "מהלך היסטורי שעורר סערה כלכלית ועתירות לבג\"ץ מטעם החברות המוכרזות.",
+          "keywords": ["רשות_התחרות", "מונופול", "שטחי_מדף"]
+        },
+        {
+          "year": 2026, "month": 5, "relevance": 8, "type": "activeLaw", "styleClass": "entity-activeLaw", "textClass": "text-activeLaw", "badgeClass": "badge-activeLaw",
+          "source": "הצעת חוק פעילה",
+          "idCode": "פ/2240/26",
+          "link": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawBill.aspx?t=lawsuggestionssearch&lawitemid=2216012",
+          "author": "האופוזיציה",
+          "title": "הצעת חוק שכירות הוגנת (הגבלת העלאת שכר דירה)",
+          "summary": "הצעה לקבוע מנגנון הצמדה המגביל העלאת שכר דירה בחוזה קיים לעד 2% בשנה בלבד, כדי להגן על שוכרים בתקופת אינפלציה.",
+          "impact": "הקואליציה מתנגדת בטענה שהדבר יקטין את היצע הדירות להשכרה. הדיון נמשך.",
+          "keywords": ["שכירות", "הגבלת_מחירים", "דיור"]
+        },
+        {
+          "year": 2026, "month": 6, "relevance": 10, "type": "passedLaw", "styleClass": "entity-passedLaw", "textClass": "text-passedLaw", "badgeClass": "badge-passedLaw",
+          "source": "חקיקה שהושלמה",
+          "idCode": "ס\"ח 3302",
+          "link": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawBill.aspx?t=lawsuggestionssearch&lawitemid=2215111",
+          "author": "ועדת הכלכלה",
+          "title": "חוק שקיפות המחירים ברשתות (תיקון)",
+          "summary": "מחייב את רשתות הפארם והמזון להציג שלט אלקטרוני ובו השוואה בזמן אמת של מחיר המוצר המקומי מול המחיר הממוצע באירופה.",
+          "impact": "מהפכת מידע בחנויות, לחץ תודעתי כבד על יצרנים להוריד מחירים לקו האירופאי.",
+          "keywords": ["שקיפות", "השוואת_מחירים", "צרכנות"]
+        }
+    ],
+    "trendsData": [
+      { "year": 2022, "val": 40 },
+      { "year": 2023, "val": 60 },
+      { "year": 2024, "val": 85 },
+      { "year": 2025, "val": 100 },
+      { "year": 2026, "val": 95 }
+    ]
+  }
+}
