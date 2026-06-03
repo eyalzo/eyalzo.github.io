@@ -147,13 +147,11 @@
 <body>
 
     <div class="max-w-7xl">
-        <!-- Header -->
         <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h1 class="text-3xl mb-1">זכויות משרתי המילואים בכנסת ה-25</h1>
-                <p class="text-gray-200 text-base mt-1">מערכת מודיעין פרלמנטרי: שקיפות, חקיקה, זירה פוליטית וסנכרון מלא למאגר הנתונים.</p>
+                <h1 class="text-3xl mb-1">זכויות משרתי המילואים (הכנסת ה-25)</h1>
+                <p class="text-gray-200 text-base mt-1">סדר היום הפרלמנטרי - הסתייגות: זוהי דוגמה עיצובית ולא תוכן רשמי.</p>
             </div>
-            <!-- Version and Date to the left -->
             <div class="badge-mono mr-auto">
                 <span>גרסה: 1.0.4</span>
                 <span style="opacity: 0.5;">|</span>
@@ -163,7 +161,6 @@
             </div>
         </header>
 
-        <!-- Exec Summary (Full Width) -->
         <div class="exec-block p-6 rounded-xl shadow-sm mb-8 relative">
             <div class="flex justify-between items-start mb-3">
                 <h2 class="font-bold text-xl">📋 תקציר מנהלים: מה משתקף מהנתונים?</h2>
@@ -186,12 +183,10 @@
             </div>
         </div>
 
-        <!-- Metrics & Political Arena Row -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <!-- Media & Social Metrics -->
             <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
                 <h3 class="text-xl mb-4 border-b pb-2">📡 מדדי שיח ציבורי ותקשורתי</h3>
-                
+
                 <div class="mb-5">
                     <div class="flex justify-between text-base mb-1">
                         <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
@@ -202,7 +197,7 @@
                         <strong>הופעות בולטות (חודש אחרון):</strong> 12 בעיתונות כתובה, 34 אייטמים ברדיו, 8 הופעות בטלוויזיה. סיקור מתון יחסית לנושאי לחימה מבצעיים.
                     </p>
                 </div>
-                
+
                 <div>
                     <div class="flex justify-between text-base mb-1">
                         <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
@@ -212,8 +207,7 @@
                     <p class="text-sm text-gray-500 mt-2 mb-1">
                         מונחי חיפוש: "זכויות מילואים", "מענק מילואים", "פטור ממילואים".
                     </p>
-                    
-                    <!-- Google Trends Timeline 2022-2026 -->
+
                     <div class="trends-container relative">
                         <canvas id="trendsChart"></canvas>
                         <div class="absolute bottom-0 w-full flex justify-between px-1 text-[11px] text-gray-400 font-mono" dir="ltr">
@@ -225,7 +219,6 @@
                 </div>
             </div>
 
-            <!-- Political Arena -->
             <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
                 <h3 class="text-xl mb-4 border-b pb-2">⚖️ הזירה הפוליטית: קואליציה מול אופוזיציה</h3>
                 <div class="grid grid-cols-1 gap-4 h-full">
@@ -241,7 +234,6 @@
             </div>
         </div>
 
-        <!-- Ecosystem Map (4 Columns) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-md border">
                 <h3 class="text-lg mb-4 border-b pb-2">🏛️ משרדי ממשלה וגופים</h3>
@@ -261,24 +253,20 @@
             </div>
         </div>
 
-        <!-- Main Timeline Chart LTR (Scrollable) -->
         <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
             <h3 class="text-xl mb-1">📊 ציר זמן: מסמכים ופעילות (משמאל לימין)</h3>
             <p class="text-base text-gray-500 mb-4 border-b pb-2">גלול ימינה/שמאלה לצפייה. העיגולים ממחישים את שם המסמך, ועובי קו העיגול מייצג את ציון ה"קשר" לנושא.</p>
-            
+
             <div class="timeline-scroll-wrapper">
                 <div class="timeline-canvas-container">
                     <canvas id="mainTimeline"></canvas>
                 </div>
             </div>
-            
-            <!-- Legend -->
+
             <div class="flex flex-wrap gap-4 mt-4 justify-center text-base font-semibold" id="chartLegend">
-                <!-- Legend items injected by JS -->
-            </div>
+                </div>
         </div>
 
-        <!-- Filterable Stream -->
         <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
                 <div>
@@ -298,13 +286,11 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="documentsStream">
-                <!-- Cards populated by JS -->
-            </div>
+                </div>
         </div>
 
     </div>
 
-    <!-- JavaScript Data & Logic -->
     <script>
         const appConfiguration = {
             ecosystem: {
