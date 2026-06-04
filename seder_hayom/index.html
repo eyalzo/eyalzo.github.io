@@ -47,7 +47,7 @@
 
         /* Typography */
         .text-sm { font-size: 0.95rem; } .text-base { font-size: 1.15rem; }
-        .text-lg { font-size: 1.35rem; font-weight: 700; } .text-2xl { font-size: 1.8rem; font-weight: 700; } .text-3xl { font-size: 2.5rem; font-weight: 700; }
+        .text-lg { font-size: 1.25rem; font-weight: 700; } .text-xl { font-size: 1.5rem; font-weight: 700; } .text-2xl { font-size: 1.8rem; font-weight: 700; } .text-3xl { font-size: 2.5rem; font-weight: 700; }
         .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
         .text-\[0\.7rem\] { font-size: 0.7rem; }
 
@@ -115,7 +115,7 @@
                 </div>
             </div>
             <div class="badge-mono mr-auto">
-                <span class="font-semibold">מערכת ליבה גרסה 1.9.0 (סינון דינמי מבודד)</span>
+                <span class="font-semibold">מערכת ליבה גרסה 1.9.2 (סינון אישים נקי)</span>
                 <span style="opacity: 0.5; margin: 0 0.5rem;">|</span>
                 <span class="font-bold text-blue-400">Gilat AI</span>
             </div>
@@ -123,22 +123,24 @@
 
         <div id="error-message"></div>
 
+        <!-- Filter Bar -->
         <div class="mb-8 flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl shadow-sm border items-start md:items-center">
             <span class="font-bold text-gray-700 whitespace-nowrap text-lg">🔍 סינון נושאים:</span>
 
-            <select id="committeeFilter" class="p-2 border rounded-lg bg-gray-50 text-gray-700 flex-grow font-semibold" style="max-width: 300px;">
+            <select id="committeeFilter" class="p-2 border rounded-lg bg-gray-50 text-gray-800 flex-grow font-semibold text-lg" style="max-width: 320px;">
                 <option value="all">כל הוועדות</option>
             </select>
 
-            <select id="entityFilter" class="p-2 border rounded-lg bg-gray-50 text-gray-700 flex-grow font-semibold" style="max-width: 300px;">
-                <option value="all">כל הגופים המעורבים (משרדים/ארגונים)</option>
+            <select id="politicianFilter" class="p-2 border rounded-lg bg-gray-50 text-gray-800 flex-grow font-semibold text-lg" style="max-width: 320px;">
+                <option value="all">כל מקבלי ההחלטות</option>
             </select>
 
-            <button onclick="resetFilters()" class="text-base text-blue-600 font-bold cursor-pointer border-none bg-transparent mr-auto" style="text-decoration: underline;">ניקוי ✖</button>
+            <button onclick="resetFilters()" class="text-lg text-blue-600 font-bold cursor-pointer border-none bg-transparent mr-auto" style="text-decoration: underline;">ניקוי ✖</button>
         </div>
 
         <div id="landing-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            </div>
+            <!-- Cards will be injected here -->
+        </div>
     </div>
 
     <script>
@@ -217,6 +219,35 @@
             setCookie('parl_favs', JSON.stringify(favs), 365);
         };
 
+        // Name extraction logic for politicians
+        function extractNames(rawName) {
+            // Remove parentheses and their contents (e.g. "(קואליציה)")
+            let clean = rawName.replace(/\(.*?\)/g, '');
+            // Split by slash for multiple names
+            let parts = clean.split('/');
+            let names = [];
+
+            const titlesToRemove = /^(ח"כ|ח״כ|השר|השרה)\s+/;
+            // General roles that are not specific names
+            const roleRegex = /^(שר ה|יו"ר|יו״ר|מנכ"ל|מנכ״ל|ראשי|חברי|שדולת|פורום)/;
+
+            parts.forEach(part => {
+                let p = part.trim();
+
+                // Skip if it's a general role
+                if (roleRegex.test(p)) return;
+
+                // Remove prefix titles if they exist
+                p = p.replace(titlesToRemove, '').trim();
+
+                // Keep only valid substantial names
+                if (p.length > 2) {
+                    names.push(p);
+                }
+            });
+            return names;
+        }
+
         window.onload = async () => {
             try {
                 const response = await fetch('manifest.json');
@@ -250,7 +281,7 @@
 
         function buildFilterOptions() {
             const committeeCounts = {};
-            const entityCounts = {};
+            const politicianCounts = {};
 
             // Extract and count unique names per dashboard (topic)
             window.allDashboards.forEach(d => {
@@ -259,20 +290,23 @@
 
                     // Use a Set to ensure we count each entity only once per dashboard
                     const dCommittees = new Set();
-                    const dEntities = new Set();
+                    const dPoliticians = new Set();
 
                     if (eco.committees) eco.committees.forEach(c => dCommittees.add(c.name));
 
-                    if (eco.ministries) eco.ministries.forEach(m => dEntities.add(m.name));
-                    if (eco.civilOrgs) eco.civilOrgs.forEach(o => dEntities.add(o.name));
-                    if (eco.politicians) eco.politicians.forEach(p => dEntities.add(p.name));
+                    if (eco.politicians) {
+                        eco.politicians.forEach(p => {
+                            const extracted = extractNames(p.name);
+                            extracted.forEach(n => dPoliticians.add(n));
+                        });
+                    }
 
                     dCommittees.forEach(c => {
                         committeeCounts[c] = (committeeCounts[c] || 0) + 1;
                     });
 
-                    dEntities.forEach(e => {
-                        entityCounts[e] = (entityCounts[e] || 0) + 1;
+                    dPoliticians.forEach(p => {
+                        politicianCounts[p] = (politicianCounts[p] || 0) + 1;
                     });
                 }
             });
@@ -282,18 +316,18 @@
                 commSelect.innerHTML += `<option value="${c}">${c} (${committeeCounts[c]})</option>`;
             });
 
-            const entSelect = document.getElementById('entityFilter');
-            Object.keys(entityCounts).sort().forEach(e => {
-                entSelect.innerHTML += `<option value="${e}">${e} (${entityCounts[e]})</option>`;
+            const polSelect = document.getElementById('politicianFilter');
+            Object.keys(politicianCounts).sort().forEach(p => {
+                polSelect.innerHTML += `<option value="${p}">${p} (${politicianCounts[p]})</option>`;
             });
 
-            // Changed event listeners to isolate filters from each other
+            // Event listeners to isolate filters from each other
             commSelect.addEventListener('change', () => {
-                document.getElementById('entityFilter').value = 'all';
+                document.getElementById('politicianFilter').value = 'all';
                 applyFilters();
             });
 
-            entSelect.addEventListener('change', () => {
+            polSelect.addEventListener('change', () => {
                 document.getElementById('committeeFilter').value = 'all';
                 applyFilters();
             });
@@ -301,7 +335,7 @@
 
         function applyFilters() {
             const commVal = document.getElementById('committeeFilter').value;
-            const entVal = document.getElementById('entityFilter').value;
+            const polVal = document.getElementById('politicianFilter').value;
 
             const filteredDashboards = window.allDashboards.filter(d => {
                 if (!d.fileData || !d.fileData.appConfiguration || !d.fileData.appConfiguration.ecosystem) return false;
@@ -314,17 +348,19 @@
                     commMatch = true;
                 }
 
-                let entMatch = false;
-                if (entVal === 'all') {
-                    entMatch = true;
-                } else {
-                    const hasMin = eco.ministries && eco.ministries.some(m => m.name === entVal);
-                    const hasCiv = eco.civilOrgs && eco.civilOrgs.some(o => o.name === entVal);
-                    const hasPol = eco.politicians && eco.politicians.some(p => p.name === entVal);
-                    if (hasMin || hasCiv || hasPol) entMatch = true;
+                let polMatch = false;
+                if (polVal === 'all') {
+                    polMatch = true;
+                } else if (eco.politicians) {
+                    eco.politicians.forEach(p => {
+                        const extracted = extractNames(p.name);
+                        if (extracted.includes(polVal)) {
+                            polMatch = true;
+                        }
+                    });
                 }
 
-                return commMatch && entMatch;
+                return commMatch && polMatch;
             });
 
             renderLanding(filteredDashboards);
@@ -332,7 +368,7 @@
 
         window.resetFilters = function() {
             document.getElementById('committeeFilter').value = 'all';
-            document.getElementById('entityFilter').value = 'all';
+            document.getElementById('politicianFilter').value = 'all';
             renderLanding(window.allDashboards);
         }
 
