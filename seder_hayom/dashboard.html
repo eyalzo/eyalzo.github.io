@@ -106,7 +106,7 @@
         .btn-inactive { background-color: #e2e8f0; color: #334155; }
         .btn-inactive:hover { background-color: #cbd5e1; }
 
-        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.2s; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .doc-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 
         .card-summary-box { background: white; border: 1px solid #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; font-size: 1.1rem; margin-bottom: 1rem; line-height: 1.6; }
@@ -147,6 +147,26 @@
         #error-message { display: none; background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; text-align: center; }
         #loading-message { display: flex; justify-content: center; align-items: center; height: 50vh; font-size: 1.5rem; color: #64748b; }
         #dashboard-content { display: none; }
+
+        /* Tooltip Styles */
+        #chartTooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.95);
+            color: #fff;
+            padding: 16px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 10px 15px -3px rgba(0,0,0,0.1);
+            direction: rtl;
+            max-width: 450px;
+            min-width: 320px;
+            line-height: 1.5;
+        }
+        #chartTooltip .tt-title { font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;}
+        #chartTooltip .tt-date { font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155;}
     </style>
 </head>
 <body>
@@ -249,13 +269,14 @@
             </div>
         </div>
 
-        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
             <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
-            <p class="text-lg text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub"></p>
-            <div class="timeline-scroll-wrapper">
+            <p class="text-lg text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
+            <div class="timeline-scroll-wrapper" style="position: relative;">
                 <div class="timeline-canvas-container">
                     <canvas id="mainTimeline"></canvas>
                 </div>
+                <div id="chartTooltip"></div>
             </div>
             <div class="flex flex-wrap gap-5 mt-5 justify-center text-lg font-bold" id="chartLegend"></div>
         </div>
@@ -264,7 +285,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
                 <div>
                     <h3 class="text-2xl mb-1">מאגר המסמכים המלא</h3>
-                    <p class="text-lg text-gray-500">מסונן וממוין לפי עוצמת הקשר (Relevance).</p>
+                    <p class="text-lg text-gray-500">מסונן וממוין לפי סוג המסמך וסדר כרונולוגי.</p>
                 </div>
                 <div class="flex flex-wrap gap-2" id="filterContainer"></div>
             </div>
@@ -275,6 +296,20 @@
     <script>
         let isSpeaking = false;
         window.appConfiguration = null;
+        let timelineNodes = [];
+
+        // Sorting configuration: Knesset sources first, then others.
+        const typeSortOrder = {
+            'mmm': 1,
+            'activeLaw': 2,
+            'passedLaw': 3,
+            'committee': 4,
+            'comptroller': 5,
+            'govDecision': 6,
+            'financeDirective': 7
+        };
+
+        const knessetTypes = ['mmm', 'activeLaw', 'passedLaw', 'committee'];
 
         function getCorrectedDate(dateStr) {
             if (!dateStr || dateStr === "לא ידוע") return dateStr;
@@ -283,7 +318,7 @@
 
             const updateDate = new Date(parts[2], parts[1] - 1, parts[0]);
             const today = new Date();
-            
+
             today.setHours(0,0,0,0);
             updateDate.setHours(0,0,0,0);
 
@@ -314,7 +349,7 @@
                 const response = await fetch(fileUrl);
                 if (!response.ok) throw new Error("File not found or network error");
                 const data = await response.json();
-                
+
                 window.appConfiguration = data.appConfiguration;
 
                 document.getElementById('d-title').innerText = data.meta.title;
@@ -346,24 +381,10 @@
                 document.getElementById('eco-title-4').innerText = data.layoutStrings.ecosystemTitles[3];
 
                 document.getElementById('d-timeline-title').innerText = data.layoutStrings.timelineTitle;
-                document.getElementById('d-timeline-sub').innerText = data.layoutStrings.timelineSubtitle;
 
-                const filterContainer = document.getElementById('filterContainer');
-                filterContainer.innerHTML = `<button class="filter-btn btn-active" data-filter="all">כל המקורות</button>` +
-                    data.appConfiguration.entities.map(e => `<button class="filter-btn btn-inactive" data-filter="${e.key}">${e.label}</button>`).join('');
-
+                setupFilters();
                 renderEcosystem();
                 renderCards('all');
-
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.filter-btn').forEach(b => {
-                            b.classList.remove('btn-active'); b.classList.add('btn-inactive');
-                        });
-                        e.target.classList.remove('btn-inactive'); e.target.classList.add('btn-active');
-                        renderCards(e.target.dataset.filter);
-                    });
-                });
 
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
@@ -383,6 +404,43 @@
                 `;
             }
         };
+
+        function setupFilters() {
+            const filterContainer = document.getElementById('filterContainer');
+            const items = window.appConfiguration.items;
+
+            // Count items per type
+            const typeCounts = {};
+            items.forEach(item => {
+                typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;
+            });
+
+            // Sort entities based on the typeSortOrder
+            const sortedEntities = [...window.appConfiguration.entities].sort((a, b) => {
+                return (typeSortOrder[a.key] || 99) - (typeSortOrder[b.key] || 99);
+            });
+
+            let filtersHtml = `<button class="filter-btn btn-active" data-filter="all">כל המקורות (${items.length})</button>`;
+
+            sortedEntities.forEach(e => {
+                const count = typeCounts[e.key] || 0;
+                if (count > 0) {
+                    filtersHtml += `<button class="filter-btn btn-inactive" data-filter="${e.key}">${e.label} (${count})</button>`;
+                }
+            });
+
+            filterContainer.innerHTML = filtersHtml;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('btn-active'); b.classList.add('btn-inactive');
+                    });
+                    e.target.classList.remove('btn-inactive'); e.target.classList.add('btn-active');
+                    renderCards(e.target.dataset.filter);
+                });
+            });
+        }
 
         function renderEcosystemList(elementId, dataArray) {
             const container = document.getElementById(elementId);
@@ -412,9 +470,16 @@
             const container = document.getElementById('documentsStream');
             container.innerHTML = '';
 
-            const filteredItems = window.appConfiguration.items.filter(item => filterType === 'all' || item.type === filterType);
+            let filteredItems = window.appConfiguration.items.filter(item => filterType === 'all' || item.type === filterType);
+
+            // Sort: Type first (Knesset sources -> outside), then chronological
             filteredItems.sort((a, b) => {
-                if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+                const orderA = typeSortOrder[a.type] || 99;
+                const orderB = typeSortOrder[b.type] || 99;
+
+                if (orderA !== orderB) {
+                    return orderA - orderB;
+                }
                 return (b.year + b.month/12) - (a.year + a.month/12);
             });
 
@@ -501,11 +566,18 @@
             canvas.width = w * dpr; canvas.height = h * dpr;
             ctx.scale(dpr, dpr);
             const padX = 150; const cy = h / 2;
-            
+
+            timelineNodes = [];
+
             const legendContainer = document.getElementById('chartLegend');
-            legendContainer.innerHTML = window.appConfiguration.entities.map(en => 
-                `<div class="flex items-center gap-2"><div style="width:16px; height:16px; background-color:${en.color}; border-radius:4px;"></div><span>${en.label}</span></div>`
-            ).join('');
+            legendContainer.innerHTML = window.appConfiguration.entities.map(en => {
+                const isKnesset = knessetTypes.includes(en.key);
+                const borderStyle = isKnesset ? 'solid' : 'dashed';
+                return `<div class="flex items-center gap-2">
+                    <div style="width:18px; height:18px; background-color:#fff; border:3px ${borderStyle} ${en.color}; border-radius:50%;"></div>
+                    <span>${en.label}</span>
+                </div>`;
+            }).join('');
 
             ctx.clearRect(0, 0, w, h);
             ctx.beginPath(); ctx.moveTo(padX, cy); ctx.lineTo(w - padX, cy);
@@ -515,7 +587,7 @@
             if (items.length === 0) return;
 
             const dates = items.map(i => i.year + i.month/12);
-            const minDate = Math.min(...dates) - 0.2; 
+            const minDate = Math.min(...dates) - 0.2;
             const maxDate = Math.max(...dates) + 0.2;
             const colorMap = {};
             window.appConfiguration.entities.forEach(en => colorMap[en.key] = en.color);
@@ -525,26 +597,95 @@
             items.forEach((item, index) => {
                 const dateVal = item.year + (item.month/12);
                 let x = padX + ((dateVal - minDate) / (maxDate - minDate)) * (w - 2 * padX);
-                // Prevent division by zero if only one item exists
                 if (maxDate === minDate) x = w / 2;
-                
+
                 const radius = 55 + (item.relevance * 1.5);
                 const isTop = index % 2 === 0;
                 const nodeCenterY = cy + (isTop ? -110 : 110);
-                
+
+                timelineNodes.push({ x: x, y: nodeCenterY, r: radius, item: item });
+
+                // Draw connecting line
                 ctx.beginPath(); ctx.moveTo(x, cy); ctx.lineTo(x, nodeCenterY - (isTop ? -radius : radius));
+                ctx.setLineDash([]);
                 ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 3; ctx.stroke();
 
+                // Draw circle
                 ctx.beginPath(); ctx.arc(x, nodeCenterY, radius, 0, 2*Math.PI);
                 ctx.fillStyle = '#ffffff'; ctx.fill();
-                ctx.strokeStyle = colorMap[item.type]; ctx.lineWidth = item.relevance; ctx.stroke();
+
+                // Solid for Knesset sources, Dashed for outside sources
+                if (knessetTypes.includes(item.type)) {
+                    ctx.setLineDash([]);
+                } else {
+                    ctx.setLineDash([8, 6]);
+                }
+
+                ctx.strokeStyle = colorMap[item.type];
+                ctx.lineWidth = 5; // Fixed thick line width
+                ctx.stroke();
+
+                ctx.setLineDash([]); // Reset line dash for text
 
                 ctx.fillStyle = '#475569'; ctx.font = 'bold 16px Assistant, sans-serif';
                 ctx.fillText(`${item.month.toString().padStart(2, '0')}/${item.year}`, x, nodeCenterY + (isTop ? -(radius + 22) : (radius + 22)));
-                
+
                 ctx.fillStyle = '#0f172a'; ctx.font = 'bold 15px Assistant, sans-serif';
                 wrapTextCenter(ctx, item.title, x, nodeCenterY, radius * 1.7, 20);
             });
+
+            setupCanvasInteractions(canvas, dpr);
+        }
+
+        function setupCanvasInteractions(canvas, dpr) {
+            const tooltip = document.getElementById('chartTooltip');
+
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mouseX = (e.clientX - rect.left) * scaleX / dpr;
+                const mouseY = (e.clientY - rect.top) * scaleY / dpr;
+
+                let foundNode = null;
+
+                for (let i = 0; i < timelineNodes.length; i++) {
+                    const node = timelineNodes[i];
+                    const dx = mouseX - node.x;
+                    const dy = mouseY - node.y;
+                    if (dx * dx + dy * dy <= node.r * node.r) {
+                        foundNode = node;
+                        break;
+                    }
+                }
+
+                if (foundNode) {
+                    const item = foundNode.item;
+                    const formattedMonth = item.month.toString().padStart(2, '0');
+
+                    tooltip.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px; gap: 12px;">
+                            <span class="tt-title" style="margin:0; border:none; padding:0;">${item.title}</span>
+                            <span class="tt-date" style="margin:0; white-space:nowrap;">${formattedMonth}/${item.year}</span>
+                        </div>
+                        <div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מקור:</strong> ${item.source} | <strong>מחבר:</strong> ${item.author}</div>
+                        <div style="font-size:0.9rem; line-height:1.5;">${item.summary}</div>
+                        <div style="margin-top: 8px; font-size: 0.85rem; color:#94a3b8;"><em>השלכה: ${item.impact}</em></div>
+                    `;
+
+                    tooltip.style.left = (e.clientX - rect.left + 20) + 'px';
+                    tooltip.style.top = (e.clientY - rect.top + 20) + 'px';
+                    tooltip.style.opacity = '1';
+                } else {
+                    tooltip.style.opacity = '0';
+                }
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = '0';
+            });
+
+            // Removed click listener from Canvas. Scroll disabled.
         }
 
         function renderTrendsChart() {
@@ -555,24 +696,24 @@
             const dpr = window.devicePixelRatio || 1;
             const rect = container.getBoundingClientRect();
             if(rect.width === 0) return;
-            
+
             canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr);
             const w = rect.width; const h = rect.height;
             const data = window.appConfiguration.trendsData;
-            
+
             ctx.clearRect(0, 0, w, h);
             if (!data || data.length === 0) return;
-            
+
             const maxVal = 100; const xStep = w / (data.length - 1);
 
-            ctx.beginPath(); ctx.moveTo(0, h); 
+            ctx.beginPath(); ctx.moveTo(0, h);
             data.forEach((d, i) => {
                 const x = i * xStep; const y = h - (d.val / maxVal * h);
                 if(i === 0) { ctx.moveTo(x, h); ctx.lineTo(x, y); } else ctx.lineTo(x, y);
             });
             ctx.lineTo(w, h); ctx.closePath();
-            
+
             const gradient = ctx.createLinearGradient(0, 0, 0, h);
             gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
             gradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
@@ -584,7 +725,7 @@
                 if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             });
             ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.stroke();
-            
+
             data.forEach((d, i) => {
                 const x = i * xStep; const y = h - (d.val / maxVal * h);
                 ctx.beginPath(); ctx.arc(x, y, 5, 0, 2*Math.PI);
