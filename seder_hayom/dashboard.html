@@ -11,7 +11,7 @@
             --bg-base: #f8fafc;
             --text-main: #0f172a;
             --header-bg: #0f172a;
-            
+
             /* Entity Colors */
             --c-comptroller-hex: #f59e0b;
             --c-mmm-hex: #8b5cf6;
@@ -36,21 +36,21 @@
         @media (min-width: 1024px) {
             .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
-        
+
         .flex { display: flex; } .flex-col { flex-direction: column; }
         @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
         .items-center { align-items: center; } .items-start { align-items: flex-start; }
-        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
         .flex-wrap { flex-wrap: wrap; }
-        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
-        
+        .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
         .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; }
         .px-4 { padding-left: 1rem; padding-right: 1rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
         .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
         .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-auto { margin-top: auto; }
-        
+
         .w-full { width: 100%; } .h-full { height: 100%; }
-        
+
         .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-full { border-radius: 9999px; }
         .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
@@ -65,7 +65,7 @@
         .text-gray-200 { color: #e2e8f0; } .text-gray-400 { color: #94a3b8; } .text-gray-500 { color: #64748b; } .text-gray-700 { color: #334155; } .text-gray-800 { color: #1e293b; } .text-gray-900 { color: #0f172a; }
         .text-red-500 { color: #ef4444; } .text-orange-500 { color: #f97316; } .text-blue-900 { color: #1e3a8a; } .text-amber-700 { color: #b45309; }
         .text-blue-400 { color: #60a5fa; }
-        
+
         /* Layout Specific */
         header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .badge-mono { font-family: monospace; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; display: flex; gap: 1rem; align-items: center; }
@@ -105,6 +105,13 @@
         .btn-active { background-color: #0f172a; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .btn-inactive { background-color: #e2e8f0; color: #334155; }
         .btn-inactive:hover { background-color: #cbd5e1; }
+
+        /* Search Styles */
+        .search-container { position: relative; width: 100%; max-width: 350px; display: flex; align-items: center; }
+        .search-input { width: 100%; padding: 0.7rem 1rem 0.7rem 2.5rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 1.05rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #f8fafc; }
+        .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); background: white; }
+        .search-clear-btn { position: absolute; left: 0.75rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.2rem; display: none; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .search-clear-btn:hover { color: #ef4444; }
 
         .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .doc-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
@@ -174,6 +181,7 @@
     <div id="error-message"></div>
 
     <div id="dashboard-content" class="max-w-7xl mt-4">
+
         <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h1 class="text-3xl mb-1" id="d-title">בטעינה...</h1>
@@ -205,6 +213,54 @@
                     <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;">
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
+            <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
+            <p class="text-lg text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
+            <div class="timeline-scroll-wrapper" style="position: relative;">
+                <div class="timeline-canvas-container">
+                    <canvas id="mainTimeline"></canvas>
+                </div>
+                <div id="chartTooltip"></div>
+            </div>
+            <div class="flex flex-wrap gap-5 mt-5 justify-center text-lg font-bold" id="chartLegend"></div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
+                <div>
+                    <h3 class="text-2xl mb-1">מאגר המסמכים המלא</h3>
+                    <p class="text-lg text-gray-500">מסונן וממוין לפי סוג המסמך וסדר כרונולוגי.</p>
+                </div>
+                <div class="flex flex-col md:items-end gap-3 w-full md:w-auto">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="חיפוש חופשי במסמכים...">
+                        <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש" style="display: none;">✖</button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 justify-end" id="filterContainer"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="documentsStream"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-1"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-2"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-3"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-4"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-politicians"></div>
             </div>
         </div>
 
@@ -250,53 +306,13 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-1"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-2"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-3"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-4"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-politicians"></div>
-            </div>
-        </div>
-
-        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
-            <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
-            <p class="text-lg text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
-            <div class="timeline-scroll-wrapper" style="position: relative;">
-                <div class="timeline-canvas-container">
-                    <canvas id="mainTimeline"></canvas>
-                </div>
-                <div id="chartTooltip"></div>
-            </div>
-            <div class="flex flex-wrap gap-5 mt-5 justify-center text-lg font-bold" id="chartLegend"></div>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
-                <div>
-                    <h3 class="text-2xl mb-1">מאגר המסמכים המלא</h3>
-                    <p class="text-lg text-gray-500">מסונן וממוין לפי סוג המסמך וסדר כרונולוגי.</p>
-                </div>
-                <div class="flex flex-wrap gap-2" id="filterContainer"></div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="documentsStream"></div>
-        </div>
     </div>
 
     <script>
         let isSpeaking = false;
         window.appConfiguration = null;
         let timelineNodes = [];
+        let currentFilterType = 'all';
 
         // Sorting configuration: Knesset sources first, then others.
         const typeSortOrder = {
@@ -375,16 +391,17 @@
                 document.getElementById('d-opp-title').innerText = data.arena.opposition.title;
                 document.getElementById('d-opp-text').innerHTML = data.arena.opposition.text;
 
-                document.getElementById('eco-title-1').innerText = data.layoutStrings.ecosystemTitles[0];
-                document.getElementById('eco-title-2').innerText = data.layoutStrings.ecosystemTitles[1];
-                document.getElementById('eco-title-3').innerText = data.layoutStrings.ecosystemTitles[2];
-                document.getElementById('eco-title-4').innerText = data.layoutStrings.ecosystemTitles[3];
+                document.getElementById('eco-title-1').innerText = "משרדי ממשלה";
+                document.getElementById('eco-title-2').innerText = data.layoutStrings.ecosystemTitles[1] || "ועדות הכנסת";
+                document.getElementById('eco-title-3').innerText = "גופים אחרים";
+                document.getElementById('eco-title-4').innerText = data.layoutStrings.ecosystemTitles[3] || "פוליטיקאים";
 
                 document.getElementById('d-timeline-title').innerText = data.layoutStrings.timelineTitle;
 
                 setupFilters();
+                setupSearch();
                 renderEcosystem();
-                renderCards('all');
+                renderCards();
 
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
@@ -409,13 +426,11 @@
             const filterContainer = document.getElementById('filterContainer');
             const items = window.appConfiguration.items;
 
-            // Count items per type
             const typeCounts = {};
             items.forEach(item => {
                 typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;
             });
 
-            // Sort entities based on the typeSortOrder
             const sortedEntities = [...window.appConfiguration.entities].sort((a, b) => {
                 return (typeSortOrder[a.key] || 99) - (typeSortOrder[b.key] || 99);
             });
@@ -437,8 +452,25 @@
                         b.classList.remove('btn-active'); b.classList.add('btn-inactive');
                     });
                     e.target.classList.remove('btn-inactive'); e.target.classList.add('btn-active');
-                    renderCards(e.target.dataset.filter);
+                    currentFilterType = e.target.dataset.filter;
+                    renderCards();
                 });
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+
+            searchInput.addEventListener('input', (e) => {
+                clearBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
+                renderCards();
+            });
+
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                clearBtn.style.display = 'none';
+                renderCards();
             });
         }
 
@@ -466,13 +498,29 @@
             renderEcosystemList('eco-politicians', window.appConfiguration.ecosystem.politicians);
         }
 
-        function renderCards(filterType = 'all') {
+        function renderCards() {
             const container = document.getElementById('documentsStream');
             container.innerHTML = '';
 
-            let filteredItems = window.appConfiguration.items.filter(item => filterType === 'all' || item.type === filterType);
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
 
-            // Sort: Type first (Knesset sources -> outside), then chronological
+            let filteredItems = window.appConfiguration.items.filter(item => {
+                const matchesType = currentFilterType === 'all' || item.type === currentFilterType;
+
+                let matchesSearch = true;
+                if (searchTerm !== '') {
+                    const searchableText = `${item.title} ${item.summary} ${item.author} ${item.source} ${item.impact} ${(item.keywords || []).join(' ')}`.toLowerCase();
+                    matchesSearch = searchableText.includes(searchTerm);
+                }
+
+                return matchesType && matchesSearch;
+            });
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b; font-size: 1.25rem;">לא נמצאו מסמכים התואמים את החיפוש.</div>`;
+                return;
+            }
+
             filteredItems.sort((a, b) => {
                 const orderA = typeSortOrder[a.type] || 99;
                 const orderB = typeSortOrder[b.type] || 99;
@@ -605,16 +653,13 @@
 
                 timelineNodes.push({ x: x, y: nodeCenterY, r: radius, item: item });
 
-                // Draw connecting line
                 ctx.beginPath(); ctx.moveTo(x, cy); ctx.lineTo(x, nodeCenterY - (isTop ? -radius : radius));
                 ctx.setLineDash([]);
                 ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 3; ctx.stroke();
 
-                // Draw circle
                 ctx.beginPath(); ctx.arc(x, nodeCenterY, radius, 0, 2*Math.PI);
                 ctx.fillStyle = '#ffffff'; ctx.fill();
 
-                // Solid for Knesset sources, Dashed for outside sources
                 if (knessetTypes.includes(item.type)) {
                     ctx.setLineDash([]);
                 } else {
@@ -622,10 +667,10 @@
                 }
 
                 ctx.strokeStyle = colorMap[item.type];
-                ctx.lineWidth = 5; // Fixed thick line width
+                ctx.lineWidth = 5;
                 ctx.stroke();
 
-                ctx.setLineDash([]); // Reset line dash for text
+                ctx.setLineDash([]);
 
                 ctx.fillStyle = '#475569'; ctx.font = 'bold 16px Assistant, sans-serif';
                 ctx.fillText(`${item.month.toString().padStart(2, '0')}/${item.year}`, x, nodeCenterY + (isTop ? -(radius + 22) : (radius + 22)));
@@ -684,8 +729,6 @@
             canvas.addEventListener('mouseleave', () => {
                 tooltip.style.opacity = '0';
             });
-
-            // Removed click listener from Canvas. Scroll disabled.
         }
 
         function renderTrendsChart() {
