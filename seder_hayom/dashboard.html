@@ -42,10 +42,12 @@
         .items-center { align-items: center; } .items-start { align-items: flex-start; }
         .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
         .flex-wrap { flex-wrap: wrap; }
-        .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+        .gap-1 { gap: 0.25rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
 
         .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+
         .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
         .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-auto { margin-top: auto; }
 
@@ -57,8 +59,8 @@
         .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; } .border-t { border-top: 1px solid #e2e8f0; }
 
         /* Typography */
-        .text-sm { font-size: 0.95rem; } .text-base { font-size: 1.15rem; }
-        .text-lg { font-size: 1.35rem; font-weight: 700; } .text-xl { font-size: 1.6rem; font-weight: 700; } .text-2xl { font-size: 2rem; font-weight: 700; } .text-3xl { font-size: 2.5rem; font-weight: 700; }
+        .text-xs { font-size: 0.8rem; } .text-sm { font-size: 0.95rem; } .text-base { font-size: 1.05rem; }
+        .text-lg { font-size: 1.2rem; font-weight: 700; } .text-xl { font-size: 1.4rem; font-weight: 700; } .text-2xl { font-size: 1.8rem; font-weight: 700; } .text-3xl { font-size: 2.2rem; font-weight: 700; }
         .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
 
         .bg-white { background-color: #ffffff; } .bg-blue-50 { background-color: #eff6ff; } .bg-gray-50 { background-color: #f9fafb; } .bg-gray-100 { background-color: #f3f4f6; }
@@ -90,7 +92,7 @@
         .pol-opposition { background-color: #f8fafc; border: 1px solid #e2e8f0; }
 
         .eco-grid-col { padding-right: 0.25rem; }
-        .eco-item { background: #f8fafc; padding: 0.85rem; margin-bottom: 0.5rem; border-radius: 0.25rem; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;}
+        .eco-item { background: #f8fafc; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.25rem; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;}
         .eco-item:hover { background: #f1f5f9; }
 
         .timeline-scroll-wrapper { width: 100%; overflow-x: auto; direction: ltr; background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0; padding: 1.5rem 0; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
@@ -101,53 +103,55 @@
         .trends-container { height: 100px; width: 100%; margin-top: 0.75rem; direction: ltr; }
         canvas { display: block; width: 100%; height: 100%; }
 
-        .filter-btn { padding: 0.7rem 1.2rem; border-radius: 0.5rem; cursor: pointer; border: none; font-weight: 600; font-size: 1.05rem; transition: all 0.2s; }
+        .filter-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; border: none; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
         .btn-active { background-color: #0f172a; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .btn-inactive { background-color: #e2e8f0; color: #334155; }
         .btn-inactive:hover { background-color: #cbd5e1; }
 
         /* Search Styles */
         .search-container { position: relative; width: 100%; max-width: 350px; display: flex; align-items: center; }
-        .search-input { width: 100%; padding: 0.7rem 1rem 0.7rem 2.5rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 1.05rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #f8fafc; }
+        .search-input { width: 100%; padding: 0.5rem 1rem 0.5rem 2.2rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #f8fafc; }
         .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); background: white; }
-        .search-clear-btn { position: absolute; left: 0.75rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.2rem; display: none; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .search-clear-btn { position: absolute; left: 0.5rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; display: none; padding: 0; display: flex; align-items: center; justify-content: center; }
         .search-clear-btn:hover { color: #ef4444; }
 
-        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .doc-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        /* COMPACT DOC CARDS */
+        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1rem; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .doc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 12px -2px rgba(0,0,0,0.1); }
 
-        .card-summary-box { background: white; border: 1px solid #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; font-size: 1.1rem; margin-bottom: 1rem; line-height: 1.6; }
-        .card-impact-box { background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 0.25rem; font-size: 1rem; margin-bottom: 1rem; border-right: 4px solid #cbd5e1; }
-        .tag-badge { background: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 4px; font-size: 0.95rem; display: inline-block; margin-bottom: 2px; }
-        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 1rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
-        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 1rem; color: #475569; }
+        .card-summary-box { background: #fcfcfc; border: 1px solid #f1f5f9; padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; line-height: 1.5; color: #334155;}
+        .card-impact-box { background: rgba(255,255,255,0.5); padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; border-right: 4px solid #cbd5e1; }
+
+        .tag-badge { background: #e2e8f0; color: #334155; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; display: inline-block; margin-bottom: 2px; }
+        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
+        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #475569; }
 
         /* Entity Colors */
-        .entity-comptroller { border-top: 5px solid var(--c-comptroller-hex); }
+        .entity-comptroller { border-top: 4px solid var(--c-comptroller-hex); }
         .badge-comptroller { background-color: var(--c-comptroller-hex); color: #ffffff; }
         .text-comptroller { color: var(--c-comptroller-hex); }
 
-        .entity-mmm { border-top: 5px solid var(--c-mmm-hex); }
+        .entity-mmm { border-top: 4px solid var(--c-mmm-hex); }
         .badge-mmm { background-color: var(--c-mmm-hex); color: #ffffff; }
         .text-mmm { color: var(--c-mmm-hex); }
 
-        .entity-activeLaw { border-top: 5px solid var(--c-active-hex); }
+        .entity-activeLaw { border-top: 4px solid var(--c-active-hex); }
         .badge-activeLaw { background-color: var(--c-active-hex); color: #ffffff; }
         .text-activeLaw { color: var(--c-active-hex); }
 
-        .entity-passedLaw { border-top: 5px solid var(--c-passed-hex); }
+        .entity-passedLaw { border-top: 4px solid var(--c-passed-hex); }
         .badge-passedLaw { background-color: var(--c-passed-hex); color: #ffffff; }
         .text-passedLaw { color: var(--c-passed-hex); }
 
-        .entity-committee { border-top: 5px solid var(--c-committee-hex); }
+        .entity-committee { border-top: 4px solid var(--c-committee-hex); }
         .badge-committee { background-color: var(--c-committee-hex); color: #ffffff; }
         .text-committee { color: var(--c-committee-hex); }
 
-        .entity-govDecision { border-top: 5px solid var(--c-gov-hex); }
+        .entity-govDecision { border-top: 4px solid var(--c-gov-hex); }
         .badge-govDecision { background-color: var(--c-gov-hex); color: #ffffff; }
         .text-govDecision { color: var(--c-gov-hex); }
 
-        .entity-financeDirective { border-top: 5px solid var(--c-finance-hex); }
+        .entity-financeDirective { border-top: 4px solid var(--c-finance-hex); }
         .badge-financeDirective { background-color: var(--c-finance-hex); color: #ffffff; }
         .text-financeDirective { color: var(--c-finance-hex); }
 
@@ -216,23 +220,42 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-2"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-4"></h3>
+                <div class="space-y-3 eco-grid-col" id="eco-politicians"></div>
+            </div>
+        </div>
+
         <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
             <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
-            <p class="text-lg text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
+            <p class="text-base text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
             <div class="timeline-scroll-wrapper" style="position: relative;">
                 <div class="timeline-canvas-container">
                     <canvas id="mainTimeline"></canvas>
                 </div>
                 <div id="chartTooltip"></div>
             </div>
-            <div class="flex flex-wrap gap-5 mt-5 justify-center text-lg font-bold" id="chartLegend"></div>
+            <div class="flex flex-wrap gap-5 mt-5 justify-center text-base font-bold" id="chartLegend"></div>
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
                 <div>
                     <h3 class="text-2xl mb-1">מאגר המסמכים המלא</h3>
-                    <p class="text-lg text-gray-500">מסונן וממוין לפי סוג המסמך וסדר כרונולוגי.</p>
+                    <p class="text-base text-gray-500">מסונן וממוין לפי סוג המסמך וסדר כרונולוגי.</p>
                 </div>
                 <div class="flex flex-col md:items-end gap-3 w-full md:w-auto">
                     <div class="search-container">
@@ -242,33 +265,14 @@
                     <div class="flex flex-wrap gap-2 justify-end" id="filterContainer"></div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="documentsStream"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-1"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-2"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-3"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-xl mb-4 border-b pb-2" id="eco-title-4"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-politicians"></div>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="documentsStream"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
                 <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
                 <div class="mb-5">
-                    <div class="flex justify-between text-lg mb-2">
+                    <div class="flex justify-between text-base mb-2">
                         <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
                         <span class="text-red-500 font-bold" id="d-media-val"></span>
                     </div>
@@ -276,7 +280,7 @@
                     <p class="text-sm text-gray-500 mt-2" id="d-media-text"></p>
                 </div>
                 <div>
-                    <div class="flex justify-between text-lg mb-2">
+                    <div class="flex justify-between text-base mb-2">
                         <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
                         <span class="text-orange-500 font-bold" id="d-social-val"></span>
                     </div>
@@ -284,7 +288,7 @@
                     <p class="text-sm text-gray-500 mt-2 mb-2" id="d-social-text"></p>
                     <div class="trends-container relative">
                         <canvas id="trendsChart"></canvas>
-                        <div class="absolute bottom-0 w-full flex justify-between px-1 text-[13px] text-gray-400 font-mono font-bold" dir="ltr">
+                        <div class="absolute bottom-0 w-full flex justify-between px-1 text-[11px] text-gray-400 font-mono font-bold" dir="ltr">
                             <span>2022</span><span>2024</span><span>2026</span>
                         </div>
                     </div>
@@ -294,13 +298,13 @@
             <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
                 <h3 class="text-xl mb-4 border-b pb-3">⚖️ הזירה הפוליטית: קואליציה מול אופוזיציה</h3>
                 <div class="grid grid-cols-1 gap-4 h-full">
-                    <div class="pol-coalition p-5 rounded-lg">
-                        <strong class="text-blue-900 block mb-3 text-lg border-b border-blue-200 pb-2" id="d-coal-title"></strong>
-                        <p class="text-base text-gray-700 leading-relaxed font-semibold" id="d-coal-text"></p>
+                    <div class="pol-coalition p-4 rounded-lg">
+                        <strong class="text-blue-900 block mb-2 text-base border-b border-blue-200 pb-2" id="d-coal-title"></strong>
+                        <p class="text-sm text-gray-700 leading-relaxed font-semibold" id="d-coal-text"></p>
                     </div>
-                    <div class="pol-opposition p-5 rounded-lg">
-                        <strong class="text-gray-900 block mb-3 text-lg border-b border-gray-200 pb-2" id="d-opp-title"></strong>
-                        <p class="text-base text-gray-700 leading-relaxed font-semibold" id="d-opp-text"></p>
+                    <div class="pol-opposition p-4 rounded-lg">
+                        <strong class="text-gray-900 block mb-2 text-base border-b border-gray-200 pb-2" id="d-opp-title"></strong>
+                        <p class="text-sm text-gray-700 leading-relaxed font-semibold" id="d-opp-text"></p>
                     </div>
                 </div>
             </div>
@@ -314,7 +318,7 @@
         let timelineNodes = [];
         let currentFilterType = 'all';
 
-        // Sorting configuration: Knesset sources first, then others.
+        // Sorting configuration
         const typeSortOrder = {
             'mmm': 1,
             'activeLaw': 2,
@@ -435,7 +439,7 @@
                 return (typeSortOrder[a.key] || 99) - (typeSortOrder[b.key] || 99);
             });
 
-            let filtersHtml = `<button class="filter-btn btn-active" data-filter="all">כל המקורות (${items.length})</button>`;
+            let filtersHtml = `<button class="filter-btn btn-active" data-filter="all">הכל (${items.length})</button>`;
 
             sortedEntities.forEach(e => {
                 const count = typeCounts[e.key] || 0;
@@ -481,11 +485,11 @@
             sortedArray.forEach(item => {
                 container.innerHTML += `
                     <div class="eco-item border-r-4 ${item.color}">
-                        <div class="flex justify-between items-start gap-2 mb-2">
-                            <strong class="text-gray-900 text-lg block leading-tight">${item.name}</strong>
-                            <div class="text-[13px] font-bold bg-gray-200 text-gray-700 px-2 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
+                        <div class="flex justify-between items-start gap-2 mb-1">
+                            <strong class="text-gray-900 text-base block leading-tight">${item.name}</strong>
+                            <div class="text-[12px] font-bold bg-gray-200 text-gray-700 px-1 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
                         </div>
-                        <span class="text-base text-gray-600 font-semibold">${item.desc}</span>
+                        <span class="text-sm text-gray-600 font-semibold">${item.desc}</span>
                     </div>
                 `;
             });
@@ -517,7 +521,7 @@
             });
 
             if (filteredItems.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #64748b; font-size: 1.25rem;">לא נמצאו מסמכים התואמים את החיפוש.</div>`;
+                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b; font-size: 1.1rem;">לא נמצאו מסמכים התואמים את החיפוש.</div>`;
                 return;
             }
 
@@ -537,29 +541,30 @@
 
                 let idBadgeHtml = `<span class="doc-id-badge">${item.idCode}</span>`;
                 if (item.link) {
-                    idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.8rem">🔗</span></a>`;
+                    idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.75rem">🔗</span></a>`;
                 }
 
+                // כרטיסיה קומפקטית
                 const cardHtml = `
                     <div class="doc-card ${item.styleClass}">
                         <div>
-                            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                                <span class="rounded-full px-4 py-1 text-base font-bold ${item.badgeClass}">${item.source}</span>
-                                <div class="flex items-center gap-4">
-                                    <span class="relevance-badge bg-gray-100">🔗 קשר: ${item.relevance}/10</span>
-                                    <span class="text-lg font-bold text-gray-700">${formattedMonth}/${item.year}</span>
+                            <div class="flex justify-between items-center mb-3 border-b pb-2">
+                                <span class="rounded-full px-2 py-0.5 text-xs font-bold ${item.badgeClass}">${item.source}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="relevance-badge bg-gray-100">🔗 ${item.relevance}/10</span>
+                                    <span class="text-base font-bold text-gray-700">${formattedMonth}/${item.year}</span>
                                 </div>
                             </div>
-                            <h4 class="text-2xl text-gray-900 mb-3 leading-tight">${item.title}</h4>
-                            <div class="text-base text-gray-500 mb-3">מקור/מחבר: <span class="font-bold text-gray-800">${item.author}</span></div>
-                            <p class="card-summary-box text-gray-800 font-semibold">${item.summary}</p>
+                            <h4 class="text-lg text-gray-900 mb-2 leading-tight">${item.title}</h4>
+                            <div class="text-sm text-gray-500 mb-3">מקור: <span class="font-bold text-gray-800">${item.author}</span></div>
+                            <p class="card-summary-box font-semibold">${item.summary}</p>
                             <div class="card-impact-box">
-                                <strong class="${item.textClass} text-base block mb-1">השלכה מעשית / סטטוס נוכחי:</strong>
+                                <strong class="${item.textClass} text-sm block mb-1">השלכה מעשית:</strong>
                                 <span class="text-gray-900 block mt-1 font-bold">${item.impact}</span>
                             </div>
                         </div>
-                        <div class="border-t pt-4 mt-auto flex justify-between items-center flex-wrap gap-3">
-                            <div class="flex flex-wrap gap-2">${tagsHtml}</div>
+                        <div class="border-t pt-3 mt-auto flex justify-between items-center flex-wrap gap-2">
+                            <div class="flex flex-wrap gap-1">${tagsHtml}</div>
                             ${idBadgeHtml}
                         </div>
                     </div>
