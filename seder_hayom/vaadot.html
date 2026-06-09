@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ריכוז דיוני ועדות - טבלה חכמה</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --bg-base: #f8fafc;
+            --text-main: #0f172a;
+            --header-bg: #0f172a;
+            --primary: #0f172a;
+            --accent: #2563eb;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; padding: 24px; font-size: 16px; }
+
+        /* Utility Classes */
+        .max-w-7xl { max-width: 80rem; margin: 0 auto; }
+        .flex { display: flex; } .flex-col { flex-direction: column; }
+        @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
+        .items-center { align-items: center; } .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; }
+        .flex-wrap { flex-wrap: wrap; } .gap-4 { gap: 1rem; }
+        .mb-1 { margin-bottom: 0.25rem; } .mb-6 { margin-bottom: 1.5rem; } .mt-2 { margin-top: 0.5rem; }
+
+        /* Layout Specific Header matching dashboard.html */
+        header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .badge-mono { font-family: monospace; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; display: flex; gap: 1rem; align-items: center; }
+        .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s; }
+        .btn-back:hover { background-color: #bfdbfe; }
+
+        /* Table Design */
+        .table-container { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-top: 2rem; }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th { background: #f1f5f9; padding: 16px; font-weight: 700; font-size: 1.1rem; color: #334155; cursor: pointer; user-select: none; border-bottom: 2px solid #cbd5e1; transition: background-color 0.2s; }
+        th:hover { background: #e2e8f0; }
+        td { padding: 16px; border-top: 1px solid #e2e8f0; font-size: 1.1rem; color: #0f172a; vertical-align: middle; }
+        tr:hover td { background-color: #f8fafc; }
+
+        /* Sort Indicator */
+        .sort-direction { display: inline-block; margin-right: 6px; font-size: 0.85rem; color: #64748b; vertical-align: middle; }
+
+        /* Dynamic Badges & Cells */
+        .score-cell { font-weight: bold; border-radius: 6px; padding: 6px 12px; display: inline-block; min-width: 45px; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
+        .subject-cell { max-width: 550px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help; font-weight: 600; }
+
+        /* Rich Tooltip Pop-up */
+        #chartTooltip {
+            position: absolute; background: rgba(15, 23, 42, 0.98); color: #fff; padding: 16px; border-radius: 8px;
+            pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 100; max-width: 500px; min-width: 320px;
+            line-height: 1.5; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); direction: rtl; font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl">
+        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl mb-1" id="page-title">ריכוז דיוני ועדות</h1>
+                <p class="text-gray-200 text-base mt-2" id="update-time">טוען נתונים...</p>
+            </div>
+            <div class="flex items-center gap-4 mr-auto flex-wrap">
+                <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
+                <a id="btn-back-dash" href="#" class="btn-back" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">חזרה לדשבורד 📊</a>
+                <div class="badge-mono">
+                    <span class="font-bold text-blue-400">Gilat AI</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="table-container">
+            <table id="meetingsTable">
+                <thead>
+                    <tr>
+                        <th onclick="handleSort(0)">עוצמה <span class="sort-direction" id="dir-0">▼</span></th>
+                        <th onclick="handleSort(1)">ועדה <span class="sort-direction" id="dir-1"></span></th>
+                        <th onclick="handleSort(2)">נושא הדיון <span class="sort-direction" id="dir-2"></span></th>
+                        <th onclick="handleSort(3)">מספר ישיבות <span class="sort-direction" id="dir-3"></span></th>
+                        <th onclick="handleSort(4)">מתאריך <span class="sort-direction" id="dir-4"></span></th>
+                        <th onclick="handleSort(5)">עד תאריך <span class="sort-direction" id="dir-5"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="chartTooltip"></div>
+
+    <script>
+        let tableData = [];
+        let currentSortKey = 'Score';
+        let currentSortDirection = 'desc'; // Default sorting state
+        const keysMap = ['Score', 'CommitteeName', 'ItemSubject', 'MeetingsCount', 'FromDate', 'ToDate'];
+
+        window.onload = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fileUrl = urlParams.get('file');
+
+            if (!fileUrl) {
+                document.getElementById('update-time').innerText = "שגיאה: לא צוין קובץ נתונים.";
+                return;
+            }
+
+            // Dynamically set back link to the corresponding topic dashboard
+            const dashFile = fileUrl.replace('vaadot_', 'data_');
+            document.getElementById('btn-back-dash').href = `dashboard.html?file=${dashFile}`;
+
+            try {
+                const response = await fetch(fileUrl);
+                const data = await response.json();
+
+                document.getElementById('page-title').innerText = `דיוני ועדות: ${data.topic_name}`;
+                document.getElementById('update-time').innerText = `עודכן לאחרונה: ${data.update_timestamp}`;
+
+                tableData = data.meetings;
+                // Initial baseline sorting by Score descending
+                executeSort('Score', 'desc');
+                renderTable();
+            } catch (e) {
+                console.error("Error loading data:", e);
+                document.getElementById('update-time').innerText = "שגיאה בטעינת קובץ ה-JSON המבוקש.";
+            }
+        };
+
+        function renderTable() {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = tableData.map(m => `
+                <tr>
+                    <td><span class="score-cell" style="background:${getScoreColor(m.Score)}">${m.Score}</span></td>
+                    <td class="font-semibold">${m.CommitteeName}</td>
+                    <td class="subject-cell" onmousemove="showPopup(event, this)" onmouseout="hidePopup()" data-fulltext="${escapeHtml(m.ItemSubject)}">
+                        ${m.ItemSubject.length > 150 ? m.ItemSubject.substring(0, 150) + '...' : m.ItemSubject}
+                    </td>
+                    <td class="font-mono font-bold text-center">${m.MeetingsCount}</td>
+                    <td class="font-mono">${m.FromDate}</td>
+                    <td class="font-mono">${m.ToDate || m.FromDate}</td>
+                </tr>
+            `).join('');
+        }
+
+        function getScoreColor(score) {
+            if (score > 80) return '#dcfce7'; // Soft Green
+            if (score > 50) return '#fef9c3'; // Soft Yellow
+            return '#fee2e2'; // Soft Red
+        }
+
+        function handleSort(columnIndex) {
+            const key = keysMap[columnIndex];
+
+            if (currentSortKey === key) {
+                // Reverse direction if same column is selected twice
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortKey = key;
+                // Numeric and Date columns default to descending first
+                currentSortDirection = (key === 'Score' || key === 'MeetingsCount' || key.includes('Date')) ? 'desc' : 'asc';
+            }
+
+            executeSort(key, currentSortDirection);
+            renderTable();
+            updateArrows(columnIndex);
+        }
+
+        function executeSort(key, direction) {
+            tableData.sort((a, b) => {
+                let valA = a[key];
+                let valB = b[key];
+
+                if (key.includes('Date')) {
+                    valA = new Date(valA || '1970-01-01');
+                    valB = new Date(valB || '1970-01-01');
+                }
+
+                if (valA < valB) return direction === 'asc' ? -1 : 1;
+                if (valA > valB) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function updateArrows(activeIndex) {
+            for (let i = 0; i < keysMap.length; i++) {
+                const indicator = document.getElementById(`dir-${i}`);
+                if (i === activeIndex) {
+                    indicator.innerText = currentSortDirection === 'asc' ? '▲' : '▼';
+                    indicator.style.color = '#2563eb';
+                } else {
+                    indicator.innerText = '';
+                }
+            }
+        }
+
+        function showPopup(e, element) {
+            const tooltip = document.getElementById('chartTooltip');
+            const text = element.getAttribute('data-fulltext');
+
+            tooltip.innerHTML = `<strong>נושא הדיון המלא:</strong><br>${text}`;
+            tooltip.style.opacity = '1';
+
+            // Layout placement mapping offset logic
+            tooltip.style.left = (e.clientX + 20) + 'px';
+            tooltip.style.top = (e.clientY + 20) + 'px';
+        }
+
+        function hidePopup() {
+            document.getElementById('chartTooltip').style.opacity = '0';
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>
