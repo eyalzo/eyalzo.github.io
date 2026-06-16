@@ -32,7 +32,9 @@
         @media (min-width: 768px) {
             .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-            .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        @media (min-width: 1280px) {
+            .xl\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
 
         .flex { display: flex; } .flex-col { flex-direction: column; }
@@ -40,7 +42,7 @@
         .items-center { align-items: center; } .items-start { align-items: flex-start; }
         .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
         .flex-wrap { flex-wrap: wrap; }
-        .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
+        .gap-1 { gap: 0.25rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
 
         .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; }
         .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; }
@@ -78,6 +80,7 @@
         }
         .btn-read-aloud, .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .btn-read-aloud:hover, .btn-back:hover { background-color: #bfdbfe; }
+        .btn-back.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; background-color: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
         .is-reading { background-color: #1e40af; color: #ffffff; animation: pulse 2s infinite; }
 
         .progress-bar-bg { width: 100%; height: 0.85rem; background-color: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 0.25rem; }
@@ -107,45 +110,6 @@
         .search-clear-btn { position: absolute; left: 0.5rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; display: none; align-items: center; justify-content: center; }
         .search-clear-btn:hover { color: #ef4444; }
 
-        .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1rem; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .doc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 12px -2px rgba(0,0,0,0.1); }
-
-        .card-summary-box { background: #fcfcfc; border: 1px solid #f1f5f9; padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; line-height: 1.5; color: #334155;}
-        .card-impact-box { background: rgba(255,255,255,0.5); padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; border-right: 4px solid #cbd5e1; }
-
-        .tag-badge { background: #e2e8f0; color: #334155; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; display: inline-block; margin-bottom: 2px; }
-        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
-        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #475569; }
-
-        /* Entity Colors */
-        .entity-comptroller { border-top: 4px solid var(--c-comptroller-hex); }
-        .badge-comptroller { background-color: var(--c-comptroller-hex); color: #ffffff; }
-        .text-comptroller { color: var(--c-comptroller-hex); }
-
-        .entity-mmm { border-top: 4px solid var(--c-mmm-hex); }
-        .badge-mmm { background-color: var(--c-mmm-hex); color: #ffffff; }
-        .text-mmm { color: var(--c-mmm-hex); }
-
-        .entity-activeLaw { border-top: 4px solid var(--c-active-hex); }
-        .badge-activeLaw { background-color: var(--c-active-hex); color: #ffffff; }
-        .text-activeLaw { color: var(--c-active-hex); }
-
-        .entity-passedLaw { border-top: 4px solid var(--c-passed-hex); }
-        .badge-passedLaw { background-color: var(--c-passed-hex); color: #ffffff; }
-        .text-passedLaw { color: var(--c-passed-hex); }
-
-        .entity-committee { border-top: 4px solid var(--c-committee-hex); }
-        .badge-committee { background-color: var(--c-committee-hex); color: #ffffff; }
-        .text-committee { color: var(--c-committee-hex); }
-
-        .entity-govDecision { border-top: 4px solid var(--c-gov-hex); }
-        .badge-govDecision { background-color: var(--c-gov-hex); color: #ffffff; }
-        .text-govDecision { color: var(--c-gov-hex); }
-
-        .entity-financeDirective { border-top: 4px solid var(--c-finance-hex); }
-        .badge-financeDirective { background-color: var(--c-finance-hex); color: #ffffff; }
-        .text-financeDirective { color: var(--c-finance-hex); }
-
         #error-message { display: none; background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; text-align: center; }
         #loading-message { display: flex; justify-content: center; align-items: center; height: 50vh; font-size: 1.5rem; color: #64748b; }
         #dashboard-content { display: none; }
@@ -173,23 +137,38 @@
         .relevance-element { display: none; }
         .show-relevance .relevance-element { display: inline-flex; }
 
-        .accordion-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .accordion-content { display: none; overflow: hidden; }
-        .accordion-content.open { display: block; }
-        .accordion-icon { transition: transform 0.3s; }
-        .accordion-icon.open { transform: rotate(180deg); }
-
-        .doc-details { display: none; margin-top: 1rem; }
-        .doc-details.open { display: block; }
-        .doc-header { cursor: pointer; }
-
         .btn-action {
             background: white; border: 1px solid #cbd5e1; color: #334155;
             padding: 8px 16px; border-radius: 0.5rem; font-weight: 600; font-size: 1rem;
             cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .btn-action:hover { background: #f8fafc; border-color: #94a3b8; }
-</style>
+
+        .accordion-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-content { display: none; overflow: hidden; }
+        .accordion-content.open { display: block; }
+        .accordion-icon { transition: transform 0.3s; }
+        .accordion-icon.open { transform: rotate(180deg); }
+
+        /* Document Stream Column Styles */
+        .category-col { background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
+        .category-title { display: flex; justify-content: space-between; align-items: center; padding: 1rem; font-weight: bold; font-size: 1.1rem; background: white; border-bottom: 1px solid #e2e8f0; }
+        .category-items { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; flex-grow: 1; overflow-y: auto; max-height: 800px; }
+
+        .doc-item-wrapper { background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .doc-mini-header { padding: 0.75rem 1rem; display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer; transition: background-color 0.2s; }
+        .doc-mini-header:hover { background-color: #f1f5f9; }
+        .doc-mini-date { font-weight: bold; color: #64748b; font-size: 0.9rem; white-space: nowrap; padding-top: 0.1rem;}
+        .doc-mini-title { font-weight: 600; color: #0f172a; line-height: 1.3; font-size: 1rem;}
+
+        .doc-full-details { display: none; padding: 1rem; border-top: 1px solid #e2e8f0; background: #fafafa; }
+        .doc-full-details.open { display: block; }
+
+        .card-summary-box { background: #ffffff; border: 1px solid #f1f5f9; padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; line-height: 1.5; color: #334155;}
+        .card-impact-box { background: rgba(255,255,255,0.5); padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; border-right: 4px solid #cbd5e1; }
+        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
+        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #475569; }
+    </style>
 </head>
 <body>
     <div id="loading-message">טוען נתונים...</div>
@@ -210,7 +189,7 @@
                     <span style="opacity: 0.5;">|</span>
                     <span>עדכון אחרון: <span id="d-date">-</span></span>
                     <span style="opacity: 0.5;">|</span>
-                    <span class="font-bold text-blue-400" id="gilat-version">Gilat AI | גרסה 2.5.0</span>
+                    <span class="font-bold text-blue-400" id="gilat-version">Gilat AI | גרסה 2.6.0</span>
                 </div>
             </div>
         </header>
@@ -230,7 +209,7 @@
                     </ul>
                 </div>
 
-                <div class="flex flex-col md:flex-row gap-4 mt-6">
+                <div class="flex flex-col md:flex-row gap-4 mt-6 mb-2">
                     <button class="btn-action">📖 מילון מונחים</button>
                     <button class="btn-action">⚙️ הגדרות</button>
                     <button class="btn-action">📊 מתודולוגיה</button>
@@ -243,21 +222,21 @@
             <h3 class="text-2xl mb-4 border-b pb-3">מפת הגורמים המעורבים</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-xl shadow-md border">
-                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1"></h3>
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1">🏛️ משרדי ממשלה ואכיפה</h3>
                     <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-md border">
-                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-2"></h3>
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-2">💼 ועדות הכנסת</h3>
                     <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-md border">
-                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3"></h3>
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3">🤝 חברה אזרחית וארגונים</h3>
                     <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Documents Stream Block is now here -->
+        <!-- Documents Stream Block -->
         <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
                 <div class="flex items-center gap-4">
@@ -275,13 +254,16 @@
                     <div class="flex flex-wrap gap-2 justify-end" id="filterContainer"></div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="documentsStream"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="documentsStream">
+                <!-- Columns injected dynamically -->
+            </div>
         </div>
 
-        <!-- Timeline Block is now here -->
+        <!-- Timeline Block -->
         <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
             <div class="accordion-header" onclick="toggleTimeline()">
-                <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
+                <h3 class="text-2xl mb-2" id="d-timeline-title">📊 ציר זמן: חקיקה, מחקר ודיוני ועדות (גלילה ימינה/שמאלה)</h3>
                 <span id="timeline-icon" class="accordion-icon text-xl">▼</span>
             </div>
             <div id="timeline-content" class="accordion-content">
@@ -295,7 +277,6 @@
                 <div class="flex flex-wrap gap-5 mt-5 justify-center text-base font-bold" id="chartLegend"></div>
             </div>
         </div>
-
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
@@ -391,6 +372,11 @@
 
                 window.appConfiguration = data.appConfiguration;
 
+                // Version Update Display
+                const dateObj = new Date();
+                const vDate = dateObj.toLocaleDateString('he-IL') + " " + dateObj.toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'});
+                document.getElementById('gilat-version').innerHTML = `Gilat AI | גרסה 2.6.0 (${vDate})`;
+
                 document.getElementById('d-title').innerText = data.meta.title;
                 document.getElementById('d-subtitle').innerText = data.meta.subtitle;
                 document.getElementById('d-date').innerText = getCorrectedDate(data.meta.lastUpdate);
@@ -413,18 +399,12 @@
                     echoContainer.innerHTML = data.mediaEcho.map(item => `
                         <a href="${item.url}" target="_blank" class="p-3 border rounded-lg hover:bg-gray-50 transition block" style="text-decoration:none;">
                             <strong class="text-blue-900 block mb-1 text-base">${item.title}</strong>
-                            <span class="text-sm text-gray-600 block">${item.subtitle}</span>
+                            <span class="text-sm text-gray-600 block">${item.source} | ${item.subtitle}</span>
                         </a>
                     `).join('');
                 } else {
                     echoContainer.innerHTML = '<span class="text-gray-500">אין נתונים זמינים</span>';
                 }
-
-                document.getElementById('eco-title-1').innerText = "משרדי ממשלה ואכיפה 🏛️";
-                document.getElementById('eco-title-2').innerText = data.layoutStrings.ecosystemTitles[1] || "ועדות הכנסת";
-                document.getElementById('eco-title-3').innerText = "חברה אזרחית וארגונים 🤝";
-
-                document.getElementById('d-timeline-title').innerText = data.layoutStrings.timelineTitle;
 
                 setupFilters();
                 setupSearch();
@@ -449,14 +429,13 @@
             const frames = window.appConfiguration.externalFrames;
             const contentDiv = document.getElementById('dashboard-content');
 
-            // Map rows: 1:Header, 2:Exec, 3:Ecosystem, 4:Docs, 5:Timeline, 6:Metrics
             const blocks = [
                 contentDiv.querySelector('header'),
                 document.querySelector('.exec-block'),
-                document.getElementById('eco-title-1').closest('.mb-8.bg-white'),
-                document.getElementById('documentsStream').closest('.mb-8.bg-white'),
-                document.getElementById('d-timeline-title').closest('.mb-8.bg-white'),
-                document.getElementById('d-media-val').closest('.grid.grid-cols-1.gap-6')
+                document.getElementById('eco-title-1')?.closest('.mb-8.bg-white'),
+                document.getElementById('documentsStream')?.closest('.mb-8.bg-white'),
+                document.getElementById('d-timeline-title')?.closest('.mb-8.bg-white'),
+                document.getElementById('d-media-val')?.closest('.grid.gap-6')
             ];
 
             frames.forEach(frame => {
@@ -596,74 +575,104 @@
                 return;
             }
 
-            filteredItems.sort((a, b) => {
-                const orderA = typeSortOrder[a.type] || 99;
-                const orderB = typeSortOrder[b.type] || 99;
-                if (orderA !== orderB) return orderA - orderB;
-                return (b.year + b.month/12) - (a.year + a.month/12);
-            });
+            const categoryGroups = [
+                { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },
+                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },
+                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] },
+                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] },
+                { key: 'comptroller', icon: '🔍', title: 'מבקר המדינה', color: '#f59e0b', items: [] },
+                { key: 'govDecision', icon: '📜', title: 'החלטות ותוכניות ממשלה', color: '#14b8a6', items: [] },
+                { key: 'financeDirective', icon: '💰', title: 'הנחיות פיננסיות', color: '#ec4899', items: [] }
+            ];
 
             filteredItems.forEach(item => {
-                let sourceText = item.source;
-                if (item.type === 'activeLaw') sourceText = 'הצעת חוק';
-                if (item.type === 'passedLaw') sourceText = 'חוק שעבר';
+                const group = categoryGroups.find(g => g.key === item.type);
+                if (group) group.items.push(item);
+            });
 
-                const tagsHtml = item.keywords.map(kw => `<span class="tag-badge">#${kw}</span>`).join('');
-                const formattedMonth = item.month.toString().padStart(2, '0');
+            categoryGroups.forEach(group => {
+                if (group.items.length === 0) return;
 
-                let idBadgeHtml = `<span class="doc-id-badge">${item.idCode}</span>`;
-                if (item.link) {
-                    idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.75rem">🔗</span></a>`;
-                }
+                group.items.sort((a, b) => (b.year + b.month/12) - (a.year + a.month/12));
 
-                const cardHtml = `
-                    <div class="doc-card ${item.styleClass}">
-                        <div class="doc-header" onclick="toggleDoc(this)">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="rounded-full px-2 py-0.5 text-xs font-bold ${item.badgeClass}">${sourceText}</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-base font-bold text-gray-700">${formattedMonth}/${item.year}</span>
-                                    <span class="accordion-icon text-sm">▼</span>
+                let colHtml = `
+                    <div class="category-col" style="border-top: 4px solid ${group.color}">
+                        <div class="category-title" style="border-color: ${group.color}">
+                            <span>${group.icon} ${group.title}</span>
+                            <span class="text-sm font-normal text-gray-500 bg-gray-100 px-2 rounded-full">${group.items.length}</span>
+                        </div>
+                        <div class="category-items">
+                `;
+
+                group.items.forEach((item, index) => {
+                    const formattedMonth = item.month.toString().padStart(2, '0');
+                    const dateStr = `${formattedMonth}/${item.year}`;
+                    const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
+
+                    let idBadgeHtml = `<span class="doc-id-badge">${item.idCode}</span>`;
+                    if (item.link) {
+                        idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.75rem">🔗</span></a>`;
+                    }
+
+                    let displayTitle = item.title;
+                    if (item.type === 'committee') {
+                        displayTitle = `<strong style="font-weight: 800; color: #0f172a;">${item.author}</strong>: ${item.title}`;
+                    }
+
+                    let sourceHtml = '';
+                    if (item.type !== 'committee' || (item.type === 'committee' && item.author !== item.source)) {
+                        sourceHtml = `<div class="flex justify-between items-center mb-2 border-b pb-2">
+                                        <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${item.author}</span></span>
+                                      </div>`;
+                    }
+
+                    let impactHtml = '';
+                    if (item.impact) {
+                        impactHtml = `<div class="card-impact-box">
+                                        <strong class="text-sm block mb-1" style="color: ${group.color}">השלכה מעשית:</strong>
+                                        <span class="text-gray-900 block mt-1 font-bold">${item.impact}</span>
+                                      </div>`;
+                    }
+
+                    const tagsHtml = '';
+
+                    colHtml += `
+                            <div class="doc-item-wrapper">
+                                <div class="doc-mini-header" onclick="toggleDoc('${detailsId}')">
+                                    <span class="doc-mini-date">${dateStr}</span>
+                                    <span class="doc-mini-title">${displayTitle}</span>
+                                </div>
+                                <div id="${detailsId}" class="doc-full-details">
+                                    ${sourceHtml}
+                                    <p class="card-summary-box font-semibold">${item.summary}</p>
+                                    ${impactHtml}
+                                    <div class="border-t pt-2 mt-auto flex justify-between items-center flex-wrap gap-2">
+                                        <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance}/10</span>
+                                        ${idBadgeHtml}
+                                    </div>
                                 </div>
                             </div>
-                            <h4 class="text-lg text-gray-900 leading-tight m-0">${item.title}</h4>
-                        </div>
-                        <div class="doc-details">
-                            <div class="flex items-center gap-2 mb-3 mt-2">
-                                <span class="relevance-element relevance-badge bg-gray-100">🔗 קשר: ${item.relevance}/10</span>
-                                <div class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${item.author}</span></div>
-                            </div>
-                            <p class="card-summary-box font-semibold">${item.summary}</p>
-                            <div class="card-impact-box">
-                                <strong class="${item.textClass} text-sm block mb-1">השלכה מעשית:</strong>
-                                <span class="text-gray-900 block mt-1 font-bold">${item.impact}</span>
-                            </div>
-                            <div class="border-t pt-3 mt-3 flex justify-between items-center flex-wrap gap-2">
-                                <div class="flex flex-wrap gap-1">${tagsHtml}</div>
-                                ${idBadgeHtml}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += cardHtml;
+                    `;
+                });
+
+                colHtml += `</div></div>`;
+                container.innerHTML += colHtml;
             });
         }
 
-        function toggleDoc(headerEl) {
-            const details = headerEl.nextElementSibling;
-            const icon = headerEl.querySelector('.accordion-icon');
-            details.classList.toggle('open');
-            icon.classList.toggle('open');
+        function toggleDoc(detailsId) {
+            const details = document.getElementById(detailsId);
+            if(details) {
+                details.classList.toggle('open');
+            }
         }
 
         function toggleAllDocs(open) {
-            document.querySelectorAll('.doc-details').forEach(el => {
+            document.querySelectorAll('.doc-full-details').forEach(el => {
                 if(open) {
                     el.classList.add('open');
-                    el.previousElementSibling.querySelector('.accordion-icon').classList.add('open');
                 } else {
                     el.classList.remove('open');
-                    el.previousElementSibling.querySelector('.accordion-icon').classList.remove('open');
                 }
             });
         }

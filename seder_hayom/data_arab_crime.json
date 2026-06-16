@@ -38,33 +38,16 @@
     }
   },
   "layoutStrings": {
-    "ecosystemTitles": [
-      "🏛️ משרדי ממשלה ואכיפה",
-      "💼 ועדות הכנסת",
-      "🤝 חברה אזרחית וארגונים",
-      "👤 מקבלי החלטות"
-    ],
-    "timelineTitle": "📊 ציר זמן: חקיקה, מחקר ודיוני ועדות (גלילה ימינה/שמאלה)",
     "timelineSubtitle": "מעקב אחר מסמכי הממ״מ ופעילות הכנסת בנושא הפשיעה בחברה הערבית."
   },
-  "mediaEcho": [
-    {
-      "url": "https://www.ynet.co.il/",
-      "title": "דו\"ח הכנסת חושף: צניחה בשיעור פענוח מקרי הרצח במגזר הערבי",
-      "subtitle": "Ynet | בעקבות פרסום נתוני הממ\"מ על פער הפענוחים"
-    },
-    {
-      "url": "https://www.haaretz.co.il/",
-      "title": "ועדת הפנים התכנסה לדיון חירום על איום ארגוני הפשיעה בשלטון המקומי",
-      "subtitle": "הארץ | דיווח מתוך דיון הוועדה הסוער על אבטחת ראשי רשויות"
-    },
-    {
-      "url": "https://www.mako.co.il/",
-      "title": "מבקר המדינה מזהיר: פרוטקשן במכרזי רשויות מקומיות",
-      "subtitle": "N12 | סיקור דוח המבקר 74ג בנושא דמי החסות בצפון"
-    }
-  ],
   "appConfiguration": {
+    "externalFrames": [
+      {
+        "row": 3,
+        "title": "דשבורד נתונים וסטטיסטיקה מורחבת",
+        "url": "https://rami890.github.io/murder_dashboard_2025/"
+      }
+    ],
     "ecosystem": {
       "ministries": [
         {
@@ -317,7 +300,8 @@
         "relevance": 9,
         "type": "committee",
         "styleClass": "entity-committee",
-        "textClass": "text-committee", "badgeClass": "badge-committee",
+        "textClass": "text-committee",
+        "badgeClass": "badge-committee",
         "source": "דיוני ועדות",
         "idCode": "פרוטוקול ביטחון לאומי 88",
         "link": "",
@@ -374,13 +358,26 @@
         "year": 2026,
         "val": 95
       }
-    ],
-    "externalFrames": [
-      {
-        "row": 3,
-        "title": "דשבורד נתונים וסטטיסטיקה מורחבת",
-        "url": "https://rami890.github.io/murder_dashboard_2025/"
-      }
     ]
-  }
+  },
+  "mediaEcho": [
+    {
+      "url": "https://www.ynet.co.il/",
+      "title": "דו\"ח הכנסת חושף: צניחה בשיעור פענוח מקרי הרצח במגזר הערבי",
+      "source": "Ynet",
+      "subtitle": "בעקבות פרסום נתוני הממ\"מ על פער הפענוחים"
+    },
+    {
+      "url": "https://www.haaretz.co.il/",
+      "title": "ועדת הפנים התכנסה לדיון חירום על איום ארגוני הפשיעה בשלטון המקומי",
+      "source": "הארץ",
+      "subtitle": "דיווח מתוך דיון הוועדה הסוער על אבטחת ראשי רשויות"
+    },
+    {
+      "url": "https://www.mako.co.il/",
+      "title": "מבקר המדינה מזהיר: פרוטקשן במכרזי רשויות מקומיות",
+      "source": "N12",
+      "subtitle": "סיקור דוח המבקר 74ג בנושא דמי החסות בצפון"
+    }
+  ]
 }
