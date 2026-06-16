@@ -371,9 +371,8 @@
                 document.getElementById('d-title').innerText = data.meta.title;
                 document.getElementById('d-subtitle').innerText = data.meta.subtitle;
 
-                document.getElementById('d-exec-title').innerText = data.execSummary.title;
+                document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
                 document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
-                document.getElementById('d-whatsnew-title').innerText = data.execSummary.whatsNewTitle;
                 document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(i => `<li>${i}</li>`).join('');
 
                 document.getElementById('d-media-val').innerText = data.metrics.media.scoreLabel;
@@ -824,7 +823,7 @@
                             <span class="tt-title" style="margin:0; border:none; padding:0;">${item.title}</span>
                             <span class="tt-date" style="margin:0; white-space:nowrap;">${formattedMonth}/${item.year}</span>
                         </div>
-                        <div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מקור:</strong> ${item.source} | <strong>מחבר:</strong> ${item.author}</div>
+                        <div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;">${item.source ? `<strong>מקור:</strong> ${item.source} | ` : ''}<strong>מחבר:</strong> ${item.author}</div>
                         <div style="font-size:0.9rem; line-height:1.5;">${item.summary}</div>
                         <div style="margin-top: 8px; font-size: 0.85rem; color:#94a3b8;"><em>השלכה: ${item.impact}</em></div>
                     `;
