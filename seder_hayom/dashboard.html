@@ -179,13 +179,24 @@
         <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h1 class="text-3xl mb-1" id="d-title">בטעינה...</h1>
-                <p class="text-gray-200 text-base mt-2" id="d-subtitle">בטעינה...</p>
             </div>
-            <div class="flex items-center gap-4 mr-auto flex-wrap">
-                <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
-                <a id="btn-vaadot" href="#" class="btn-back disabled" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">ישיבות ועדות 🏛️</a>
-                <div class="badge-mono">
-                    <span>גרסה: 2.6.0 | עודכן ב-16/06/2026 15:20</span>
+            <div class="flex flex-col items-end gap-3 mr-auto">
+                <!-- שורת הכפתורים -->
+                <div class="flex gap-3">
+                    <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
+                    <a id="btn-vaadot" href="#" class="btn-back disabled" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">ישיבות ועדות 🏛️</a>
+                </div>
+
+                <!-- אזור מידע המערכת -->
+                <div class="badge-mono" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding: 0.5rem 1rem;">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-white">סדר היום הפרלמנטרי</span>
+                        <span style="color: rgba(255,255,255,0.3)">|</span>
+                        <span class="text-sm">גרסה: 2.6.0 | עודכן ב-16/06/2026 15:20</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 2px;">
+                        Powered by <span style="font-family: 'Segoe UI', Tahoma, Verdana, sans-serif; font-weight: 800; color: #60a5fa; letter-spacing: 0.5px;">Gilat AI</span>
+                    </div>
                 </div>
             </div>
         </header>
@@ -393,7 +404,6 @@
                 window.appConfiguration = data.appConfiguration;
 
                 document.getElementById('d-title').innerText = data.meta.title;
-                document.getElementById('d-subtitle').innerText = data.meta.subtitle;
 
                 document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
                 document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
