@@ -359,6 +359,26 @@
             const urlParams = new URLSearchParams(window.location.search);
             const fileUrl = urlParams.get('file') || 'https://mmm.beniad.com/seder_hayom/data_arab_crime.json';
 
+            if (fileUrl.includes('data_')) {
+                const vaadotUrl = fileUrl.replace('data_', 'vaadot_');
+
+                fetch(vaadotUrl, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            const btnVaadot = document.getElementById('btn-vaadot');
+                            // עדכון הקישור לעמוד הוועדות עם הפרמטר החדש
+                            btnVaadot.href = `vaadot.html?file=${encodeURIComponent(vaadotUrl)}`;
+
+                            // הסרת מחלקת הניטרול ואיפוס עיצובי ה-inline כדי שעיצוב ה-CSS הרגיל יחול
+                            btnVaadot.classList.remove('disabled');
+                            btnVaadot.style.backgroundColor = '';
+                            btnVaadot.style.color = '';
+                            btnVaadot.style.borderColor = '';
+                        }
+                    })
+                    .catch(err => console.log('Vaadot file check failed:', err));
+            }
+
             if (!fileUrl) {
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('error-message').style.display = 'block';
