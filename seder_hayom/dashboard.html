@@ -170,14 +170,6 @@
         #chartTooltip .tt-title { font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;}
         #chartTooltip .tt-date { font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155;}
 
-        /* Action Buttons & Accordion CSS */
-        .btn-action {
-            background: white; border: 1px solid #cbd5e1; color: #334155;
-            padding: 8px 16px; border-radius: 0.5rem; font-weight: 600; font-size: 1rem;
-            cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .btn-action:hover { background: #f8fafc; border-color: #94a3b8; }
-
         .relevance-element { display: none; }
         .show-relevance .relevance-element { display: inline-flex; }
 
@@ -190,7 +182,14 @@
         .doc-details { display: none; margin-top: 1rem; }
         .doc-details.open { display: block; }
         .doc-header { cursor: pointer; }
-    </style>
+
+        .btn-action {
+            background: white; border: 1px solid #cbd5e1; color: #334155;
+            padding: 8px 16px; border-radius: 0.5rem; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-action:hover { background: #f8fafc; border-color: #94a3b8; }
+</style>
 </head>
 <body>
     <div id="loading-message">טוען נתונים...</div>
@@ -205,12 +204,13 @@
             </div>
             <div class="flex items-center gap-4 mr-auto flex-wrap">
                 <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
+                <a id="btn-vaadot" href="#" class="btn-back disabled" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">ישיבות ועדות 🏛️</a>
                 <div class="badge-mono">
                     <span>גרסה: <span id="d-version">-</span></span>
                     <span style="opacity: 0.5;">|</span>
                     <span>עדכון אחרון: <span id="d-date">-</span></span>
                     <span style="opacity: 0.5;">|</span>
-                    <span class="font-bold text-blue-400" id="gilat-version">Gilat AI</span>
+                    <span class="font-bold text-blue-400" id="gilat-version">Gilat AI | גרסה 2.5.0</span>
                 </div>
             </div>
         </header>
@@ -257,6 +257,7 @@
             </div>
         </div>
 
+        <!-- Documents Stream Block is now here -->
         <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
                 <div class="flex items-center gap-4">
@@ -277,6 +278,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="documentsStream"></div>
         </div>
 
+        <!-- Timeline Block is now here -->
         <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
             <div class="accordion-header" onclick="toggleTimeline()">
                 <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
@@ -294,7 +296,8 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-6 mb-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
                 <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
                 <div class="mb-5">
@@ -318,6 +321,13 @@
                             <span>2022</span><span>2024</span><span>2026</span>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-3">📰 הדהוד בתקשורת</h3>
+                <div class="grid grid-cols-1 gap-3 h-full" id="media-echo-container">
+                    <!-- Media echo items will be injected here -->
                 </div>
             </div>
         </div>
@@ -381,11 +391,6 @@
 
                 window.appConfiguration = data.appConfiguration;
 
-                // Version Update
-                const dateObj = new Date();
-                const vDate = dateObj.toLocaleDateString('he-IL') + " " + dateObj.toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'});
-                document.getElementById('gilat-version').innerHTML = `Gilat AI | גרסה 2.4.0 (${vDate})`;
-
                 document.getElementById('d-title').innerText = data.meta.title;
                 document.getElementById('d-subtitle').innerText = data.meta.subtitle;
                 document.getElementById('d-date').innerText = getCorrectedDate(data.meta.lastUpdate);
@@ -403,9 +408,21 @@
                 document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
                 document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
 
-                document.getElementById('eco-title-1').innerText = "משרדי ממשלה";
+                const echoContainer = document.getElementById('media-echo-container');
+                if (data.mediaEcho && data.mediaEcho.length > 0) {
+                    echoContainer.innerHTML = data.mediaEcho.map(item => `
+                        <a href="${item.url}" target="_blank" class="p-3 border rounded-lg hover:bg-gray-50 transition block" style="text-decoration:none;">
+                            <strong class="text-blue-900 block mb-1 text-base">${item.title}</strong>
+                            <span class="text-sm text-gray-600 block">${item.subtitle}</span>
+                        </a>
+                    `).join('');
+                } else {
+                    echoContainer.innerHTML = '<span class="text-gray-500">אין נתונים זמינים</span>';
+                }
+
+                document.getElementById('eco-title-1').innerText = "משרדי ממשלה ואכיפה 🏛️";
                 document.getElementById('eco-title-2').innerText = data.layoutStrings.ecosystemTitles[1] || "ועדות הכנסת";
-                document.getElementById('eco-title-3').innerText = "גופים אחרים";
+                document.getElementById('eco-title-3').innerText = "חברה אזרחית וארגונים 🤝";
 
                 document.getElementById('d-timeline-title').innerText = data.layoutStrings.timelineTitle;
 
@@ -695,7 +712,7 @@
             content.classList.toggle('open');
             icon.classList.toggle('open');
             if(content.classList.contains('open')) {
-                renderMainTimeline();
+                renderMainTimeline(); // render when opened
             }
         }
 
