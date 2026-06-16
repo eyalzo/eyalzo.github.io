@@ -184,6 +184,26 @@
         .relevance-element { display: none; }
         .show-relevance .relevance-element { display: inline-flex; } /* for badges */
         .show-relevance div.relevance-element { display: block; } /* for ecosystem texts */
+
+        .action-buttons { flex-wrap: wrap; }
+        .action-btn {
+            background: white; border: 1px solid #bfdbfe; color: #1e40af;
+            padding: 10px 20px; border-radius: 999px; font-weight: 700; font-size: 1.05rem;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .action-btn:hover { background: #eff6ff; border-color: #93c5fd; transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .action-icon { font-size: 1.2rem; }
+
+        .accordion-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-content { display: none; overflow: hidden; }
+        .accordion-content.open { display: block; }
+        .accordion-icon { transition: transform 0.3s; }
+        .accordion-icon.open { transform: rotate(180deg); }
+
+        .doc-details { display: none; margin-top: 1rem; }
+        .doc-details.open { display: block; }
+        .doc-header { cursor: pointer; }
 </style>
 </head>
 <body>
@@ -205,7 +225,7 @@
                     <span style="opacity: 0.5;">|</span>
                     <span>עדכון אחרון: <span id="d-date">-</span></span>
                     <span style="opacity: 0.5;">|</span>
-                    <span class="font-bold text-blue-400">Gilat AI | גרסה 2.1.0 (16/06/2026 13:00)</span>
+                    <span class="font-bold text-blue-400">Gilat AI | גרסה 2.2.0 (16/06/2026 13:00)</span>
                 </div>
             </div>
         </header>
@@ -214,7 +234,7 @@
             <div class="flex justify-between items-start mb-4">
                 <h2 class="font-bold text-xl md:text-3xl" id="d-exec-title">📋 תקציר מנהלים</h2>
                 <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
-                    <span>🔊</span> <span id="tts-text">הקראת סיכום</span>
+                    <span>🔊</span> <span id="tts-text">הקראת התקציר</span>
                 </button>
             </div>
             <div id="execSummaryWrapper">
@@ -223,6 +243,20 @@
                     <h3 class="font-bold text-amber-700 text-xl mb-3" id="d-whatsnew-title">🔥 מה התחדש לאחרונה?</h3>
                     <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;">
                     </ul>
+                </div>
+                <div class="flex gap-4 mt-6 action-buttons">
+                    <button class="action-btn">
+                        <span class="action-icon">💡</span>
+                        שאלות על הנושא
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon">📄</span>
+                        תקציר לוועדה
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon">🎤</span>
+                        נקודות לראיון
+                    </button>
                 </div>
             </div>
         </div>
@@ -243,18 +277,6 @@
                 <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
             </div></div></div>
 
-        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
-            <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
-            <p class="text-base text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
-            <div class="timeline-scroll-wrapper" style="position: relative;">
-                <div class="timeline-canvas-container">
-                    <canvas id="mainTimeline"></canvas>
-                </div>
-                <div id="chartTooltip"></div>
-            </div>
-            <div class="flex flex-wrap gap-5 mt-5 justify-center text-base font-bold" id="chartLegend"></div>
-        </div>
-
         <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
                 <div>
@@ -266,11 +288,33 @@
                         <input type="text" id="searchInput" class="search-input" placeholder="חיפוש חופשי במסמכים...">
                         <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש" style="display: none;">✖</button>
                     </div>
-                    <button id="toggleRelevanceBtn" class="btn-back" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1; height: 100%;">הצג ציוני קשר</button>
+
                     <div class="flex flex-wrap gap-2 justify-end" id="filterContainer"></div>
                 </div>
             </div>
+
+                <div class="flex gap-2 mb-4 w-full">
+                    <button class="btn-back" style="font-size: 0.9rem; padding: 4px 10px;" onclick="toggleAllDocs(true)">פתיחת הכל</button>
+                    <button class="btn-back" style="font-size: 0.9rem; padding: 4px 10px;" onclick="toggleAllDocs(false)">סגירת הכל</button>
+                </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="documentsStream"></div>
+        </div>
+
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
+            <div class="accordion-header" onclick="toggleTimeline()">
+                <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
+                <span id="timeline-icon" class="accordion-icon text-xl">▼</span>
+            </div>
+            <div id="timeline-content" class="accordion-content">
+            <p class="text-base text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
+            <div class="timeline-scroll-wrapper" style="position: relative;">
+                <div class="timeline-canvas-container">
+                    <canvas id="mainTimeline"></canvas>
+                </div>
+                <div id="chartTooltip"></div>
+            </div>
+            <div class="flex flex-wrap gap-5 mt-5 justify-center text-base font-bold" id="chartLegend"></div>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 gap-6 mb-8">
@@ -413,14 +457,6 @@
                 setupFilters();
                 setupSearch();
 
-            document.getElementById('toggleRelevanceBtn').addEventListener('click', function() {
-                document.body.classList.toggle('show-relevance');
-                if (document.body.classList.contains('show-relevance')) {
-                    this.innerText = 'הסתר ציוני קשר';
-                } else {
-                    this.innerText = 'הצג ציוני קשר';
-                }
-            });
 
                 renderEcosystem();
                 renderCards();
@@ -429,7 +465,6 @@
                 document.getElementById('dashboard-content').style.display = 'block';
 
                 setTimeout(() => {
-                    renderMainTimeline();
                     renderTrendsChart();
                 }, 100);
 
@@ -457,7 +492,12 @@
                 return (typeSortOrder[a.key] || 99) - (typeSortOrder[b.key] || 99);
             });
 
-            let filtersHtml = `<button class="filter-btn btn-active" data-filter="all">הכל (${items.length})</button>`;
+            let filtersHtml = `
+            <label class="flex items-center gap-2 text-sm text-gray-500 cursor-pointer ml-4">
+                <input type="checkbox" id="relevanceToggle" class="cursor-pointer">
+                הצג ציוני קשר
+            </label>
+<button class="filter-btn btn-active" data-filter="all">הכל (${items.length})</button>`;
 
             sortedEntities.forEach(e => {
                 const count = typeCounts[e.key] || 0;
@@ -467,6 +507,14 @@
             });
 
             filterContainer.innerHTML = filtersHtml;
+
+            document.getElementById('relevanceToggle').addEventListener('change', (e) => {
+                if(e.target.checked) {
+                    document.body.classList.add('show-relevance');
+                } else {
+                    document.body.classList.remove('show-relevance');
+                }
+            });
 
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -567,32 +615,55 @@
                     idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.75rem">🔗</span></a>`;
                 }
 
-                // כרטיסיה קומפקטית
                 const cardHtml = `
                     <div class="doc-card ${item.styleClass}">
-                        <div>
-                            <div class="flex justify-between items-center mb-3 border-b pb-2">
+                        <div class="doc-header" onclick="toggleDoc(this)">
+                            <div class="flex justify-between items-center mb-2">
                                 <span class="rounded-full px-2 py-0.5 text-xs font-bold ${item.badgeClass}">${sourceText}</span>
                                 <div class="flex items-center gap-2">
-                                    <span class="relevance-element relevance-badge bg-gray-100">🔗 ${item.relevance}/10</span>
                                     <span class="text-base font-bold text-gray-700">${formattedMonth}/${item.year}</span>
+                                    <span class="accordion-icon text-sm">▼</span>
                                 </div>
                             </div>
-                            <h4 class="text-lg text-gray-900 mb-2 leading-tight">${item.title}</h4>
-                            <div class="text-sm text-gray-500 mb-3">מקור: <span class="font-bold text-gray-800">${item.author}</span></div>
+                            <h4 class="text-lg text-gray-900 leading-tight m-0">${item.title}</h4>
+                        </div>
+                        <div class="doc-details">
+                            <div class="flex items-center gap-2 mb-3 mt-2">
+                                <span class="relevance-element relevance-badge bg-gray-100">🔗 קשר: ${item.relevance}/10</span>
+                                <div class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${item.author}</span></div>
+                            </div>
                             <p class="card-summary-box font-semibold">${item.summary}</p>
                             <div class="card-impact-box">
                                 <strong class="${item.textClass} text-sm block mb-1">השלכה מעשית:</strong>
                                 <span class="text-gray-900 block mt-1 font-bold">${item.impact}</span>
                             </div>
-                        </div>
-                        <div class="border-t pt-3 mt-auto flex justify-between items-center flex-wrap gap-2">
-                            <div class="flex flex-wrap gap-1">${tagsHtml}</div>
-                            ${idBadgeHtml}
+                            <div class="border-t pt-3 mt-3 flex justify-between items-center flex-wrap gap-2">
+                                <div class="flex flex-wrap gap-1">${tagsHtml}</div>
+                                ${idBadgeHtml}
+                            </div>
                         </div>
                     </div>
                 `;
                 container.innerHTML += cardHtml;
+            });
+        }
+
+        function toggleDoc(headerEl) {
+            const details = headerEl.nextElementSibling;
+            const icon = headerEl.querySelector('.accordion-icon');
+            details.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        function toggleAllDocs(open) {
+            document.querySelectorAll('.doc-details').forEach(el => {
+                if(open) {
+                    el.classList.add('open');
+                    el.previousElementSibling.querySelector('.accordion-icon').classList.add('open');
+                } else {
+                    el.classList.remove('open');
+                    el.previousElementSibling.querySelector('.accordion-icon').classList.remove('open');
+                }
             });
         }
 
@@ -603,7 +674,7 @@
                 window.speechSynthesis.cancel();
                 isSpeaking = false;
                 btn.classList.remove('is-reading');
-                textEl.innerText = 'הקראת סיכום';
+                textEl.innerText = 'הקראת התקציר';
             } else {
                 const text = document.getElementById('d-exec-text').innerText;
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -611,7 +682,7 @@
                 utterance.onend = () => {
                     isSpeaking = false;
                     btn.classList.remove('is-reading');
-                    textEl.innerText = 'הקראת סיכום';
+                    textEl.innerText = 'הקראת התקציר';
                 };
                 window.speechSynthesis.speak(utterance);
                 isSpeaking = true;
@@ -632,6 +703,16 @@
             lines.push(line);
             const startY = y - ((lines.length - 1) * lineHeight) / 2;
             for(let i=0; i<lines.length; i++){ ctx.fillText(lines[i].trim(), x, startY + (i * lineHeight)); }
+        }
+
+        function toggleTimeline() {
+            const content = document.getElementById('timeline-content');
+            const icon = document.getElementById('timeline-icon');
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+            if(content.classList.contains('open')) {
+                renderMainTimeline(); // render when opened
+            }
         }
 
         function renderMainTimeline() {
