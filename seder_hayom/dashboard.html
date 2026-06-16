@@ -316,6 +316,15 @@
         window.appConfiguration = null;
         let timelineNodes = [];
         let currentFilterType = 'all';
+        const ENTITIES = [
+          { key: "mmm", label: "מסמכי ממ״מ", color: "#8b5cf6" },
+          { key: "committee", label: "דיוני ועדות", color: "#ef4444" },
+          { key: "activeLaw", label: "הצעות חוק פעילות", color: "#3b82f6" },
+          { key: "passedLaw", label: "חקיקה שאושרה", color: "#10b981" },
+          { key: "comptroller", label: "מבקר המדינה", color: "#f59e0b" },
+          { key: "govDecision", label: "החלטות ממשלה", color: "#64748b" },
+          { key: "financeDirective", label: "הנחיות פיננסיות", color: "#92400e" }
+        ];
 
         const typeSortOrder = {
             'mmm': 1,
@@ -360,11 +369,6 @@
                 const response = await fetch(fileUrl);
                 if (!response.ok) throw new Error("File not found");
                 const data = await response.json();
-
-                data.appConfiguration.entities.forEach(e => {
-                    if (e.key === 'activeLaw') e.label = 'הצעות חוק';
-                    if (e.key === 'passedLaw') e.label = 'חוקים שעברו';
-                });
 
                 window.appConfiguration = data.appConfiguration;
 
@@ -465,7 +469,7 @@
                 typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;
             });
 
-            const sortedEntities = [...window.appConfiguration.entities].sort((a, b) => {
+            const sortedEntities = [...ENTITIES].sort((a, b) => {
                 return (typeSortOrder[a.key] || 99) - (typeSortOrder[b.key] || 99);
             });
 
@@ -519,13 +523,13 @@
             });
         }
 
-        function renderEcosystemList(elementId, dataArray) {
+        function renderEcosystemList(elementId, dataArray, borderColor) {
             const container = document.getElementById(elementId);
             container.innerHTML = '';
             const sortedArray = [...dataArray].sort((a, b) => b.relevance - a.relevance);
             sortedArray.forEach(item => {
                 container.innerHTML += `
-                    <div class="eco-item border-r-4 ${item.color}">
+                    <div class="eco-item" style="border-right: 4px solid ${borderColor};">
                         <div class="flex justify-between items-start gap-2 mb-1">
                             <strong class="text-gray-900 text-base block leading-tight">${item.name}</strong>
                         </div>
@@ -536,9 +540,10 @@
         }
 
         function renderEcosystem() {
-            renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries);
-            renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees);
-            renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs);
+            // העברת הצבעים כפרמטר שלישי (Hex) לכל קטגוריה
+            renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries, '#3b82f6'); // כחול למשרדי ממשלה
+            renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees, '#ef4444'); // אדום לוועדות
+            renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs, '#10b981'); // ירוק לארגונים אזרחיים
         }
 
         function renderCards() {
@@ -728,7 +733,7 @@
             timelineNodes = [];
 
             const legendContainer = document.getElementById('chartLegend');
-            legendContainer.innerHTML = window.appConfiguration.entities.map(en => {
+            legendContainer.innerHTML = ENTITIES.map(en => {
                 const isKnesset = knessetTypes.includes(en.key);
                 const borderStyle = isKnesset ? 'solid' : 'dashed';
                 return `<div class="flex items-center gap-2">
@@ -748,7 +753,7 @@
             const minDate = Math.min(...dates) - 0.2;
             const maxDate = Math.max(...dates) + 0.2;
             const colorMap = {};
-            window.appConfiguration.entities.forEach(en => colorMap[en.key] = en.color);
+            ENTITIES.forEach(en => colorMap[en.key] = en.color);
 
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = 'rtl';
 
