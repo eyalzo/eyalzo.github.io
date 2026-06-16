@@ -375,11 +375,11 @@
                 document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
                 document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(i => `<li>${i}</li>`).join('');
 
-                document.getElementById('d-media-val').innerText = data.metrics.media.scoreLabel;
+                document.getElementById('d-media-val').innerText = data.metrics.media.score + '%';
                 document.getElementById('d-media-bar').style.width = data.metrics.media.score + '%';
                 document.getElementById('d-media-text').innerHTML = data.metrics.media.text;
 
-                document.getElementById('d-social-val').innerText = data.metrics.social.scoreLabel;
+                document.getElementById('d-social-val').innerText = data.metrics.social.score + '%';
                 document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
                 document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
 
