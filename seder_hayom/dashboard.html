@@ -185,11 +185,7 @@
                 <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
                 <a id="btn-vaadot" href="#" class="btn-back disabled" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">ישיבות ועדות 🏛️</a>
                 <div class="badge-mono">
-                    <span>גרסה: <span id="d-version">-</span></span>
-                    <span style="opacity: 0.5;">|</span>
-                    <span>עדכון אחרון: <span id="d-date">-</span></span>
-                    <span style="opacity: 0.5;">|</span>
-                    <span class="font-bold text-blue-400" id="gilat-version">Gilat AI | גרסה 2.6.0</span>
+                    <span>גרסה: 2.6.0 | עודכן ב-16/06/2026 15:20</span>
                 </div>
             </div>
         </header>
@@ -372,14 +368,8 @@
 
                 window.appConfiguration = data.appConfiguration;
 
-                // Version Update Display
-                const dateObj = new Date();
-                const vDate = dateObj.toLocaleDateString('he-IL') + " " + dateObj.toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'});
-                document.getElementById('gilat-version').innerHTML = `Gilat AI | גרסה 2.6.0 (${vDate})`;
-
                 document.getElementById('d-title').innerText = data.meta.title;
                 document.getElementById('d-subtitle').innerText = data.meta.subtitle;
-                document.getElementById('d-date').innerText = getCorrectedDate(data.meta.lastUpdate);
 
                 document.getElementById('d-exec-title').innerText = data.execSummary.title;
                 document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
