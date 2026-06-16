@@ -34,27 +34,22 @@
             .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
-        @media (min-width: 1024px) {
-            .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-        }
 
         .flex { display: flex; } .flex-col { flex-direction: column; }
         @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
         .items-center { align-items: center; } .items-start { align-items: flex-start; }
         .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
         .flex-wrap { flex-wrap: wrap; }
-        .gap-1 { gap: 0.25rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+        .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
 
-        .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; }
+        .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; }
         .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
 
-        .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
-        .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-auto { margin-top: auto; }
+        .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
+        .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-auto { margin-top: auto; }
 
         .w-full { width: 100%; } .h-full { height: 100%; }
-
-        .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-full { border-radius: 9999px; }
+        .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-full { border-radius: 9999px; }
         .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
         .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; } .border-t { border-top: 1px solid #e2e8f0; }
@@ -83,15 +78,11 @@
         }
         .btn-read-aloud, .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .btn-read-aloud:hover, .btn-back:hover { background-color: #bfdbfe; }
-        .btn-back.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; background-color: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
         .is-reading { background-color: #1e40af; color: #ffffff; animation: pulse 2s infinite; }
 
         .progress-bar-bg { width: 100%; height: 0.85rem; background-color: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 0.25rem; }
         .progress-media { height: 100%; background-color: #ef4444; }
         .progress-social { height: 100%; background-color: #f97316; }
-
-        .pol-coalition { background-color: #eff6ff; border: 1px solid #bfdbfe; }
-        .pol-opposition { background-color: #f8fafc; border: 1px solid #e2e8f0; }
 
         .eco-grid-col { padding-right: 0.25rem; }
         .eco-item { background: #f8fafc; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.25rem; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;}
@@ -110,14 +101,12 @@
         .btn-inactive { background-color: #e2e8f0; color: #334155; }
         .btn-inactive:hover { background-color: #cbd5e1; }
 
-        /* Search Styles */
         .search-container { position: relative; width: 100%; max-width: 350px; display: flex; align-items: center; }
         .search-input { width: 100%; padding: 0.5rem 1rem 0.5rem 2.2rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #f8fafc; }
         .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); background: white; }
-        .search-clear-btn { position: absolute; left: 0.5rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; display: none; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .search-clear-btn { position: absolute; left: 0.5rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; display: none; align-items: center; justify-content: center; }
         .search-clear-btn:hover { color: #ef4444; }
 
-        /* COMPACT DOC CARDS */
         .doc-card { background: white; border: 1px solid #e2e8f0; padding: 1rem; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .doc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 12px -2px rgba(0,0,0,0.1); }
 
@@ -181,19 +170,16 @@
         #chartTooltip .tt-title { font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;}
         #chartTooltip .tt-date { font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155;}
 
-        .relevance-element { display: none; }
-        .show-relevance .relevance-element { display: inline-flex; } /* for badges */
-        .show-relevance div.relevance-element { display: block; } /* for ecosystem texts */
-
-        .action-buttons { flex-wrap: wrap; }
-        .action-btn {
-            background: white; border: 1px solid #bfdbfe; color: #1e40af;
-            padding: 10px 20px; border-radius: 999px; font-weight: 700; font-size: 1.05rem;
-            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        /* Action Buttons & Accordion CSS */
+        .btn-action {
+            background: white; border: 1px solid #cbd5e1; color: #334155;
+            padding: 8px 16px; border-radius: 0.5rem; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .action-btn:hover { background: #eff6ff; border-color: #93c5fd; transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .action-icon { font-size: 1.2rem; }
+        .btn-action:hover { background: #f8fafc; border-color: #94a3b8; }
+
+        .relevance-element { display: none; }
+        .show-relevance .relevance-element { display: inline-flex; }
 
         .accordion-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .accordion-content { display: none; overflow: hidden; }
@@ -204,7 +190,7 @@
         .doc-details { display: none; margin-top: 1rem; }
         .doc-details.open { display: block; }
         .doc-header { cursor: pointer; }
-</style>
+    </style>
 </head>
 <body>
     <div id="loading-message">טוען נתונים...</div>
@@ -219,13 +205,12 @@
             </div>
             <div class="flex items-center gap-4 mr-auto flex-wrap">
                 <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
-                <a id="btn-vaadot" href="#" class="btn-back disabled" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">ישיבות ועדות 🏛️</a>
                 <div class="badge-mono">
                     <span>גרסה: <span id="d-version">-</span></span>
                     <span style="opacity: 0.5;">|</span>
                     <span>עדכון אחרון: <span id="d-date">-</span></span>
                     <span style="opacity: 0.5;">|</span>
-                    <span class="font-bold text-blue-400">Gilat AI | גרסה 2.2.0 (16/06/2026 13:00)</span>
+                    <span class="font-bold text-blue-400" id="gilat-version">Gilat AI</span>
                 </div>
             </div>
         </header>
@@ -244,19 +229,12 @@
                     <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;">
                     </ul>
                 </div>
-                <div class="flex gap-4 mt-6 action-buttons">
-                    <button class="action-btn">
-                        <span class="action-icon">💡</span>
-                        שאלות על הנושא
-                    </button>
-                    <button class="action-btn">
-                        <span class="action-icon">📄</span>
-                        תקציר לוועדה
-                    </button>
-                    <button class="action-btn">
-                        <span class="action-icon">🎤</span>
-                        נקודות לראיון
-                    </button>
+
+                <div class="flex flex-col md:flex-row gap-4 mt-6">
+                    <button class="btn-action">📖 מילון מונחים</button>
+                    <button class="btn-action">⚙️ הגדרות</button>
+                    <button class="btn-action">📊 מתודולוגיה</button>
+                    <button class="btn-action">⚠️ הסתייגויות</button>
                 </div>
             </div>
         </div>
@@ -264,39 +242,38 @@
         <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
             <h3 class="text-2xl mb-4 border-b pb-3">מפת הגורמים המעורבים</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border">
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1"></h3>
+                    <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border">
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-2"></h3>
+                    <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border">
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3"></h3>
+                    <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
+                </div>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-2"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
-            </div></div></div>
+        </div>
 
         <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
-                <div>
-                    <h3 class="text-2xl mb-1">מאגר המסמכים המלא</h3>
-                    <p class="text-base text-gray-500">מסונן וממוין לפי סוג המסמך וסדר כרונולוגי.</p>
+                <div class="flex items-center gap-4">
+                    <h3 class="text-2xl mb-1">מסמכים</h3>
+                    <div class="flex gap-2">
+                        <button class="btn-back" style="font-size: 0.85rem; padding: 2px 8px;" onclick="toggleAllDocs(true)">פתיחת הכל</button>
+                        <button class="btn-back" style="font-size: 0.85rem; padding: 2px 8px;" onclick="toggleAllDocs(false)">סגירת הכל</button>
+                    </div>
                 </div>
                 <div class="flex flex-col md:items-end gap-3 w-full md:w-auto">
                     <div class="search-container">
                         <input type="text" id="searchInput" class="search-input" placeholder="חיפוש חופשי במסמכים...">
                         <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש" style="display: none;">✖</button>
                     </div>
-
                     <div class="flex flex-wrap gap-2 justify-end" id="filterContainer"></div>
                 </div>
             </div>
-
-                <div class="flex gap-2 mb-4 w-full">
-                    <button class="btn-back" style="font-size: 0.9rem; padding: 4px 10px;" onclick="toggleAllDocs(true)">פתיחת הכל</button>
-                    <button class="btn-back" style="font-size: 0.9rem; padding: 4px 10px;" onclick="toggleAllDocs(false)">סגירת הכל</button>
-                </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="documentsStream"></div>
         </div>
 
@@ -306,14 +283,14 @@
                 <span id="timeline-icon" class="accordion-icon text-xl">▼</span>
             </div>
             <div id="timeline-content" class="accordion-content">
-            <p class="text-base text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
-            <div class="timeline-scroll-wrapper" style="position: relative;">
-                <div class="timeline-canvas-container">
-                    <canvas id="mainTimeline"></canvas>
+                <p class="text-base text-gray-500 mb-5 border-b pb-3 font-semibold" id="d-timeline-sub">יש להעביר עכבר על העיגולים לפרטים נוספים.</p>
+                <div class="timeline-scroll-wrapper" style="position: relative;">
+                    <div class="timeline-canvas-container">
+                        <canvas id="mainTimeline"></canvas>
+                    </div>
+                    <div id="chartTooltip"></div>
                 </div>
-                <div id="chartTooltip"></div>
-            </div>
-            <div class="flex flex-wrap gap-5 mt-5 justify-center text-base font-bold" id="chartLegend"></div>
+                <div class="flex flex-wrap gap-5 mt-5 justify-center text-base font-bold" id="chartLegend"></div>
             </div>
         </div>
 
@@ -343,8 +320,7 @@
                     </div>
                 </div>
             </div>
-
-            </div>
+        </div>
 
     </div>
 
@@ -354,7 +330,6 @@
         let timelineNodes = [];
         let currentFilterType = 'all';
 
-        // Sorting configuration
         const typeSortOrder = {
             'mmm': 1,
             'activeLaw': 2,
@@ -371,13 +346,10 @@
             if (!dateStr || dateStr === "לא ידוע") return dateStr;
             const parts = dateStr.split('/');
             if (parts.length !== 3) return dateStr;
-
             const updateDate = new Date(parts[2], parts[1] - 1, parts[0]);
             const today = new Date();
-
             today.setHours(0,0,0,0);
             updateDate.setHours(0,0,0,0);
-
             if (updateDate > today) {
                 const dd = String(today.getDate()).padStart(2, '0');
                 const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -394,26 +366,25 @@
             if (!fileUrl) {
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('error-message').style.display = 'block';
-                document.getElementById('error-message').innerHTML = `
-                    <strong>שגיאה בטעינת הנתונים</strong><br>
-                    לא צוין קובץ נתונים להצגה בשורת הכתובת. אנא חזרו לתפריט הראשי ובחרו נושא.
-                `;
                 return;
             }
 
             try {
                 const response = await fetch(fileUrl);
-                if (!response.ok) throw new Error("File not found or network error");
+                if (!response.ok) throw new Error("File not found");
                 const data = await response.json();
 
-
-                // Rename entities as requested
                 data.appConfiguration.entities.forEach(e => {
                     if (e.key === 'activeLaw') e.label = 'הצעות חוק';
                     if (e.key === 'passedLaw') e.label = 'חוקים שעברו';
                 });
 
                 window.appConfiguration = data.appConfiguration;
+
+                // Version Update
+                const dateObj = new Date();
+                const vDate = dateObj.toLocaleDateString('he-IL') + " " + dateObj.toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'});
+                document.getElementById('gilat-version').innerHTML = `Gilat AI | גרסה 2.4.0 (${vDate})`;
 
                 document.getElementById('d-title').innerText = data.meta.title;
                 document.getElementById('d-subtitle').innerText = data.meta.subtitle;
@@ -432,34 +403,17 @@
                 document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
                 document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
 
-
-
                 document.getElementById('eco-title-1').innerText = "משרדי ממשלה";
                 document.getElementById('eco-title-2').innerText = data.layoutStrings.ecosystemTitles[1] || "ועדות הכנסת";
                 document.getElementById('eco-title-3').innerText = "גופים אחרים";
 
-
                 document.getElementById('d-timeline-title').innerText = data.layoutStrings.timelineTitle;
-
-                // Check if vaadot file exists and enable button
-                const vaadotFileUrl = fileUrl.replace('data_', 'vaadot_');
-                try {
-                    const vaadotRes = await fetch(vaadotFileUrl, { method: 'HEAD' });
-                    if (vaadotRes.ok) {
-                        const btnVaadot = document.getElementById('btn-vaadot');
-                        btnVaadot.href = `vaadot.html?file=${vaadotFileUrl}`;
-                        btnVaadot.classList.remove('disabled');
-                    }
-                } catch (e) {
-                    console.log('vaadot file not found');
-                }
 
                 setupFilters();
                 setupSearch();
-
-
                 renderEcosystem();
                 renderCards();
+                renderExternalFrames();
 
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
@@ -469,15 +423,53 @@
                 }, 100);
 
             } catch (e) {
-                console.error("Error fetching dashboard data", e);
-                document.getElementById('loading-message').style.display = 'none';
-                document.getElementById('error-message').style.display = 'block';
-                document.getElementById('error-message').innerHTML = `
-                    <strong>שגיאה בטעינת הקובץ: ${fileUrl}</strong><br><br>
-                    אנא ודאו שהקובץ קיים בתיקייה ושהמערכת פועלת על שרת מקומי.
-                `;
+                console.error(e);
             }
         };
+
+        function renderExternalFrames() {
+            if (!window.appConfiguration || !window.appConfiguration.externalFrames) return;
+            const frames = window.appConfiguration.externalFrames;
+            const contentDiv = document.getElementById('dashboard-content');
+
+            // Map rows: 1:Header, 2:Exec, 3:Ecosystem, 4:Docs, 5:Timeline, 6:Metrics
+            const blocks = [
+                contentDiv.querySelector('header'),
+                document.querySelector('.exec-block'),
+                document.getElementById('eco-title-1').closest('.mb-8.bg-white'),
+                document.getElementById('documentsStream').closest('.mb-8.bg-white'),
+                document.getElementById('d-timeline-title').closest('.mb-8.bg-white'),
+                document.getElementById('d-media-val').closest('.grid.grid-cols-1.gap-6')
+            ];
+
+            frames.forEach(frame => {
+                const targetBlock = blocks[frame.row - 1];
+                if (targetBlock) {
+                    const frameHtml = `
+                        <div class="mb-8 bg-white p-4 rounded-xl shadow-md border position-relative">
+                            <div class="accordion-header" onclick="toggleFrame(this)">
+                                <h3 class="text-xl mb-4 border-b pb-3 font-bold text-gray-800" style="margin-bottom:0; border:none; padding-bottom:0;">
+                                    ${frame.title}
+                                    <a href="${frame.url}" target="_blank" style="font-size:0.8rem; margin-right:10px; text-decoration:none; color:#2563eb;" title="פתיחה בחלון חדש">🔗 מקור</a>
+                                </h3>
+                                <span class="accordion-icon text-xl open">▼</span>
+                            </div>
+                            <div class="accordion-content open" style="margin-top:1rem;">
+                                <iframe src="${frame.url}" class="w-full rounded-lg" style="height: 700px; border: none; width: 100%;"></iframe>
+                            </div>
+                        </div>
+                    `;
+                    targetBlock.insertAdjacentHTML('beforebegin', frameHtml);
+                }
+            });
+        }
+
+        function toggleFrame(headerEl) {
+            const content = headerEl.nextElementSibling;
+            const icon = headerEl.querySelector('.accordion-icon');
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
 
         function setupFilters() {
             const filterContainer = document.getElementById('filterContainer');
@@ -497,7 +489,7 @@
                 <input type="checkbox" id="relevanceToggle" class="cursor-pointer">
                 הצג ציוני קשר
             </label>
-<button class="filter-btn btn-active" data-filter="all">הכל (${items.length})</button>`;
+            <button class="filter-btn btn-active" data-filter="all">הכל (${items.length})</button>`;
 
             sortedEntities.forEach(e => {
                 const count = typeCounts[e.key] || 0;
@@ -553,7 +545,6 @@
                     <div class="eco-item border-r-4 ${item.color}">
                         <div class="flex justify-between items-start gap-2 mb-1">
                             <strong class="text-gray-900 text-base block leading-tight">${item.name}</strong>
-                            <div class="relevance-element text-[12px] font-bold bg-gray-200 text-gray-700 px-1 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
                         </div>
                         <span class="text-sm text-gray-600 font-semibold">${item.desc}</span>
                     </div>
@@ -565,7 +556,6 @@
             renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries);
             renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees);
             renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs);
-
         }
 
         function renderCards() {
@@ -576,13 +566,11 @@
 
             let filteredItems = window.appConfiguration.items.filter(item => {
                 const matchesType = currentFilterType === 'all' || item.type === currentFilterType;
-
                 let matchesSearch = true;
                 if (searchTerm !== '') {
                     const searchableText = `${item.title} ${item.summary} ${item.author} ${item.source} ${item.impact} ${(item.keywords || []).join(' ')}`.toLowerCase();
                     matchesSearch = searchableText.includes(searchTerm);
                 }
-
                 return matchesType && matchesSearch;
             });
 
@@ -594,15 +582,11 @@
             filteredItems.sort((a, b) => {
                 const orderA = typeSortOrder[a.type] || 99;
                 const orderB = typeSortOrder[b.type] || 99;
-
-                if (orderA !== orderB) {
-                    return orderA - orderB;
-                }
+                if (orderA !== orderB) return orderA - orderB;
                 return (b.year + b.month/12) - (a.year + a.month/12);
             });
 
             filteredItems.forEach(item => {
-
                 let sourceText = item.source;
                 if (item.type === 'activeLaw') sourceText = 'הצעת חוק';
                 if (item.type === 'passedLaw') sourceText = 'חוק שעבר';
@@ -711,7 +695,7 @@
             content.classList.toggle('open');
             icon.classList.toggle('open');
             if(content.classList.contains('open')) {
-                renderMainTimeline(); // render when opened
+                renderMainTimeline();
             }
         }
 
