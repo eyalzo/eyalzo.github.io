@@ -489,9 +489,7 @@
 
             sortedEntities.forEach(e => {
                 const count = typeCounts[e.key] || 0;
-                if (count > 0) {
-                    filtersHtml += `<button class="filter-btn btn-inactive" data-filter="${e.key}">${e.label} (${count})</button>`;
-                }
+                filtersHtml += `<button class="filter-btn btn-inactive" data-filter="${e.key}">${e.label} (${count})</button>`;
             });
 
             filterContainer.innerHTML = filtersHtml;
@@ -570,19 +568,17 @@
                 return matchesType && matchesSearch;
             });
 
-            if (filteredItems.length === 0) {
+            if (filteredItems.length === 0 && searchTerm !== '') {
                 container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b; font-size: 1.1rem;">לא נמצאו מסמכים התואמים את החיפוש.</div>`;
                 return;
             }
-
             const categoryGroups = [
                 { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },
                 { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },
                 { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] },
                 { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] },
                 { key: 'comptroller', icon: '🔍', title: 'מבקר המדינה', color: '#f59e0b', items: [] },
-                { key: 'govDecision', icon: '📜', title: 'החלטות ותוכניות ממשלה', color: '#14b8a6', items: [] },
-                { key: 'financeDirective', icon: '💰', title: 'הנחיות פיננסיות', color: '#ec4899', items: [] }
+                { key: 'govDecision', icon: '📜', title: 'החלטות ותוכניות ממשלה', color: '#14b8a6', items: [] }
             ];
 
             filteredItems.forEach(item => {
@@ -591,7 +587,8 @@
             });
 
             categoryGroups.forEach(group => {
-                if (group.items.length === 0) return;
+                // מציג את העמודה אם בחרנו 'הכל' או אם בחרנו בקטגוריה הספציפית הזו
+                if (currentFilterType !== 'all' && currentFilterType !== group.key) return;
 
                 group.items.sort((a, b) => (b.year + b.month/12) - (a.year + a.month/12));
 
@@ -603,6 +600,11 @@
                         </div>
                         <div class="category-items">
                 `;
+
+                // הוספת טקסט מציין לעמודה ריקה
+                if (group.items.length === 0) {
+                    colHtml += `<div style="text-align: center; color: #94a3b8; font-size: 0.95rem; margin-top: 1rem;">אין מסמכים בקטגוריה זו</div>`;
+                }
 
                 group.items.forEach((item, index) => {
                     const formattedMonth = item.month.toString().padStart(2, '0');
