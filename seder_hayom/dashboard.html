@@ -31,6 +31,7 @@
         .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
         @media (min-width: 768px) {
             .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
         @media (min-width: 1024px) {
@@ -179,7 +180,11 @@
         }
         #chartTooltip .tt-title { font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;}
         #chartTooltip .tt-date { font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155;}
-    </style>
+
+        .relevance-element { display: none; }
+        .show-relevance .relevance-element { display: inline-flex; } /* for badges */
+        .show-relevance div.relevance-element { display: block; } /* for ecosystem texts */
+</style>
 </head>
 <body>
     <div id="loading-message">טוען נתונים...</div>
@@ -200,7 +205,7 @@
                     <span style="opacity: 0.5;">|</span>
                     <span>עדכון אחרון: <span id="d-date">-</span></span>
                     <span style="opacity: 0.5;">|</span>
-                    <span class="font-bold text-blue-400">Gilat AI</span>
+                    <span class="font-bold text-blue-400">Gilat AI | גרסה 2.1.0 (16/06/2026 13:00)</span>
                 </div>
             </div>
         </header>
@@ -222,7 +227,9 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
+            <h3 class="text-2xl mb-4 border-b pb-3">מפת הגורמים המעורבים</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white p-6 rounded-xl shadow-md border">
                 <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1"></h3>
                 <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
@@ -234,12 +241,7 @@
             <div class="bg-white p-6 rounded-xl shadow-md border">
                 <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3"></h3>
                 <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border">
-                <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-4"></h3>
-                <div class="space-y-3 eco-grid-col" id="eco-politicians"></div>
-            </div>
-        </div>
+            </div></div></div>
 
         <div class="mb-8 bg-white p-6 rounded-xl shadow-md border position-relative">
             <h3 class="text-2xl mb-2" id="d-timeline-title"></h3>
@@ -264,13 +266,14 @@
                         <input type="text" id="searchInput" class="search-input" placeholder="חיפוש חופשי במסמכים...">
                         <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש" style="display: none;">✖</button>
                     </div>
+                    <button id="toggleRelevanceBtn" class="btn-back" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1; height: 100%;">הצג ציוני קשר</button>
                     <div class="flex flex-wrap gap-2 justify-end" id="filterContainer"></div>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="documentsStream"></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="grid grid-cols-1 gap-6 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
                 <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
                 <div class="mb-5">
@@ -297,20 +300,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
-                <h3 class="text-xl mb-4 border-b pb-3">⚖️ הזירה הפוליטית: קואליציה מול אופוזיציה</h3>
-                <div class="grid grid-cols-1 gap-4 h-full">
-                    <div class="pol-coalition p-4 rounded-lg">
-                        <strong class="text-blue-900 block mb-2 text-base border-b border-blue-200 pb-2" id="d-coal-title"></strong>
-                        <p class="text-sm text-gray-700 leading-relaxed font-semibold" id="d-coal-text"></p>
-                    </div>
-                    <div class="pol-opposition p-4 rounded-lg">
-                        <strong class="text-gray-900 block mb-2 text-base border-b border-gray-200 pb-2" id="d-opp-title"></strong>
-                        <p class="text-sm text-gray-700 leading-relaxed font-semibold" id="d-opp-text"></p>
-                    </div>
-                </div>
             </div>
-        </div>
 
     </div>
 
@@ -355,7 +345,7 @@
 
         window.onload = async () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const fileUrl = urlParams.get('file');
+            const fileUrl = urlParams.get('file') || 'https://mmm.beniad.com/seder_hayom/data_arab_crime.json';
 
             if (!fileUrl) {
                 document.getElementById('loading-message').style.display = 'none';
@@ -372,11 +362,17 @@
                 if (!response.ok) throw new Error("File not found or network error");
                 const data = await response.json();
 
+
+                // Rename entities as requested
+                data.appConfiguration.entities.forEach(e => {
+                    if (e.key === 'activeLaw') e.label = 'הצעות חוק';
+                    if (e.key === 'passedLaw') e.label = 'חוקים שעברו';
+                });
+
                 window.appConfiguration = data.appConfiguration;
 
                 document.getElementById('d-title').innerText = data.meta.title;
                 document.getElementById('d-subtitle').innerText = data.meta.subtitle;
-                document.getElementById('d-version').innerText = data.meta.version;
                 document.getElementById('d-date').innerText = getCorrectedDate(data.meta.lastUpdate);
 
                 document.getElementById('d-exec-title').innerText = data.execSummary.title;
@@ -392,18 +388,15 @@
                 document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
                 document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
 
-                document.getElementById('d-coal-title').innerText = data.arena.coalition.title;
-                document.getElementById('d-coal-text').innerHTML = data.arena.coalition.text;
-                document.getElementById('d-opp-title').innerText = data.arena.opposition.title;
-                document.getElementById('d-opp-text').innerHTML = data.arena.opposition.text;
+
 
                 document.getElementById('eco-title-1').innerText = "משרדי ממשלה";
                 document.getElementById('eco-title-2').innerText = data.layoutStrings.ecosystemTitles[1] || "ועדות הכנסת";
                 document.getElementById('eco-title-3').innerText = "גופים אחרים";
-                document.getElementById('eco-title-4').innerText = data.layoutStrings.ecosystemTitles[3] || "פוליטיקאים";
+
 
                 document.getElementById('d-timeline-title').innerText = data.layoutStrings.timelineTitle;
-                
+
                 // Check if vaadot file exists and enable button
                 const vaadotFileUrl = fileUrl.replace('data_', 'vaadot_');
                 try {
@@ -419,6 +412,16 @@
 
                 setupFilters();
                 setupSearch();
+
+            document.getElementById('toggleRelevanceBtn').addEventListener('click', function() {
+                document.body.classList.toggle('show-relevance');
+                if (document.body.classList.contains('show-relevance')) {
+                    this.innerText = 'הסתר ציוני קשר';
+                } else {
+                    this.innerText = 'הצג ציוני קשר';
+                }
+            });
+
                 renderEcosystem();
                 renderCards();
 
@@ -502,7 +505,7 @@
                     <div class="eco-item border-r-4 ${item.color}">
                         <div class="flex justify-between items-start gap-2 mb-1">
                             <strong class="text-gray-900 text-base block leading-tight">${item.name}</strong>
-                            <div class="text-[12px] font-bold bg-gray-200 text-gray-700 px-1 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
+                            <div class="relevance-element text-[12px] font-bold bg-gray-200 text-gray-700 px-1 py-0.5 rounded whitespace-nowrap">קשר: ${item.relevance}/10</div>
                         </div>
                         <span class="text-sm text-gray-600 font-semibold">${item.desc}</span>
                     </div>
@@ -514,7 +517,7 @@
             renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries);
             renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees);
             renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs);
-            renderEcosystemList('eco-politicians', window.appConfiguration.ecosystem.politicians);
+
         }
 
         function renderCards() {
@@ -551,6 +554,11 @@
             });
 
             filteredItems.forEach(item => {
+
+                let sourceText = item.source;
+                if (item.type === 'activeLaw') sourceText = 'הצעת חוק';
+                if (item.type === 'passedLaw') sourceText = 'חוק שעבר';
+
                 const tagsHtml = item.keywords.map(kw => `<span class="tag-badge">#${kw}</span>`).join('');
                 const formattedMonth = item.month.toString().padStart(2, '0');
 
@@ -564,9 +572,9 @@
                     <div class="doc-card ${item.styleClass}">
                         <div>
                             <div class="flex justify-between items-center mb-3 border-b pb-2">
-                                <span class="rounded-full px-2 py-0.5 text-xs font-bold ${item.badgeClass}">${item.source}</span>
+                                <span class="rounded-full px-2 py-0.5 text-xs font-bold ${item.badgeClass}">${sourceText}</span>
                                 <div class="flex items-center gap-2">
-                                    <span class="relevance-badge bg-gray-100">🔗 ${item.relevance}/10</span>
+                                    <span class="relevance-element relevance-badge bg-gray-100">🔗 ${item.relevance}/10</span>
                                     <span class="text-base font-bold text-gray-700">${formattedMonth}/${item.year}</span>
                                 </div>
                             </div>
