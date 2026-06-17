@@ -466,7 +466,10 @@
                     // שליפת התאריך מהמסמך המקושר או מהפריט החיצוני
                     if (item.refId) {
                         doc = data.appConfiguration.items.find(d => d.idCode === item.refId);
-                        if (doc) parsedDate = doc.parsedDate; // משתמש בנתון שעבר עיבוד מקדים
+                        if (doc)
+                            parsedDate = doc.parsedDate; // משתמש בנתון שעבר עיבוד מקדים
+                        else
+                            console.warn("New item with refId that does not match a doc with this idCode " + item.refId);
                     } else if (item.date) {
                         parsedDate = parseFlexibleDate(item.date);
                     }
