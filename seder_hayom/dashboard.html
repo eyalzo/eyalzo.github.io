@@ -781,8 +781,8 @@
 
                     // Render specific metadata based on item type
                     let metadataHtml = '';
-                    if (item.type === 'activeLaw') {
 
+                    if (item.type === 'activeLaw') {
                         // Render committee field ONLY if it exists and is not empty
                         let vaadaHtml = '';
                         if (item.activeLawVaada && item.activeLawVaada.trim() !== '') {
@@ -801,8 +801,17 @@
                                     ${statusVisualHtml}
                                 </div>
                             </div>`;
-                    } else {
-                        // Display the original source for all other item types
+                    }
+                    else if (item.type === 'mmm') {
+                        // New logic for MMM documents
+                        metadataHtml = `
+                            <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-1">
+                                <div><span class="font-bold">מבקש המסמך:</span> ${item.mmmRequester || 'לא צוין'}</div>
+                                <div><span class="font-bold">סוג:</span> ${item.mmmCategory || 'לא צוין'}</div>
+                            </div>`;
+                    }
+                    else {
+                        // Display the original source for all other item types (e.g., committee, comptroller)
                         metadataHtml = `
                             <div class="flex justify-between items-center mb-2 border-b pb-2">
                                 <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${item.source || item.author}</span></span>
