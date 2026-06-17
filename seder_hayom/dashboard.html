@@ -155,14 +155,14 @@
         .category-title { display: flex; justify-content: space-between; align-items: center; padding: 1rem; font-weight: bold; font-size: 1.1rem; background: white; border-bottom: 1px solid #e2e8f0; }
         .category-items { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; flex-grow: 1; overflow-y: auto; max-height: 800px; }
 
-        .doc-item-wrapper { background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .doc-item-wrapper { background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); flex-shrink: 0; }
         .doc-mini-header { padding: 0.75rem 1rem; display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer; transition: background-color 0.2s; }
         .doc-mini-header:hover { background-color: #f1f5f9; }
         .doc-mini-date { font-weight: bold; color: #64748b; font-size: 0.9rem; white-space: nowrap; padding-top: 0.1rem;}
         .doc-mini-title { font-weight: 600; color: #0f172a; line-height: 1.3; font-size: 1rem;}
 
         .doc-full-details { display: none; padding: 1rem; border-top: 1px solid #e2e8f0; background: #fafafa; }
-        .doc-full-details.open { display: block; }
+        .doc-full-details.open { display: flex; flex-direction: column; }
 
         .card-summary-box { background: #ffffff; border: 1px solid #f1f5f9; padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; line-height: 1.5; color: #334155;}
         .card-impact-box { background: rgba(255,255,255,0.5); padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; border-right: 4px solid #cbd5e1; }
@@ -790,64 +790,68 @@
                     const dateStr = `${formattedMonth}/${item.year}`;
                     const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
 
-                    // Hide internal ID and only build a link badge if a valid URL exists
+                    // 1. Safe link processing (prevents crash if data is missing or invalid)
                     let linkBadgeHtml = '';
-
-                    // Check if link exists and is valid
-                    if (item.link && (item.link.startsWith('http://') || item.link.startsWith('https://'))) {
-                        linkBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-right: auto;" title="למעבר למסמך המקור"><span>קישור למסמך</span><span style="font-size:0.75rem">🔗</span></a>`;
+                    let safeLink = item.link ? String(item.link).trim() : '';
+                    if (safeLink !== '' && safeLink !== 'undefined') {
+                        // Auto-append protocol if missing
+                        if (!safeLink.startsWith('http')) safeLink = 'https://' + safeLink;
+                        linkBadgeHtml = `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>קישור למסמך</span><span style="font-size:0.75rem">🔗</span></a>`;
                     }
 
+                    // 2. Basic title display
                     let displayTitle = item.title;
                     if (item.type === 'committee') {
                         displayTitle = `<strong style="font-weight: 800; color: #0f172a;">${item.author}</strong>: ${item.title}`;
                     }
 
-                    // Render specific metadata based on item type
+                    // 3. Safe metadata processing (prevents trim() crash on numeric data from Excel)
                     let metadataHtml = '';
-
                     if (item.type === 'activeLaw') {
-                        // Render committee field ONLY if it exists and is not empty
                         let vaadaHtml = '';
-                        if (item.activeLawVaada && item.activeLawVaada.trim() !== '') {
-                            vaadaHtml = `<div style="margin-top: 4px;"><span class="font-bold">ועדה מטפלת:</span> ${item.activeLawVaada}</div>`;
+                        let safeVaada = item.activeLawVaada ? String(item.activeLawVaada).trim() : '';
+                        if (safeVaada !== '') {
+                            vaadaHtml = `<div style="margin-top: 4px;"><span class="font-bold">ועדה מטפלת:</span> ${safeVaada}</div>`;
                         }
 
-                        // Generate the visual progress bar for the status
-                        const statusVisualHtml = generateLawProgressHtml(item.activeLawStatus);
+                        let safeStatus = item.activeLawStatus ? String(item.activeLawStatus).trim() : '';
+                        const statusVisualHtml = generateLawProgressHtml(safeStatus);
+
+                        let safeType = item.activeLawType ? String(item.activeLawType).trim() : 'לא צוין';
 
                         metadataHtml = `
                             <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-2">
-                                <div><span class="font-bold">סוג:</span> ${item.activeLawType || 'לא צוין'}</div>
+                                <div><span class="font-bold">סוג:</span> ${safeType}</div>
                                 ${vaadaHtml}
                                 <div>
                                     <span class="font-bold">סטטוס:</span>
                                     ${statusVisualHtml}
                                 </div>
                             </div>`;
-                    }
-                    else if (item.type === 'mmm') {
-                        // New logic for MMM documents
+                    } else if (item.type === 'mmm') {
+                        let safeRequester = item.mmmRequester ? String(item.mmmRequester).trim() : 'לא צוין';
+                        let safeCategory = item.mmmCategory ? String(item.mmmCategory).trim() : 'לא צוין';
                         metadataHtml = `
                             <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-1">
-                                <div><span class="font-bold">מבקש המסמך:</span> ${item.mmmRequester || 'לא צוין'}</div>
-                                <div><span class="font-bold">סוג:</span> ${item.mmmCategory || 'לא צוין'}</div>
+                                <div><span class="font-bold">מבקש המסמך:</span> ${safeRequester}</div>
+                                <div><span class="font-bold">סוג:</span> ${safeCategory}</div>
                             </div>`;
-                    }
-                    else {
-                        // Display the original source for all other item types (e.g., committee, comptroller)
+                    } else {
+                        let safeSource = (item.source || item.author) ? String(item.source || item.author).trim() : 'לא צוין';
                         metadataHtml = `
                             <div class="flex justify-between items-center mb-2 border-b pb-2">
-                                <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${item.source || item.author}</span></span>
+                                <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${safeSource}</span></span>
                             </div>`;
                     }
 
-                    // Check if impact exists and is not empty
+                    // 4. Safe impact processing
                     let impactHtml = '';
-                    if (item.impact && item.impact.trim() !== '') {
-                        impactHtml = `<div class="card-impact-box text-sm mb-3"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${item.impact}</div>`;
+                    let safeImpact = item.impact ? String(item.impact).trim() : '';
+                    if (safeImpact !== '') {
+                        impactHtml = `<div class="card-impact-box text-sm mb-3"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${safeImpact}</div>`;
                     }
 
+                    // 5. Final HTML assembly with a wrapper to strictly push the link to the left
                     colHtml += `
                             <div class="doc-item-wrapper">
                                 <div class="doc-mini-header" onclick="toggleDoc('${detailsId}')">
@@ -856,11 +860,11 @@
                                 </div>
                                 <div id="${detailsId}" class="doc-full-details">
                                     ${metadataHtml}
-                                    <p class="card-summary-box font-semibold">${item.summary}</p>
+                                    <p class="card-summary-box font-semibold">${item.summary || ''}</p>
                                     ${impactHtml}
-                                    <div class="border-t pt-2 mt-auto flex justify-between items-center flex-wrap gap-2">
-                                        <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance}/10</span>
-                                        ${linkBadgeHtml}
+                                    <div class="border-t pt-2 mt-auto flex items-center w-full">
+                                        <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance || '0'}/10</span>
+                                        <div style="margin-right: auto;">${linkBadgeHtml}</div>
                                     </div>
                                 </div>
                             </div>
