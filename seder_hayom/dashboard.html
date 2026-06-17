@@ -986,9 +986,15 @@
             const doc = window.appConfiguration.items.find(d => d.idCode === idCode);
             if (!doc) return;
 
-            const formattedMonth = String(doc.month).padStart(2, '0');
-            const day = doc.day ? String(doc.day).padStart(2, '0') + '/' : '';
+            // Build the date badge only if a valid date exists
+            let dateBadgeHtml = '';
+            if (doc.parsedDate && doc.parsedDate.hasDate) {
+                const formattedMonth = String(doc.month).padStart(2, '0');
+                const day = doc.day ? String(doc.day).padStart(2, '0') + '/' : '';
+                dateBadgeHtml = `<span style="font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155; white-space:nowrap;">${day}${formattedMonth}/${doc.year}</span>`;
+            }
 
+            // Build the source/author text
             let sourceHtml = '';
             if (doc.type !== 'committee' || (doc.type === 'committee' && doc.author !== doc.source)) {
                 sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מקור:</strong> ${doc.author}</div>`;
@@ -996,17 +1002,17 @@
                 sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מחבר:</strong> ${doc.author}</div>`;
             }
 
-            // הזרקת התוכן לפופאפ באותו מבנה כמו במשולבים המורחבים
+            // Inject content into the tooltip
             tooltip.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px; gap: 12px;">
                     <span style="font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;">${doc.title}</span>
-                    <span style="font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155; white-space:nowrap;">${day}${formattedMonth}/${doc.year}</span>
+                    ${dateBadgeHtml}
                 </div>
                 ${sourceHtml}
                 <div style="font-size:0.9rem; line-height:1.5;">${doc.summary}</div>
             `;
 
-            // מיקום גמיש לפי העכבר כדי למנוע חיתוך במסכים קטנים
+            // Dynamic positioning to prevent overflow on small screens
             let leftPos = event.clientX + 15;
             if (leftPos + 350 > window.innerWidth) {
                 leftPos = event.clientX - 365;
