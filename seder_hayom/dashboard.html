@@ -456,7 +456,31 @@
                 document.getElementById('d-title').innerText = data.meta.title;
 
                 document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
-                document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
+                // Render Interactive Executive Summary sentences
+                if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
+                    // Split text by period followed by space
+                    const sentences = data.execSummary.text.split('. ');
+                    const processedText = sentences.map((sentence, index) => {
+                        const sIndex = index + 1; // 1-based index to match JSON
+                        const refs = data.execSummary.textRefs.filter(r => r.sentenceIndex === sIndex);
+
+                        // Ensure we put the period and space back
+                        let textToWrap = sentence;
+                        if (index < sentences.length - 1 || !textToWrap.endsWith('.')) {
+                            textToWrap += '. ';
+                        }
+
+                        if (refs.length > 0) {
+                            // Combine multiple refIds into a comma-separated string
+                            const idCodes = refs.map(r => r.refId).join(',');
+                            return `<span style="cursor: help; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color=''" onmousemove="showDocTooltip(event, '${idCodes}')" onmouseleave="hideDocTooltip()">${textToWrap}</span>`;
+                        }
+                        return textToWrap;
+                    }).join('');
+                    document.getElementById('d-exec-text').innerHTML = processedText;
+                } else {
+                    document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
+                }
                 document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(item => {
                     if (typeof item === 'string') return `<li style="margin-bottom: 0.5rem;">${item}</li>`;
 
@@ -1114,36 +1138,68 @@
             });
         }
 
-        function showDocTooltip(event, idCode) {
+        function showDocTooltip(event, idCodesStr) {
             const tooltip = document.getElementById('docHoverTooltip');
-            const doc = window.appConfiguration.items.find(d => d.idCode === idCode);
-            if (!doc) return;
+            // Split incoming string into array of IDs
+            const idCodes = idCodesStr.split(',');
 
-            // Build the date badge only if a valid date exists
-            let dateBadgeHtml = '';
-            if (doc.parsedDate && doc.parsedDate.hasDate) {
-                const formattedMonth = String(doc.month).padStart(2, '0');
-                const day = doc.day ? String(doc.day).padStart(2, '0') + '/' : '';
-                dateBadgeHtml = `<span style="font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155; white-space:nowrap;">${day}${formattedMonth}/${doc.year}</span>`;
-            }
+            let htmlContent = '';
 
-            // Build the source/author text
-            let sourceHtml = '';
-            if (doc.type !== 'committee' || (doc.type === 'committee' && doc.author !== doc.source)) {
-                sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מקור:</strong> ${doc.author}</div>`;
-            } else {
-                sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מחבר:</strong> ${doc.author}</div>`;
-            }
+            idCodes.forEach((idCode, index) => {
+                const doc = window.appConfiguration.items.find(d => d.idCode === idCode.trim());
+                if (!doc) return;
 
-            // Inject content into the tooltip
-            tooltip.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px; gap: 12px;">
-                    <span style="font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;">${doc.title}</span>
-                    ${dateBadgeHtml}
-                </div>
-                ${sourceHtml}
-                <div style="font-size:0.9rem; line-height:1.5;">${doc.summary}</div>
-            `;
+                // יצירת תווית תאריך
+                let dateBadgeHtml = '';
+                if (doc.parsedDate && doc.parsedDate.hasDate) {
+                    const formattedMonth = String(doc.month).padStart(2, '0');
+                    const day = doc.day ? String(doc.day).padStart(2, '0') + '/' : '';
+                    dateBadgeHtml = `<span style="font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155; white-space:nowrap;">${day}${formattedMonth}/${doc.year}</span>`;
+                }
+
+                // מיפוי סוג המסמך לצבע ולטקסט המתאים
+                const entityMap = {
+                    'mmm': { label: 'מסמך ממ״מ', color: '#8b5cf6' },
+                    'activeLaw': { label: 'הצעת חוק', color: '#3b82f6' },
+                    'passedLaw': { label: 'חוק שאושר', color: '#10b981' },
+                    // אם זו ועדה - נשתמש בשם הוועדה (המחבר) כטקסט התווית
+                    'committee': { label: doc.author || 'דיון ועדה', color: '#ef4444' },
+                    'comptroller': { label: 'מבקר המדינה', color: '#f59e0b' },
+                    'govDecision': { label: 'החלטת ממשלה', color: '#14b8a6' }
+                };
+                const entity = entityMap[doc.type] || { label: 'מסמך', color: '#64748b' };
+                const typeBadgeHtml = `<div style="display:inline-block; background-color: ${entity.color}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 6px;">${entity.label}</div>`;
+
+                // בניית שורת המקור/מחבר - מוצגת רק אם קיים טקסט!
+                let sourceHtml = '';
+                // אם זו ועדה, כבר השתמשנו בשם הוועדה בתגית הצבע למעלה, אז אפשר לדלג.
+                if (doc.type !== 'committee') {
+                    if (doc.source && doc.source.trim() !== '') {
+                        sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מקור:</strong> ${doc.source}</div>`;
+                    } else if (doc.author && doc.author.trim() !== '') {
+                        sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מחבר:</strong> ${doc.author}</div>`;
+                    }
+                }
+
+                // קו מפריד אם יש יותר ממסמך אחד בפופאפ
+                if (index > 0) {
+                    htmlContent += `<div style="border-top: 1px solid #334155; margin: 12px 0;"></div>`;
+                }
+
+                // הזרקת התוכן הסופי
+                htmlContent += `
+                    <div>${typeBadgeHtml}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px; gap: 12px;">
+                        <span style="font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;">${doc.title}</span>
+                        ${dateBadgeHtml}
+                    </div>
+                    ${sourceHtml}
+                    <div style="font-size:0.9rem; line-height:1.5;">${doc.summary}</div>
+                `;
+            });
+
+            if (!htmlContent) return;
+            tooltip.innerHTML = htmlContent;
 
             // Dynamic positioning to prevent overflow on small screens
             let leftPos = event.clientX + 15;
