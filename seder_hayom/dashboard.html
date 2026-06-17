@@ -134,8 +134,8 @@
         #chartTooltip .tt-title { font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;}
         #chartTooltip .tt-date { font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155;}
 
-        .relevance-element { display: none; }
-        .show-relevance .relevance-element { display: inline-flex; }
+        .relevance-element { display: none !important; }
+        .show-relevance .relevance-element { display: inline-flex !important; }
 
         .btn-action {
             background: white; border: 1px solid #cbd5e1; color: #334155;
@@ -346,6 +346,42 @@
 
         const knessetTypes = ['mmm', 'activeLaw', 'passedLaw', 'committee'];
 
+        // פענוח שדה תאריך אחיד (תומך בכל המפרידים ובכיוונים שונים)
+        function parseFlexibleDate(dateStr) {
+            if (!dateStr) return { day: null, month: 1, year: 1970, sortValue: 0, hasDate: false };
+
+            const normalized = String(dateStr).replace(/[\\\-]/g, '/');
+            const parts = normalized.split('/');
+
+            let day = null, month = 1, year = 1970;
+
+            if (parts.length === 2) {
+                if (parts[0].length === 4) { year = parseInt(parts[0]); month = parseInt(parts[1]); }
+                else { month = parseInt(parts[0]); year = parseInt(parts[1]); }
+            } else if (parts.length === 3) {
+                if (parts[0].length === 4) { year = parseInt(parts[0]); month = parseInt(parts[1]); day = parseInt(parts[2]); }
+                else { day = parseInt(parts[0]); month = parseInt(parts[1]); year = parseInt(parts[2]); }
+            } else if (parts.length === 1 && parts[0].length === 4) {
+                year = parseInt(parts[0]);
+            }
+
+            const sortValue = year + (month / 12) + (day ? (day / 365) : 0);
+            return { day, month, year, sortValue, hasDate: true };
+        }
+
+        // המרת התאריך המפוענח למחרוזת תצוגה
+        function formatParsedDate(parsed) {
+            // בודק את הדגל החדש כדי לא להציג את 1970
+            if (!parsed || !parsed.hasDate) return '';
+
+            const mm = String(parsed.month).padStart(2, '0');
+            if (parsed.day) {
+                const dd = String(parsed.day).padStart(2, '0');
+                return `${dd}/${mm}/${parsed.year}`;
+            }
+            return `${mm}/${parsed.year}`;
+        }
+
         function getCorrectedDate(dateStr) {
             if (!dateStr || dateStr === "לא ידוע") return dateStr;
             const parts = dateStr.split('/');
@@ -400,11 +436,56 @@
 
                 window.appConfiguration = data.appConfiguration;
 
+                // עיבוד מקדים של תאריכי המסמכים בזיכרון
+                window.appConfiguration.items.forEach(item => {
+                    const parsed = parseFlexibleDate(item.date);
+                    item.parsedDate = parsed;
+                    item.year = parsed.year;
+                    item.month = parsed.month;
+                    item.day = parsed.day;
+                    item.sortValue = parsed.sortValue;
+                });
+
                 document.getElementById('d-title').innerText = data.meta.title;
 
                 document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
                 document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
-                document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(i => `<li>${i}</li>`).join('');
+                document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(item => {
+                    if (typeof item === 'string') return `<li style="margin-bottom: 0.5rem;">${item}</li>`;
+
+                    let doc = null;
+                    let parsedDate = null;
+
+                    // שליפת התאריך מהמסמך המקושר או מהפריט החיצוני
+                    if (item.refId) {
+                        doc = data.appConfiguration.items.find(d => d.idCode === item.refId);
+                        if (doc) parsedDate = doc.parsedDate; // משתמש בנתון שעבר עיבוד מקדים
+                    } else if (item.date) {
+                        parsedDate = parseFlexibleDate(item.date);
+                    }
+
+                    if (!parsedDate && doc) return `<li style="margin-bottom: 0.5rem;">${item.text}</li>`;
+
+                    const dateStr = formatParsedDate(parsedDate);
+                    const dateDisplay = dateStr ? `<strong>${dateStr}</strong> - ` : '';
+
+                    let linkHtml = '';
+                    if (doc && doc.link && (doc.link.startsWith('http://') || doc.link.startsWith('https://'))) {
+                        linkHtml = ` <a href="${doc.link}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;" title="למעבר למסמך המקור">🔗 מסמך</a>`;
+                    } else if (item.externalLink) {
+                        linkHtml = ` <a href="${item.externalLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;" title="למעבר לכתבה">🔗 קישור לכתבה</a>`;
+                    }
+
+                    if (item.refId && doc) {
+                        return `<li style="cursor: help; margin-bottom: 0.5rem;" onmousemove="showDocTooltip(event, '${doc.idCode}')" onmouseleave="hideDocTooltip()">
+                            ${dateDisplay}${item.text}${linkHtml}
+                        </li>`;
+                    } else {
+                        return `<li style="margin-bottom: 0.5rem;">
+                            ${dateDisplay}${item.text}${linkHtml}
+                        </li>`;
+                    }
+                }).join('');
 
                 document.getElementById('d-media-val').innerText = data.metrics.media.score + '%';
                 document.getElementById('d-media-bar').style.width = data.metrics.media.score + '%';
@@ -633,7 +714,8 @@
                     const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
 
                     let idBadgeHtml = `<span class="doc-id-badge">${item.idCode}</span>`;
-                    if (item.link) {
+                    // בדיקה האם הקישור קיים ונראה כמו כתובת אינטרנט תקינה
+                    if (item.link && (item.link.startsWith('http://') || item.link.startsWith('https://'))) {
                         idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.75rem">🔗</span></a>`;
                     }
 
@@ -642,23 +724,6 @@
                         displayTitle = `<strong style="font-weight: 800; color: #0f172a;">${item.author}</strong>: ${item.title}`;
                     }
 
-                    let sourceHtml = '';
-                    if (item.type !== 'committee' || (item.type === 'committee' && item.author !== item.source)) {
-                        sourceHtml = `<div class="flex justify-between items-center mb-2 border-b pb-2">
-                                        <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${item.author}</span></span>
-                                      </div>`;
-                    }
-
-                    let impactHtml = '';
-                    if (item.impact) {
-                        impactHtml = `<div class="card-impact-box">
-                                        <strong class="text-sm block mb-1" style="color: ${group.color}">השלכה מעשית:</strong>
-                                        <span class="text-gray-900 block mt-1 font-bold">${item.impact}</span>
-                                      </div>`;
-                    }
-
-                    const tagsHtml = '';
-
                     colHtml += `
                             <div class="doc-item-wrapper">
                                 <div class="doc-mini-header" onclick="toggleDoc('${detailsId}')">
@@ -666,9 +731,7 @@
                                     <span class="doc-mini-title">${displayTitle}</span>
                                 </div>
                                 <div id="${detailsId}" class="doc-full-details">
-                                    ${sourceHtml}
                                     <p class="card-summary-box font-semibold">${item.summary}</p>
-                                    ${impactHtml}
                                     <div class="border-t pt-2 mt-auto flex justify-between items-center flex-wrap gap-2">
                                         <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance}/10</span>
                                         ${idBadgeHtml}
@@ -918,11 +981,52 @@
             });
         }
 
+        function showDocTooltip(event, idCode) {
+            const tooltip = document.getElementById('docHoverTooltip');
+            const doc = window.appConfiguration.items.find(d => d.idCode === idCode);
+            if (!doc) return;
+
+            const formattedMonth = String(doc.month).padStart(2, '0');
+            const day = doc.day ? String(doc.day).padStart(2, '0') + '/' : '';
+
+            let sourceHtml = '';
+            if (doc.type !== 'committee' || (doc.type === 'committee' && doc.author !== doc.source)) {
+                sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מקור:</strong> ${doc.author}</div>`;
+            } else {
+                sourceHtml = `<div style="font-size:0.9rem; color:#cbd5e1; margin-bottom: 8px;"><strong>מחבר:</strong> ${doc.author}</div>`;
+            }
+
+            // הזרקת התוכן לפופאפ באותו מבנה כמו במשולבים המורחבים
+            tooltip.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px; gap: 12px;">
+                    <span style="font-weight: bold; color: #93c5fd; font-size: 1.15rem; line-height: 1.3;">${doc.title}</span>
+                    <span style="font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 2px 8px; border-radius: 4px; border: 1px solid #334155; white-space:nowrap;">${day}${formattedMonth}/${doc.year}</span>
+                </div>
+                ${sourceHtml}
+                <div style="font-size:0.9rem; line-height:1.5;">${doc.summary}</div>
+            `;
+
+            // מיקום גמיש לפי העכבר כדי למנוע חיתוך במסכים קטנים
+            let leftPos = event.clientX + 15;
+            if (leftPos + 350 > window.innerWidth) {
+                leftPos = event.clientX - 365;
+            }
+
+            tooltip.style.left = leftPos + 'px';
+            tooltip.style.top = (event.clientY + 15) + 'px';
+            tooltip.style.opacity = '1';
+        }
+
+        function hideDocTooltip() {
+            document.getElementById('docHoverTooltip').style.opacity = '0';
+        }
+
         window.addEventListener('resize', () => {
             if(document.getElementById('dashboard-content').style.display === 'block') {
                 renderTrendsChart();
             }
         });
     </script>
+    <div id="docHoverTooltip" style="position: fixed; background: rgba(15, 23, 42, 0.95); color: #fff; padding: 16px; border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 9999; direction: rtl; max-width: 450px; min-width: 320px; line-height: 1.5; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 10px 15px -3px rgba(0,0,0,0.1);"></div>
 </body>
 </html>
