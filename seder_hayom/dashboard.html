@@ -654,6 +654,59 @@
             renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs, '#10b981'); // ירוק לארגונים אזרחיים
         }
 
+        // Determine the progress stage (0 to 5) based on status text
+        function getLawStageIndex(statusText) {
+            if (!statusText) return 0;
+            const text = statusText;
+
+            // Map stages based on Knesset's 6-step progress bar
+            if (text.includes('הכנה לקריאה שנייה') || text.includes('הכנה לקריאה שניה')) return 3;
+            if (text.includes('שנייה ושלישית') || text.includes('שניה ושלישית') || text.includes('התקבל')) return 4;
+            if (text.includes('פורסם') || text.includes('סופי')) return 5;
+            if (text.includes('קריאה ראשונה')) {
+                if (text.includes('הכנה')) return 1;
+                return 2;
+            }
+            // Default (0) for preliminary stages (טרומית, מונחת)
+            return 0;
+        }
+
+        // Generate the visual progress dots mimicking the Knesset website
+        function generateLawProgressHtml(statusText) {
+            if (!statusText) return '<span class="text-gray-500">לא צוין</span>';
+
+            const stageIndex = getLawStageIndex(statusText);
+
+            // Exact Knesset RGB colors converted to HEX
+            const pastColors = ['#96bba3', '#7ea886', '#649474', '#4b7a5a', '#326040'];
+            const currentColor = '#ff9f11';
+            const futureColor = '#dcdcdc';
+
+            let dotsHtml = '';
+            for (let i = 0; i < 6; i++) {
+                if (i < stageIndex) {
+                    // Past completed stages (shades of green)
+                    const color = pastColors[Math.min(i, pastColors.length - 1)];
+                    dotsHtml += `<li style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; display: inline-block;"></li>`;
+                } else if (i === stageIndex) {
+                    // Current active stage (orange)
+                    dotsHtml += `<li style="background-color: ${currentColor}; width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(255, 159, 17, 0.3);"></li>`;
+                } else {
+                    // Future pending stages (gray)
+                    dotsHtml += `<li style="background-color: ${futureColor}; width: 14px; height: 14px; border-radius: 50%; display: inline-block;"></li>`;
+                }
+            }
+
+            return `
+                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+                    <div style="font-weight: 600; color: #1e293b;">${statusText}</div>
+                    <ul style="display: flex; gap: 6px; list-style: none; padding: 0; margin: 0; align-items: center;">
+                        ${dotsHtml}
+                    </ul>
+                </div>
+            `;
+        }
+
         function renderCards() {
             const container = document.getElementById('documentsStream');
             container.innerHTML = '';
@@ -726,6 +779,42 @@
                         displayTitle = `<strong style="font-weight: 800; color: #0f172a;">${item.author}</strong>: ${item.title}`;
                     }
 
+                    // Render specific metadata based on item type
+                    let metadataHtml = '';
+                    if (item.type === 'activeLaw') {
+
+                        // Render committee field ONLY if it exists and is not empty
+                        let vaadaHtml = '';
+                        if (item.activeLawVaada && item.activeLawVaada.trim() !== '') {
+                            vaadaHtml = `<div style="margin-top: 4px;"><span class="font-bold">ועדה מטפלת:</span> ${item.activeLawVaada}</div>`;
+                        }
+
+                        // Generate the visual progress bar for the status
+                        const statusVisualHtml = generateLawProgressHtml(item.activeLawStatus);
+
+                        metadataHtml = `
+                            <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-2">
+                                <div><span class="font-bold">סוג:</span> ${item.activeLawType || 'לא צוין'}</div>
+                                ${vaadaHtml}
+                                <div>
+                                    <span class="font-bold">סטטוס:</span>
+                                    ${statusVisualHtml}
+                                </div>
+                            </div>`;
+                    } else {
+                        // Display the original source for all other item types
+                        metadataHtml = `
+                            <div class="flex justify-between items-center mb-2 border-b pb-2">
+                                <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${item.source || item.author}</span></span>
+                            </div>`;
+                    }
+
+                    // Check if impact exists and is not empty
+                    let impactHtml = '';
+                    if (item.impact && item.impact.trim() !== '') {
+                        impactHtml = `<div class="card-impact-box text-sm mb-3"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${item.impact}</div>`;
+                    }
+
                     colHtml += `
                             <div class="doc-item-wrapper">
                                 <div class="doc-mini-header" onclick="toggleDoc('${detailsId}')">
@@ -733,7 +822,9 @@
                                     <span class="doc-mini-title">${displayTitle}</span>
                                 </div>
                                 <div id="${detailsId}" class="doc-full-details">
+                                    ${metadataHtml}
                                     <p class="card-summary-box font-semibold">${item.summary}</p>
+                                    ${impactHtml}
                                     <div class="border-t pt-2 mt-auto flex justify-between items-center flex-wrap gap-2">
                                         <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance}/10</span>
                                         ${linkBadgeHtml}
