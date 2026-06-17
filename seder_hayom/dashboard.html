@@ -430,11 +430,17 @@
             }
 
             try {
+                console.log('1. page loaded');
+                console.log('2. fetching', fileUrl);
                 const response = await fetch(fileUrl);
+                console.log('3. response', response.status);
+
                 if (!response.ok) throw new Error("File not found");
                 const data = await response.json();
+                console.log('4. json loaded');
 
                 window.appConfiguration = data.appConfiguration;
+                console.log('5. appConfiguration assigned');
 
                 // עיבוד מקדים של תאריכי המסמכים בזיכרון
                 window.appConfiguration.items.forEach(item => {
@@ -445,6 +451,7 @@
                     item.day = parsed.day;
                     item.sortValue = parsed.sortValue;
                 });
+                console.log('6. dates parsed');
 
                 document.getElementById('d-title').innerText = data.meta.title;
 
@@ -486,6 +493,7 @@
                         </li>`;
                     }
                 }).join('');
+                console.log('7. what is new displayed');
 
                 document.getElementById('d-media-val').innerText = data.metrics.media.score + '%';
                 document.getElementById('d-media-bar').style.width = data.metrics.media.score + '%';
@@ -506,12 +514,18 @@
                 } else {
                     echoContainer.innerHTML = '<span class="text-gray-500">אין נתונים זמינים</span>';
                 }
+                console.log('8. media echo processed');
 
                 setupFilters();
+                console.log('9. filters set up');
                 setupSearch();
+                console.log('10. search set up');
                 renderEcosystem();
+                console.log('11. ecosystem set up');
                 renderCards();
+                console.log('12. cards rendered');
                 renderExternalFrames();
+                console.log('13. external frames rendered');
 
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
@@ -762,6 +776,16 @@
                 }
 
                 group.items.forEach((item, index) => {
+                     if (!item.type) {
+                        console.error('Item missing type, skipping:', item);
+                        return;
+                    }
+
+                    if (!item.idCode) {
+                        item.idCode = `${item.type}_${index + 1}`;
+                        console.warn(`Generated idCode: ${item.idCode}`, item);
+                    }
+
                     const formattedMonth = item.month.toString().padStart(2, '0');
                     const dateStr = `${formattedMonth}/${item.year}`;
                     const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
