@@ -713,10 +713,12 @@
                     const dateStr = `${formattedMonth}/${item.year}`;
                     const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
 
-                    let idBadgeHtml = `<span class="doc-id-badge">${item.idCode}</span>`;
-                    // בדיקה האם הקישור קיים ונראה כמו כתובת אינטרנט תקינה
+                    // Hide internal ID and only build a link badge if a valid URL exists
+                    let linkBadgeHtml = '';
+
+                    // Check if link exists and is valid
                     if (item.link && (item.link.startsWith('http://') || item.link.startsWith('https://'))) {
-                        idBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>${item.idCode}</span><span style="font-size:0.75rem">🔗</span></a>`;
+                        linkBadgeHtml = `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-right: auto;" title="למעבר למסמך המקור"><span>קישור למסמך</span><span style="font-size:0.75rem">🔗</span></a>`;
                     }
 
                     let displayTitle = item.title;
@@ -734,7 +736,7 @@
                                     <p class="card-summary-box font-semibold">${item.summary}</p>
                                     <div class="border-t pt-2 mt-auto flex justify-between items-center flex-wrap gap-2">
                                         <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance}/10</span>
-                                        ${idBadgeHtml}
+                                        ${linkBadgeHtml}
                                     </div>
                                 </div>
                             </div>
