@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ציר זמן פרלמנטרי ושרשורים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        (function() {
+            const isLocal = window.location.hostname === 'localhost' ||
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.protocol === 'file:';
+            const scriptUrl = isLocal ? './mmm_shared.js' : 'https://mmm.beniad.com/seder_hayom/mmm_shared.js';
+
+            const script = document.createElement('script');
+            script.src = scriptUrl;
+            script.onload = () => {
+                if (typeof initDashboard === 'function') {
+                    initDashboard();
+                }
+            };
+            document.head.appendChild(script);
+        })();
+    </script>
+
+    <style>
+        :root { --bg-base: #f8fafc; --text-main: #0f172a; --header-bg: #0f172a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; padding: 24px; }
+
+        .max-w-4xl { max-width: 56rem; margin: 0 auto; }
+        header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+
+        .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; text-decoration: none; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-back:hover { background-color: #bfdbfe; }
+
+        .timeline-container { position: relative; padding-right: 32px; margin-top: 2rem; }
+        .timeline-container::before { content: ''; position: absolute; right: 14px; top: 0; bottom: 0; width: 4px; background-color: #cbd5e1; border-radius: 2px; }
+
+        .timeline-item { position: relative; margin-bottom: 2rem; }
+        .timeline-dot { position: absolute; right: -32px; top: 1.5rem; width: 20px; height: 20px; border-radius: 50%; border: 4px solid white; box-shadow: 0 0 0 2px #cbd5e1; z-index: 10; }
+
+        .relation-label-on-line {
+            position: absolute; right: -80px; top: -1.2rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; padding: 2px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; z-index: 5; box-shadow: 0 1px 2px rgba(0,0,0,0.05); white-space: nowrap;
+        }
+        .relation-label-on-line::after { content: ''; position: absolute; right: 50%; bottom: -6px; width: 2px; height: 6px; background-color: #bfdbfe; }
+
+        .timeline-card { background: white; border: 1px solid #cbd5e1; border-radius: 0.75rem; padding: 1.2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; cursor: pointer; position: relative; }
+        .timeline-card:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background-color: #f8fafc; }
+        .timeline-card.is-root-node { border: 2px solid #3b82f6 !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .card-date { font-weight: bold; color: #64748b; font-size: 1rem; }
+        .card-title { font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1.3; }
+
+        .card-expanded-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; cursor: default; }
+        .card-expanded-content.open { display: block; }
+
+        .expand-hint { font-size: 0.85rem; color: #94a3b8; font-weight: bold; margin-top: 0.5rem; }
+        .timeline-card.open .expand-hint { display: none; }
+
+        .card-source { font-size: 0.95rem; color: #64748b; margin-bottom: 0.75rem; }
+        .card-summary { font-size: 1.05rem; color: #334155; margin-bottom: 0.75rem; background: #fff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
+        .card-impact-box { background: rgba(239, 68, 68, 0.05); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.95rem; margin-bottom: 0.75rem; border-right: 4px solid #ef4444; }
+
+        .thread-btn { background-color: #f8fafc; border: 1px solid #cbd5e1; color: #0f172a; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem;}
+        .thread-btn:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+
+        .thread-banner { background: #eff6ff; border: 1px solid #bfdbfe; border-right: 4px solid #3b82f6; padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: none; justify-content: space-between; align-items: center; }
+        .thread-banner.active { display: flex; }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-4xl">
+        <header>
+            <div>
+                <h1 class="text-3xl font-bold mb-1" id="page-title">ציר זמן ושרשורים</h1>
+                <p class="text-gray-300">היסטוריית החקיקה, המחקר ודיוני הוועדות - בסדר כרונולוגי.</p>
+            </div>
+            <a id="back-to-dash" href="dashboard.html" class="btn-back">חזרה לדשבורד 📊</a>
+        </header>
+
+        <div id="threadBanner" class="thread-banner">
+            <div>
+                <h2 class="font-bold text-xl text-blue-900 mb-1">מציג שרשור מסמכים קשורים</h2>
+                <p class="text-blue-800" id="threadBannerText"></p>
+            </div>
+            <button class="thread-btn" onclick="clearThread()" style="background: white;">✖ חזרה לכל המסמכים</button>
+        </div>
+
+        <div id="timelineContainer" class="timeline-container">
+            </div>
+    </div>
+
+    <script>
+        let allItems = [];
+        window.appConfiguration = { items: [] };
+
+        window.initDashboard = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fileUrl = urlParams.get('file') || 'https://mmm.beniad.com/seder_hayom/data_arab_crime.json';
+
+            document.getElementById('back-to-dash').href = `dashboard.html?file=${encodeURIComponent(fileUrl)}`;
+
+            try {
+                const response = await fetch(fileUrl);
+                if (!response.ok) throw new Error("File not found");
+                const data = await response.json();
+
+                document.getElementById('page-title').innerText = "ציר זמן: " + data.meta.title;
+
+                allItems = data.appConfiguration.items.map(item => {
+                    const parsed = parseFlexibleDate(item.date);
+                    return { ...item, parsedDate: parsed, sortValue: parsed.sortValue };
+                });
+
+                allItems.sort((a, b) => b.sortValue - a.sortValue);
+                window.appConfiguration.items = allItems;
+
+                renderTimeline(allItems);
+            } catch (e) {
+                console.error("Failed to load data", e);
+                document.getElementById('timelineContainer').innerHTML = "<p>שגיאה בטעינת הנתונים.</p>";
+            }
+        };
+
+        function renderTimeline(itemsToRender, activeRootItem = null) {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+
+            itemsToRender.forEach((item, index) => {
+                const entity = entityMap[item.type] || { label: 'מסמך', color: '#64748b' };
+                const label = item.type === 'committee' && item.author ? item.author : entity.label;
+                const dateStr = formatParsedDate(item.parsedDate);
+                const detailsId = `tl-item-${index}`;
+
+                const displayTitle = item.type === 'committee' ? `<strong style="color: #0f172a;">${item.author}</strong>: ${item.title}` : item.title;
+                const safeSource = (item.source || (item.type !== 'committee' ? item.author : '')) ? String(item.source || (item.type !== 'committee' ? item.author : '')).trim() : '';
+                const sourceHtml = safeSource ? `<div class="card-source"><strong>מקור/מחבר:</strong> ${safeSource}</div>` : '';
+                const safeImpact = item.impact ? String(item.impact).trim() : '';
+                const impactHtml = safeImpact ? `<div class="card-impact-box"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${safeImpact}</div>` : '';
+
+                let linkHtml = '';
+                let safeLink = item.link ? String(item.link).trim() : '';
+                if (safeLink) {
+                    if (!safeLink.startsWith('http')) safeLink = 'https://' + safeLink;
+                    linkHtml = `<a href="${safeLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: bold; display:inline-block; margin-top:8px;">🔗 צפייה במסמך המקור</a>`;
+                }
+
+                let threadHtml = '';
+                let relationLabelOnLineHtml = '';
+                let rootNodeClass = '';
+
+                if (activeRootItem) {
+                    if (item.idCode === activeRootItem.idCode) {
+                        rootNodeClass = 'is-root-node';
+                        relationLabelOnLineHtml = `<div class="relation-label-on-line" style="background:#3b82f6; color:white; border-color:#2563eb;">📍 מסמך מרכזי</div>`;
+                    } else {
+                        const relObj = activeRootItem.relatedDocs.find(r =>
+                            (typeof r === 'object' && r.idCode === item.idCode) ||
+                            (typeof r === 'string' && r === item.idCode)
+                        );
+
+                        if (relObj) {
+                            const relLabel = (typeof relObj === 'object' && relObj.label) ? relObj.label : 'קשור למסמך המרכזי';
+                            const relWeight = (typeof relObj === 'object' && relObj.weight) ? relObj.weight : 5;
+                            relationLabelOnLineHtml = `<div class="relation-label-on-line" data-weight="${relWeight}">🔗 ${relLabel}</div>`;
+                        }
+                    }
+                }
+                else if (item.relatedDocs && Array.isArray(item.relatedDocs) && item.relatedDocs.length > 0) {
+                    const relatedIds = item.relatedDocs.map(r => typeof r === 'object' ? r.idCode : r);
+                    const relatedIdsStr = relatedIds.join(',');
+
+                    threadHtml = `
+                        <div style="margin-top: 1rem; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+                            <button class="thread-btn"
+                                onclick="filterThread(event, '${item.idCode}')"
+                                onmousemove="if(typeof showDocTooltip === 'function') showDocTooltip(event, '${relatedIdsStr}')"
+                                onmouseleave="if(typeof hideDocTooltip === 'function') hideDocTooltip()">
+                                🔗 צפה בשרשור הקשור (${item.relatedDocs.length} מסמכים)
+                            </button>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="timeline-item">
+                        ${relationLabelOnLineHtml}
+                        <div class="timeline-dot" style="background-color: ${entity.color}; box-shadow: 0 0 0 4px ${entity.color}20;"></div>
+                        <div class="timeline-card ${rootNodeClass}" onclick="toggleCard(this, '${detailsId}')" style="border-right: 4px solid ${entity.color}">
+
+                            <div class="card-header">
+                                <span class="card-type-badge" style="background-color: ${entity.color}">${label}</span>
+                                ${dateStr ? `<span class="card-date">${dateStr}</span>` : ''}
+                            </div>
+                            <h3 class="card-title">${displayTitle}</h3>
+                            <div class="expand-hint">▼ לחץ להרחבה ופרטים נוספים</div>
+
+                            <div id="${detailsId}" class="card-expanded-content" onclick="event.stopPropagation();">
+                                ${sourceHtml}
+                                <p class="card-summary">${item.summary || 'אין תקציר זמין.'}</p>
+                                ${impactHtml}
+                                <div>${linkHtml}</div>
+                                ${threadHtml}
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleCard(cardElement, detailsId) {
+            const detailsElement = document.getElementById(detailsId);
+            const isOpen = detailsElement.classList.contains('open');
+
+            document.querySelectorAll('.card-expanded-content').forEach(el => el.classList.remove('open'));
+            document.querySelectorAll('.timeline-card').forEach(el => el.classList.remove('open'));
+
+            if (!isOpen) {
+                detailsElement.classList.add('open');
+                cardElement.classList.add('open');
+            }
+        }
+
+        function filterThread(event, rootIdCode) {
+            event.stopPropagation();
+            if(typeof hideDocTooltip === 'function') hideDocTooltip();
+
+            const rootItem = allItems.find(i => i.idCode === rootIdCode);
+            if (!rootItem) return;
+
+            const relatedIds = (rootItem.relatedDocs || []).map(r => typeof r === 'object' ? r.idCode : r);
+            const threadIds = [rootIdCode, ...relatedIds];
+
+            const threadItems = allItems.filter(i => threadIds.includes(i.idCode));
+
+            const banner = document.getElementById('threadBanner');
+            document.getElementById('threadBannerText').innerText = `מציג את שרשרת האירועים סביב: "${rootItem.title}"`;
+            banner.classList.add('active');
+
+            renderTimeline(threadItems, rootItem);
+
+            setTimeout(() => {
+                document.querySelectorAll('.card-expanded-content').forEach(el => el.classList.add('open'));
+                document.querySelectorAll('.timeline-card').forEach(el => el.classList.add('open'));
+            }, 50);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearThread() {
+            document.getElementById('threadBanner').classList.remove('active');
+            renderTimeline(allItems);
+        }
+    </script>
+</body>
+</html>
