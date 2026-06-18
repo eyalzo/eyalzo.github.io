@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ציר זמן פרלמנטרי ושרשורים</title>
+    <title>ציר זמן פרלמנטרי וקשרים</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <script>
@@ -16,9 +16,7 @@
             const script = document.createElement('script');
             script.src = scriptUrl;
             script.onload = () => {
-                if (typeof initDashboard === 'function') {
-                    initDashboard();
-                }
+                if (typeof initDashboard === 'function') initDashboard();
             };
             document.head.appendChild(script);
         })();
@@ -27,76 +25,125 @@
     <style>
         :root { --bg-base: #f8fafc; --text-main: #0f172a; --header-bg: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
-        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; padding: 24px; }
 
-        .max-w-4xl { max-width: 56rem; margin: 0 auto; }
-        header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.5; padding: 16px; overflow-x: hidden; transition: background-color 0.4s ease; }
+        body.filtered-mode { background-color: #e0e7ff; }
 
-        .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; text-decoration: none; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .max-w-6xl { max-width: 72rem; margin: 0 auto; }
+        header { background-color: var(--header-bg); color: white; padding: 1.25rem 1.75rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; z-index: 20; position: relative; }
+
+        .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; text-decoration: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-back:hover { background-color: #bfdbfe; }
 
-        .timeline-container { position: relative; padding-right: 32px; margin-top: 2rem; }
-        .timeline-container::before { content: ''; position: absolute; right: 14px; top: 0; bottom: 0; width: 4px; background-color: #cbd5e1; border-radius: 2px; }
+        .timeline-direction-hint { text-align: center; color: #64748b; font-weight: 800; font-size: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .timeline-direction-hint span.badge { background: #e2e8f0; color: #334155; padding: 2px 16px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        body.filtered-mode .timeline-direction-hint { opacity: 0; pointer-events: none; }
 
-        .timeline-item { position: relative; margin-bottom: 2rem; }
-        .timeline-dot { position: absolute; right: -32px; top: 1.5rem; width: 20px; height: 20px; border-radius: 50%; border: 4px solid white; box-shadow: 0 0 0 2px #cbd5e1; z-index: 10; }
+        .timeline-container { position: relative; padding: 0 0 4rem 0; width: 100%; min-height: 600px; display: flex; flex-direction: column; align-items: center; }
+        .timeline-container::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background-color: #e2e8f0; transform: translateX(-50%); border-radius: 2px; z-index: 0; }
+        body.filtered-mode .timeline-container::before { background-color: #bfdbfe; }
 
-        .relation-label-on-line {
-            position: absolute; right: -80px; top: -1.2rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; padding: 2px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; z-index: 5; box-shadow: 0 1px 2px rgba(0,0,0,0.05); white-space: nowrap;
+        /* Grouping by Month styles */
+        .month-section { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 10; margin-bottom: 1.5rem; }
+        .month-divider { display: flex; align-items: center; width: 100%; margin: 0.5rem 0 1.5rem 0; color: #64748b; font-weight: 800; font-size: 1.25rem; font-family: monospace; }
+        .month-line { flex-grow: 1; border-top: 2px dashed #cbd5e1; margin: 0 1rem; }
+        body.filtered-mode .month-divider { opacity: 0.5; color: #60a5fa; }
+        body.filtered-mode .month-line { border-color: #93c5fd; }
+
+        .cards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: 100%; padding: 0 0.5rem; }
+
+        /* SVG & Labels Layer: Z-index 50 to be in FRONT of cards */
+        #connections-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+        #connections-labels { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
+        .connection-label {
+            position: absolute; transform: translate(-50%, -50%);
+            background: #eff6ff; color: #1e3a8a; padding: 2px 10px; border-radius: 12px;
+            font-size: 0.8rem; font-weight: bold; border: 1px solid #bfdbfe;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; pointer-events: auto;
         }
-        .relation-label-on-line::after { content: ''; position: absolute; right: 50%; bottom: -6px; width: 2px; height: 6px; background-color: #bfdbfe; }
 
-        .timeline-card { background: white; border: 1px solid #cbd5e1; border-radius: 0.75rem; padding: 1.2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; cursor: pointer; position: relative; }
-        .timeline-card:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background-color: #f8fafc; }
-        .timeline-card.is-root-node { border: 2px solid #3b82f6 !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        /* Compact Cards Restyling */
+        .timeline-card {
+            background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative;
+            width: calc(33.333% - 1rem); min-width: 240px; max-width: 300px;
+            text-align: right; display: flex; flex-direction: column; cursor: pointer; z-index: 10;
+        }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-        .card-date { font-weight: bold; color: #64748b; font-size: 1rem; }
-        .card-title { font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1.3; }
+        .timeline-card.has-relations { border-width: 2px; border-color: #94a3b8; }
+        .timeline-card.has-relations:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 6px 12px -3px rgba(0,0,0,0.1); }
+        .timeline-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important; z-index: 20; }
 
-        .card-expanded-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; cursor: default; }
-        .card-expanded-content.open { display: block; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
+        .card-date { font-weight: 800; color: #64748b; font-size: 0.85rem; font-family: monospace; }
+        .card-type-badge { color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
 
-        .expand-hint { font-size: 0.85rem; color: #94a3b8; font-weight: bold; margin-top: 0.5rem; }
-        .timeline-card.open .expand-hint { display: none; }
+        .relation-icon-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: #eff6ff; color: #2563eb; font-size: 0.7rem; padding: 2px 6px;
+            border-radius: 12px; margin-right: auto; font-weight: bold; border: 1px solid #bfdbfe;
+            margin-left: 6px;
+        }
 
-        .card-source { font-size: 0.95rem; color: #64748b; margin-bottom: 0.75rem; }
-        .card-summary { font-size: 1.05rem; color: #334155; margin-bottom: 0.75rem; background: #fff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
-        .card-impact-box { background: rgba(239, 68, 68, 0.05); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.95rem; margin-bottom: 0.75rem; border-right: 4px solid #ef4444; }
+        .card-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; line-height: 1.25; }
 
-        .thread-btn { background-color: #f8fafc; border: 1px solid #cbd5e1; color: #0f172a; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem;}
-        .thread-btn:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+        .filter-notice-badge {
+            position: fixed; top: 20px; left: 20px;
+            background: #1e3a8a; color: white; padding: 8px 16px;
+            border-radius: 20px; font-weight: bold; font-size: 0.95rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000;
+            display: none; cursor: pointer; align-items: center; gap: 8px;
+            border: 2px solid #bfdbfe;
+        }
+        body.filtered-mode .filter-notice-badge { display: flex; animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
 
-        .thread-banner { background: #eff6ff; border: 1px solid #bfdbfe; border-right: 4px solid #3b82f6; padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: none; justify-content: space-between; align-items: center; }
-        .thread-banner.active { display: flex; }
     </style>
 </head>
 <body>
 
-    <div class="max-w-4xl">
+    <div class="filter-notice-badge" id="filterNotice" title="לחץ לביטול הסינון">
+        <span>🔄</span> כל קליק נוסף יחזיר לתצוגה רגילה
+    </div>
+
+    <div class="max-w-6xl">
         <header>
             <div>
-                <h1 class="text-3xl font-bold mb-1" id="page-title">ציר זמן ושרשורים</h1>
-                <p class="text-gray-300">היסטוריית החקיקה, המחקר ודיוני הוועדות - בסדר כרונולוגי.</p>
+                <h1 class="text-2xl font-bold mb-1" id="page-title">ציר זמן וקשרים</h1>
+                <p class="text-gray-300" style="font-size: 0.9rem;">היסטוריית החקיקה, המחקר ודיוני הוועדות. לחיצה על כרטיסייה תבודד את המסמכים הקשורים אליה.</p>
+                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem;">
+                    עודכן לאחרונה: <span id="last-update-text">בטעינה...</span>
+                </div>
             </div>
-            <a id="back-to-dash" href="dashboard.html" class="btn-back">חזרה לדשבורד 📊</a>
+            <div>
+                <a id="back-to-dash" href="dashboard.html" class="btn-back">חזרה לדשבורד 📊</a>
+            </div>
         </header>
 
-        <div id="threadBanner" class="thread-banner">
-            <div>
-                <h2 class="font-bold text-xl text-blue-900 mb-1">מציג שרשור מסמכים קשורים</h2>
-                <p class="text-blue-800" id="threadBannerText"></p>
-            </div>
-            <button class="thread-btn" onclick="clearThread()" style="background: white;">✖ חזרה לכל המסמכים</button>
+        <div class="timeline-direction-hint">
+            <span style="font-size: 1.4rem; margin-bottom: -4px;">⬆️</span>
+            <span class="badge">החדש ביותר</span>
         </div>
 
         <div id="timelineContainer" class="timeline-container">
+            <svg id="connections-svg">
+                <defs>
+                    <marker id="arrowhead" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto">
+                        <polygon points="0 0, 14 5, 0 10" fill="#2563eb" />
+                    </marker>
+                </defs>
+            </svg>
+            <div id="connections-labels"></div>
             </div>
     </div>
 
     <script>
         let allItems = [];
         window.appConfiguration = { items: [] };
+
+        let isFilteredMode = false;
+        let savedScrollPosition = 0;
+        let edgesInfo = []; // שומר את כל המידע על הקווים לציור
 
         window.initDashboard = async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -110,10 +157,36 @@
                 const data = await response.json();
 
                 document.getElementById('page-title').innerText = "ציר זמן: " + data.meta.title;
+                if(data.meta && data.meta.lastUpdate) {
+                    document.getElementById('last-update-text').innerText = data.meta.lastUpdate;
+                }
 
                 allItems = data.appConfiguration.items.map(item => {
-                    const parsed = parseFlexibleDate(item.date);
-                    return { ...item, parsedDate: parsed, sortValue: parsed.sortValue };
+                    const parsed = typeof parseFlexibleDate === 'function' ? parseFlexibleDate(item.date) : {day:null, month:1, year:1970, sortValue:0, hasDate:false};
+                    return { ...item, parsedDate: parsed, month: parsed.month, year: parsed.year, day: parsed.day, sortValue: parsed.sortValue };
+                });
+
+                // בניית רשת הקשרים המלאה (Bidirectional Network) לחישוב הקבוצה ולציור
+                const inOutMap = {};
+                allItems.forEach(item => inOutMap[item.idCode] = new Set());
+
+                allItems.forEach(item => {
+                    const rels = item.relatedDocs || [];
+                    rels.forEach(rel => {
+                        const tId = typeof rel === 'object' ? rel.idCode : rel;
+                        const label = typeof rel === 'object' ? rel.label : '';
+                        if (inOutMap[tId]) {
+                            inOutMap[item.idCode].add(tId);
+                            inOutMap[tId].add(item.idCode); // השלמת הדדיות
+                            edgesInfo.push({ source: item.idCode, target: tId, label: label });
+                        }
+                    });
+                });
+
+                // עדכון כל אייטם בסט הקשרים הדו-כיווני שלו
+                allItems.forEach(item => {
+                    inOutMap[item.idCode].delete(item.idCode); // מניעת הפניה עצמית
+                    item.clusterIds = Array.from(inOutMap[item.idCode]);
                 });
 
                 allItems.sort((a, b) => b.sortValue - a.sortValue);
@@ -122,139 +195,290 @@
                 renderTimeline(allItems);
             } catch (e) {
                 console.error("Failed to load data", e);
-                document.getElementById('timelineContainer').innerHTML = "<p>שגיאה בטעינת הנתונים.</p>";
+                document.getElementById('timelineContainer').innerHTML = "<p style='color:red;'>שגיאה בטעינת הנתונים.</p>";
             }
         };
 
-        function renderTimeline(itemsToRender, activeRootItem = null) {
+        function renderTimeline(itemsToRender) {
             const container = document.getElementById('timelineContainer');
-            container.innerHTML = '';
 
-            itemsToRender.forEach((item, index) => {
-                const entity = entityMap[item.type] || { label: 'מסמך', color: '#64748b' };
-                const label = item.type === 'committee' && item.author ? item.author : entity.label;
-                const dateStr = formatParsedDate(item.parsedDate);
-                const detailsId = `tl-item-${index}`;
+            Array.from(container.children).forEach(child => {
+                if(child.id !== 'connections-svg' && child.id !== 'connections-labels') child.remove();
+            });
 
-                const displayTitle = item.type === 'committee' ? `<strong style="color: #0f172a;">${item.author}</strong>: ${item.title}` : item.title;
-                const safeSource = (item.source || (item.type !== 'committee' ? item.author : '')) ? String(item.source || (item.type !== 'committee' ? item.author : '')).trim() : '';
-                const sourceHtml = safeSource ? `<div class="card-source"><strong>מקור/מחבר:</strong> ${safeSource}</div>` : '';
-                const safeImpact = item.impact ? String(item.impact).trim() : '';
-                const impactHtml = safeImpact ? `<div class="card-impact-box"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${safeImpact}</div>` : '';
+            // קיבוץ לפי חודש ושנה
+            const groupsMap = {};
+            itemsToRender.forEach(item => {
+                const m = item.month ? String(item.month).padStart(2, '0') : '01';
+                const y = item.year || '1970';
+                const groupKey = `${m}/${y}`;
 
-                let linkHtml = '';
-                let safeLink = item.link ? String(item.link).trim() : '';
-                if (safeLink) {
-                    if (!safeLink.startsWith('http')) safeLink = 'https://' + safeLink;
-                    linkHtml = `<a href="${safeLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: bold; display:inline-block; margin-top:8px;">🔗 צפייה במסמך המקור</a>`;
+                if(!groupsMap[groupKey]) {
+                    groupsMap[groupKey] = { dateStr: groupKey, sortValue: item.sortValue, items: [] };
                 }
+                groupsMap[groupKey].items.push(item);
+            });
 
-                let threadHtml = '';
-                let relationLabelOnLineHtml = '';
-                let rootNodeClass = '';
+            const groups = Object.values(groupsMap).sort((a,b) => b.sortValue - a.sortValue);
 
-                if (activeRootItem) {
-                    if (item.idCode === activeRootItem.idCode) {
-                        rootNodeClass = 'is-root-node';
-                        relationLabelOnLineHtml = `<div class="relation-label-on-line" style="background:#3b82f6; color:white; border-color:#2563eb;">📍 מסמך מרכזי</div>`;
-                    } else {
-                        const relObj = activeRootItem.relatedDocs.find(r =>
-                            (typeof r === 'object' && r.idCode === item.idCode) ||
-                            (typeof r === 'string' && r === item.idCode)
-                        );
+            groups.forEach(group => {
+                let cardsHtml = '';
 
-                        if (relObj) {
-                            const relLabel = (typeof relObj === 'object' && relObj.label) ? relObj.label : 'קשור למסמך המרכזי';
-                            const relWeight = (typeof relObj === 'object' && relObj.weight) ? relObj.weight : 5;
-                            relationLabelOnLineHtml = `<div class="relation-label-on-line" data-weight="${relWeight}">🔗 ${relLabel}</div>`;
-                        }
-                    }
-                }
-                else if (item.relatedDocs && Array.isArray(item.relatedDocs) && item.relatedDocs.length > 0) {
-                    const relatedIds = item.relatedDocs.map(r => typeof r === 'object' ? r.idCode : r);
-                    const relatedIdsStr = relatedIds.join(',');
+                group.items.forEach(item => {
+                    const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
+                    const label = item.type === 'committee' && item.author ? item.author : entity.label;
+                    const dateStr = typeof formatParsedDate === 'function' ? formatParsedDate(item.parsedDate) : item.date;
+                    const displayTitle = item.type === 'committee' ? `<strong style="font-weight: 800; color: #0f172a;">${item.author}</strong>: ${item.title}` : item.title;
 
-                    threadHtml = `
-                        <div style="margin-top: 1rem; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
-                            <button class="thread-btn"
-                                onclick="filterThread(event, '${item.idCode}')"
-                                onmousemove="if(typeof showDocTooltip === 'function') showDocTooltip(event, '${relatedIdsStr}')"
-                                onmouseleave="if(typeof hideDocTooltip === 'function') hideDocTooltip()">
-                                🔗 צפה בשרשור הקשור (${item.relatedDocs.length} מסמכים)
-                            </button>
-                        </div>
-                    `;
-                }
+                    const count = item.clusterIds ? item.clusterIds.length : 0;
+                    const relationClass = count > 0 ? 'has-relations' : '';
+                    const relationIconHtml = count > 0 ? `<span class="relation-icon-badge">🔗 ${count} קשרים</span>` : '';
 
-                container.innerHTML += `
-                    <div class="timeline-item">
-                        ${relationLabelOnLineHtml}
-                        <div class="timeline-dot" style="background-color: ${entity.color}; box-shadow: 0 0 0 4px ${entity.color}20;"></div>
-                        <div class="timeline-card ${rootNodeClass}" onclick="toggleCard(this, '${detailsId}')" style="border-right: 4px solid ${entity.color}">
+                    cardsHtml += `
+                        <div class="timeline-card ${relationClass}"
+                             id="card-${item.idCode}"
+                             data-id="${item.idCode}"
+                             style="border-top-color: ${entity.color}; border-top-width: 4px;"
+                             onmouseenter="handleCardEnter(event, '${item.idCode}')"
+                             onmouseleave="handleCardLeave()"
+                             onclick="handleCardClick(event, '${item.idCode}')">
 
                             <div class="card-header">
-                                <span class="card-type-badge" style="background-color: ${entity.color}">${label}</span>
-                                ${dateStr ? `<span class="card-date">${dateStr}</span>` : ''}
+                                <div style="display:flex; align-items:center;">
+                                    <span class="card-type-badge" style="background-color: ${entity.color}">${label}</span>
+                                    ${relationIconHtml}
+                                </div>
+                                <span class="card-date">${dateStr}</span>
                             </div>
-                            <h3 class="card-title">${displayTitle}</h3>
-                            <div class="expand-hint">▼ לחץ להרחבה ופרטים נוספים</div>
+                            <div class="card-title">${displayTitle}</div>
+                        </div>
+                    `;
+                });
 
-                            <div id="${detailsId}" class="card-expanded-content" onclick="event.stopPropagation();">
-                                ${sourceHtml}
-                                <p class="card-summary">${item.summary || 'אין תקציר זמין.'}</p>
-                                ${impactHtml}
-                                <div>${linkHtml}</div>
-                                ${threadHtml}
-                            </div>
-
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="month-section">
+                        <div class="month-divider">
+                            <span>${group.dateStr}</span>
+                            <div class="month-line"></div>
+                            <span>${group.dateStr}</span>
+                        </div>
+                        <div class="cards-grid">
+                            ${cardsHtml}
                         </div>
                     </div>
-                `;
+                `);
             });
         }
 
-        function toggleCard(cardElement, detailsId) {
-            const detailsElement = document.getElementById(detailsId);
-            const isOpen = detailsElement.classList.contains('open');
+        // --- לוגיקת קליק (סינון, פיזור וציור חיצים) ---
 
-            document.querySelectorAll('.card-expanded-content').forEach(el => el.classList.remove('open'));
-            document.querySelectorAll('.timeline-card').forEach(el => el.classList.remove('open'));
+        function handleCardClick(event, currentId) {
+            event.stopPropagation();
 
-            if (!isOpen) {
-                detailsElement.classList.add('open');
-                cardElement.classList.add('open');
+            // העלמה מיידית של הפופאפ המרחף
+            if (typeof hideDocTooltip === 'function') hideDocTooltip();
+
+            if (isFilteredMode) {
+                clearFilter();
+                return;
+            }
+
+            const currentCard = document.getElementById(`card-${currentId}`);
+            if(!currentCard) return;
+
+            const rootItem = allItems.find(i => i.idCode === currentId);
+            if (!rootItem || !rootItem.clusterIds || rootItem.clusterIds.length === 0) return;
+
+            savedScrollPosition = window.scrollY;
+            isFilteredMode = true;
+            document.body.classList.add('filtered-mode');
+
+            const threadIds = [currentId, ...rootItem.clusterIds];
+            const scatterOffsets = ['0%', '25%', '-25%', '15%', '-15%', '35%', '-35%'];
+            let visibleCount = 0;
+
+            document.querySelectorAll('.month-section').forEach(section => {
+                let hasVisibleCard = false;
+                section.querySelectorAll('.timeline-card').forEach(card => {
+                    const cId = card.getAttribute('data-id');
+                    if (!threadIds.includes(cId)) {
+                        card.style.display = 'none';
+                    } else {
+                        card.style.display = 'flex';
+                        hasVisibleCard = true;
+                        if(cId === currentId) {
+                            card.classList.add('focused-root');
+                        }
+
+                        // פיזור ויזואלי להרחקת הכרטיסיות זו מזו
+                        const offset = scatterOffsets[visibleCount % scatterOffsets.length];
+                        card.style.transform = `translateX(${offset})`;
+                        visibleCount++;
+                    }
+                });
+                section.style.display = hasVisibleCard ? 'flex' : 'none';
+            });
+
+            // ציור החיצים רק אחרי שהאנימציה של הפיזור מסתיימת (0.35s)
+            setTimeout(() => {
+                drawFilteredConnections(currentId);
+                const rootEl = document.getElementById(`card-${currentId}`);
+                if(rootEl) {
+                    rootEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 380);
+        }
+
+        function clearFilter() {
+            isFilteredMode = false;
+            document.body.classList.remove('filtered-mode');
+
+            document.querySelectorAll('.timeline-card').forEach(card => {
+                card.style.display = 'flex';
+                card.style.transform = 'none';
+                card.classList.remove('focused-root');
+            });
+
+            document.querySelectorAll('.month-section').forEach(section => {
+                section.style.display = 'flex';
+            });
+
+            clearSVG();
+            if(typeof hideDocTooltip === 'function') hideDocTooltip();
+
+            setTimeout(() => {
+                window.scrollTo({ top: savedScrollPosition, behavior: 'instant' });
+            }, 10);
+        }
+
+        document.addEventListener('click', () => {
+            if (isFilteredMode) clearFilter();
+        });
+
+        // --- הופעת פופאפים בלבד (ללא קווים) בהובר ---
+
+        function handleCardEnter(event, currentId) {
+            // הופעת פופאפ רגילה, עובד גם בתצוגה המסוננת!
+            if (typeof showDocTooltip === 'function') showDocTooltip(event, currentId);
+        }
+
+        function handleCardLeave() {
+            if (typeof hideDocTooltip === 'function') hideDocTooltip();
+        }
+
+        // --- מנגנון שרטוט החיצים בחזית ---
+
+        function clearSVG() {
+            const svg = document.getElementById('connections-svg');
+            svg.innerHTML = `
+                <defs>
+                    <marker id="arrowhead" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto">
+                        <polygon points="0 0, 14 5, 0 10" fill="#2563eb" />
+                    </marker>
+                </defs>
+            `;
+            document.getElementById('connections-labels').innerHTML = '';
+        }
+
+        // פונקציה למציאת נקודת החיתוך בגבולות הכרטיסייה (מניעת דריסה)
+        function getBorderPoint(rect, targetX, targetY) {
+            const MathAbs = Math.abs;
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = targetX - cx;
+            const dy = targetY - cy;
+
+            // בדיקת פרופורציות כדי להחליט אם נחצה למעלה/למטה או בצדדים
+            if (MathAbs(dx) * rect.height > MathAbs(dy) * rect.width) {
+                const x = dx > 0 ? rect.right : rect.left;
+                const y = cy + dy * (rect.width / 2) / MathAbs(dx);
+                return { x, y };
+            } else {
+                const y = dy > 0 ? rect.bottom : rect.top;
+                const x = cx + dx * (rect.height / 2) / MathAbs(dy);
+                return { x, y };
             }
         }
 
-        function filterThread(event, rootIdCode) {
-            event.stopPropagation();
-            if(typeof hideDocTooltip === 'function') hideDocTooltip();
+        function drawFilteredConnections(rootId) {
+            clearSVG();
+            const svg = document.getElementById('connections-svg');
 
-            const rootItem = allItems.find(i => i.idCode === rootIdCode);
-            if (!rootItem) return;
+            // משיכת כל הקשרים שבהם מסמך השורש מעורב
+            const activeEdges = edgesInfo.filter(e => e.source === rootId || e.target === rootId);
 
-            const relatedIds = (rootItem.relatedDocs || []).map(r => typeof r === 'object' ? r.idCode : r);
-            const threadIds = [rootIdCode, ...relatedIds];
+            activeEdges.forEach((edge, index) => {
+                const sourceItem = allItems.find(i => i.idCode === edge.source);
+                const targetItem = allItems.find(i => i.idCode === edge.target);
+                if (!sourceItem || !targetItem) return;
 
-            const threadItems = allItems.filter(i => threadIds.includes(i.idCode));
+                let startItem, endItem;
+                // החץ מצביע תמיד אל המסמך החדש יותר!
+                if (sourceItem.sortValue < targetItem.sortValue) {
+                    startItem = sourceItem; // הישן
+                    endItem = targetItem;   // החדש
+                } else {
+                    startItem = targetItem; // הישן
+                    endItem = sourceItem;   // החדש
+                }
 
-            const banner = document.getElementById('threadBanner');
-            document.getElementById('threadBannerText').innerText = `מציג את שרשרת האירועים סביב: "${rootItem.title}"`;
-            banner.classList.add('active');
+                const startEl = document.getElementById(`card-${startItem.idCode}`);
+                const endEl = document.getElementById(`card-${endItem.idCode}`);
+                if(!startEl || !endEl) return;
 
-            renderTimeline(threadItems, rootItem);
+                const svgRect = svg.getBoundingClientRect();
+                const sRect = startEl.getBoundingClientRect();
+                const eRect = endEl.getBoundingClientRect();
 
-            setTimeout(() => {
-                document.querySelectorAll('.card-expanded-content').forEach(el => el.classList.add('open'));
-                document.querySelectorAll('.timeline-card').forEach(el => el.classList.add('open'));
-            }, 50);
+                // חישוב המרכז של כל כרטיס
+                const cx1 = sRect.left + sRect.width/2;
+                const cy1 = sRect.top + sRect.height/2;
+                const cx2 = eRect.left + eRect.width/2;
+                const cy2 = eRect.top + eRect.height/2;
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+                // חישוב מדויק של הנקודה על מסגרת הכרטיסייה כדי לא לדרוס את התוכן!
+                const startPt = getBorderPoint(sRect, cx2, cy2);
+                const endPt = getBorderPoint(eRect, cx1, cy1);
 
-        function clearThread() {
-            document.getElementById('threadBanner').classList.remove('active');
-            renderTimeline(allItems);
+                const startX = startPt.x - svgRect.left;
+                const startY = startPt.y - svgRect.top;
+                const endX = endPt.x - svgRect.left;
+                const endY = endPt.y - svgRect.top;
+
+                const dx = endX - startX;
+                const dy = endY - startY;
+
+                // יצירת עקומה משתנה כדי שהקווים לא יחפפו אחד את השני
+                const sign = (index % 2 === 0) ? 1 : -1;
+                const curveAmount = 0.2;
+                const cx = startX + dx/2 - dy * curveAmount * sign;
+                const cy = startY + dy/2 + dx * curveAmount * sign;
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                const d = `M ${startX},${startY} Q ${cx},${cy} ${endX},${endY}`;
+
+                path.setAttribute("d", d);
+                path.setAttribute("stroke", "#2563eb");
+                path.setAttribute("stroke-width", "3");
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke-dasharray", "6,4");
+                path.setAttribute("marker-end", "url(#arrowhead)");
+
+                svg.appendChild(path);
+
+                if (edge.label) {
+                    let labelX = startX*0.25 + cx*0.5 + endX*0.25;
+                    let labelY = startY*0.25 + cy*0.5 + endY*0.25;
+
+                    const labelDiv = document.createElement('div');
+                    labelDiv.className = 'connection-label';
+                    labelDiv.innerText = edge.label;
+                    labelDiv.style.left = labelX + 'px';
+                    labelDiv.style.top = labelY + 'px';
+
+                    document.getElementById('connections-labels').appendChild(labelDiv);
+                }
+            });
         }
     </script>
 </body>
