@@ -51,30 +51,36 @@
 
         .cards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: 100%; padding: 0 0.5rem; }
 
-        /* כרטיסיית עיצוב משותף לציר הזמן ול-Cytoscape */
+        /* כרטיסיית ציר הזמן הרגיל */
         .timeline-card {
-            background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem 0.75rem;
+            background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.75rem 1rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s; position: relative;
             width: calc(33.333% - 1rem); min-width: 220px; max-width: 280px;
             text-align: right; display: flex; flex-direction: column; cursor: pointer; z-index: 10;
         }
-
         .timeline-card.has-relations { border-width: 2px; border-color: #94a3b8; }
         .timeline-card.has-relations:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 8px -2px rgba(0,0,0,0.1); }
-        .timeline-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important; z-index: 20; }
-
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
-        .card-date { font-weight: 700; color: #475569; font-size: 0.8rem; font-family: monospace; }
-        .card-type-badge { color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
-
-        .relation-icon-badge {
-            display: inline-flex; align-items: center; justify-content: center;
-            background: #eff6ff; color: #2563eb; font-size: 0.65rem; padding: 2px 6px;
-            border-radius: 12px; margin-right: auto; font-weight: bold; border: 1px solid #bfdbfe;
-            margin-left: 6px;
+        .timeline-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
+        .timeline-card .card-date { font-weight: 700; color: #475569; font-size: 0.85rem; font-family: monospace; }
+        .timeline-card .card-type-badge { color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .timeline-card .relation-icon-badge {
+            display: inline-flex; align-items: center; justify-content: center; background: #eff6ff; color: #2563eb;
+            font-size: 0.7rem; padding: 2px 6px; border-radius: 12px; margin-right: auto; font-weight: bold; border: 1px solid #bfdbfe; margin-left: 6px;
         }
+        .timeline-card .card-title { font-size: 0.95rem; color: #0f172a; line-height: 1.25; font-weight: 400; }
 
-        .card-title { font-size: 0.85rem; color: #0f172a; line-height: 1.25; font-weight: 400; }
+        /* === עיצוב ייעודי ומוקטן לכרטיסיות בתוך מפת הקשרים === */
+        .network-card {
+            background: white; border: 1px solid #cbd5e1; border-radius: 0.4rem; padding: 0.4rem 0.6rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: right; display: flex; flex-direction: column;
+            width: 220px; /* רוחב קבוע חובה כדי למנוע "ריחוף" של האלמנט מהקואורדינטות! */
+            margin: 0; pointer-events: auto; cursor: pointer; direction: rtl; /* החזרת הטקסט לימין-לשמאל */
+        }
+        .network-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; }
+        .network-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.2rem; }
+        .network-card .card-date { font-weight: 700; color: #475569; font-size: 0.75rem; font-family: monospace; }
+        .network-card .card-type-badge { color: white; padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
+        .network-card .card-title { font-size: 0.8rem; color: #0f172a; line-height: 1.2; font-weight: 400; }
 
         /* קונטיינר ל-Cytoscape */
         #cy-container {
@@ -132,13 +138,12 @@
                 <button class="btn-cy" onclick="closeNetworkView()">✖ סגור מפת קשרים וחזור לציר הזמן</button>
                 <button class="btn-cy" onclick="cy.fit()" style="background:#475569;">מרכז תצוגה</button>
             </div>
-            <div id="cy" style="width: 100%; height: 100%;"></div>
+            <div id="cy" style="width: 100%; height: 100%; direction: ltr;"></div>
         </div>
 
     </div>
 
     <script>
-        // רישום הפלאגינים של Cytoscape
         if(typeof cytoscape !== 'undefined' && typeof cytoscapeElk !== 'undefined') {
             cytoscape.use(cytoscapeElk);
         }
@@ -232,7 +237,7 @@
                     const yStr = item.year || '1970';
                     const dateStr = `${mStr}/${yStr}`;
 
-                    // הלוגיקה החדשה והנקייה - מונעת כפילות בוועדות!
+                    // מניעת כפילות בוועדות, והדגשת המקור בלבד
                     let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
                     if (item.type !== 'committee') {
                         if (item.source && item.source.trim() !== '') {
@@ -288,7 +293,7 @@
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
         }
 
-        // --- פתיחה וסגירה של ה-Network ---
+        // --- פתיחה וסגירה של מפת הקשרים ---
         function openNetworkView(rootId) {
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
 
@@ -302,6 +307,11 @@
             cyContainer.style.display = 'block';
 
             initCytoscapeForCluster(rootId, rootItem.clusterIds);
+
+            // תן לקנבס שנייה להסתדר ואז עשה Fit מלא
+            setTimeout(() => {
+                if(cy) cy.fit(cy.elements(), 50);
+            }, 100);
 
             cyContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -324,7 +334,6 @@
             const elements = [];
             const nodesSet = new Set([rootId, ...clusterIds]);
 
-            // יצירת צמתים (Nodes) - מאחסנים את כל המידע כדי להזריק ל-HTML
             nodesSet.forEach(id => {
                 const item = allItems.find(i => i.idCode === id);
                 if(!item) return;
@@ -336,7 +345,6 @@
                 const yStr = item.year || '1970';
                 const dateStr = `${mStr}/${yStr}`;
 
-                // הסרת כפילויות גם בתצוגת הרשת
                 let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
                 if (item.type !== 'committee') {
                     if (item.source && item.source.trim() !== '') {
@@ -359,7 +367,6 @@
                 });
             });
 
-            // יצירת קשתות
             const processedEdges = new Set();
             edgesInfo.forEach(edge => {
                 if (nodesSet.has(edge.source) && nodesSet.has(edge.target)) {
@@ -368,7 +375,8 @@
                     if(!sItem || !tItem) return;
 
                     let realSource, realTarget;
-                    // כיוון החץ: מהישן לחדש (כדי שהחדש יהיה למעלה במפה)
+                    // אנחנו רוצים שהחדש (SortValue גבוה) יהיה למעלה.
+                    // במנוע ELK עם direction:DOWN, ה-Source ממוקם מעל ה-Target.
                     if (sItem.sortValue > tItem.sortValue) {
                         realSource = sItem.idCode; realTarget = tItem.idCode;
                     } else {
@@ -398,10 +406,9 @@
                     {
                         selector: 'node',
                         style: {
-                            'width': 260,
-                            'height': 80,
-                            'background-opacity': 0, // שקוף לחלוטין! ה-HTML יעשה את העבודה
-                            'border-width': 0,
+                            'width': 220, // תואם לרוחב הקבוע של ה-network-card
+                            'height': 60,
+                            'background-opacity': 0, // שקוף כדי שה-HTML יבלוט
                             'shape': 'rectangle'
                         }
                     },
@@ -410,11 +417,12 @@
                         style: {
                             'width': 2.5,
                             'line-color': '#94a3b8',
+                            // החץ צריך להצביע מהישן אל החדש (כלומר למעלה, לכיוון ה-Source)
                             'source-arrow-color': '#3b82f6',
-                            'source-arrow-shape': 'triangle', // מצביע על המקור (המסמך החדש)
+                            'source-arrow-shape': 'triangle',
                             'target-arrow-shape': 'none',
                             'curve-style': 'bezier',
-                            'text-margin-y': -14, // מרחיק את התווית מהקו
+                            'text-margin-y': -14, // מונע מתווית לדרוס את הקו
                             'label': 'data(label)',
                             'font-family': 'Assistant, sans-serif',
                             'font-size': '11px',
@@ -434,15 +442,15 @@
                     elk: {
                         'algorithm': 'layered',
                         'elk.direction': 'DOWN',
-                        'elk.spacing.nodeNode': 60,
-                        'elk.layered.spacing.nodeNodeBetweenLayers': 110, // רווח אנכי גדול
+                        'elk.spacing.nodeNode': 40,
+                        'elk.layered.spacing.nodeNodeBetweenLayers': 80, // רווח אנכי מתאים
                         'elk.edgeRouting': 'SPLINES'
                     }
                 },
                 wheelSensitivity: 0.2
             });
 
-            // הפעלת תוסף ה-HTML Label שמזריק את הקוביות שלנו מעל ל-Cytoscape
+            // הפעלת תוסף ה-HTML: הוא שואב את העיצוב מהמחלקות שיצרנו
             cy.nodeHtmlLabel([{
                 query: 'node',
                 halign: 'center',
@@ -451,13 +459,11 @@
                 valignBox: 'center',
                 tpl: function(data) {
                     const rootClass = data.isRoot ? 'focused-root' : '';
-                    // שימו לב: הוסר ה-relationIconHtml מפה!
+                    // שימוש ב-network-card المוקטן, ללא סמל הקישורים
                     return `
-                        <div class="timeline-card ${rootClass}" style="width: 260px; height: auto; min-height: 80px; margin: 0; pointer-events: none; border-top-color: ${data.color}; border-top-width: 4px;">
+                        <div class="network-card ${rootClass}" style="border-top-color: ${data.color}; border-top-width: 4px;">
                             <div class="card-header">
-                                <div style="display:flex; align-items:center;">
-                                    <span class="card-type-badge" style="background-color: ${data.color}">${data.typeLabel}</span>
-                                </div>
+                                <span class="card-type-badge" style="background-color: ${data.color}">${data.typeLabel}</span>
                                 <span class="card-date">${data.dateStr}</span>
                             </div>
                             <div class="card-title">${data.displayTitle}</div>
@@ -466,7 +472,7 @@
                 }
             }]);
 
-            // חיבור הפופאפים לקוביות השקופות שנמצאות מתחת ל-HTML
+            // חיבור הפופאפים
             cy.on('mouseover', 'node', function(evt){
                 const node = evt.target;
                 const id = node.data('id');
