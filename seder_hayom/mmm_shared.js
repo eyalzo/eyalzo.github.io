@@ -194,3 +194,42 @@ function getDisplayTitle(item) {
 
     return titleHtml;
 }
+
+// פונקציה לייצור כפתור מפת קשרים (טיימליין)
+function getRelationBadgeHtml(count, idCode) {
+    if (!count || count === 0) return '';
+    const fontWeight = count >= 2 ? 'bold' : 'normal';
+    // שימוש באייקון של רשת/נתיבים במקום שרשרת, ופתיחה רק בלחיצה על הבאדג' עצמו
+    return `<span class="relation-icon-badge" style="font-weight: ${fontWeight}; cursor: pointer;" onclick="event.stopPropagation(); if(typeof openNetworkView === 'function') openNetworkView('${idCode}')" title="לחץ לפתיחת מפת קשרים המציגה את רשת המסמכים">🔀 ${count}</span>`;
+}
+
+// פונקציה לייצור כפתור קישור למסמך (לדשבורד ולטיימליין)
+function getDocLinkBadgeHtml(link) {
+    let safeLink = link ? String(link).trim() : '';
+    if (safeLink !== '' && safeLink !== 'undefined') {
+        if (!safeLink.startsWith('http')) safeLink = 'https://' + safeLink;
+        return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="text-decoration: none; cursor: pointer; padding: 1px 5px; border-radius: 4px; display: inline-flex; border: 1px solid #bfdbfe; background-color: #eff6ff;" onclick="event.stopPropagation();" title="לחץ למעבר למסמך המקור">📄</a>`;
+    } else {
+        return `<span class="doc-id-badge" style="padding: 1px 5px; border-radius: 4px; display: inline-flex; border: 1px solid #e2e8f0; background-color: #f1f5f9; opacity: 0.5; cursor: not-allowed;" onclick="event.stopPropagation();" title="אין קישור למסמך כרגע">📄</span>`;
+    }
+}
+
+// Get a compact label for timeline and network view cards
+function getCompactLabel(item) {
+    const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
+
+    // Override specific labels for a more compact UI
+    const compactLabels = {
+        'activeLaw': 'הצעת חוק',
+        'mmm': 'מסמך ממ״מ',
+        'govDecision': 'החלטת ממשלה',
+        'passedLaw': 'חוק'
+    };
+
+    // Use author name for committees, otherwise use compact label or default
+    if (item.type === 'committee' && item.author) {
+        return item.author;
+    }
+
+    return compactLabels[item.type] || entity.label;
+}

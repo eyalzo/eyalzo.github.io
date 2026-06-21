@@ -73,8 +73,8 @@
         .network-card {
             background: white; border: 1px solid #cbd5e1; border-radius: 0.4rem; padding: 0.4rem 0.6rem;
             box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: right; display: flex; flex-direction: column;
-            width: 220px; /* רוחב קבוע חובה כדי למנוע "ריחוף" של האלמנט מהקואורדינטות! */
-            margin: 0; pointer-events: auto; cursor: pointer; direction: rtl; /* החזרת הטקסט לימין-לשמאל */
+            width: 220px;
+            margin: 0; pointer-events: auto; cursor: pointer; direction: rtl;
         }
         .network-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; }
         .network-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.2rem; }
@@ -130,13 +130,14 @@
                 <span class="badge">החדש ביותר</span>
             </div>
             <div id="timelineContainer" class="timeline-container">
-                </div>
+            </div>
         </div>
 
         <div id="cy-container">
             <div class="cy-toolbar">
-                <button class="btn-cy" onclick="closeNetworkView()">✖ סגור מפת קשרים וחזור לציר הזמן</button>
+                <button class="btn-cy" onclick="closeNetworkView()">✖ סגור מפה וחזור</button>
                 <button class="btn-cy" onclick="cy.fit()" style="background:#475569;">מרכז תצוגה</button>
+                <button class="btn-cy" id="resetLayoutBtn" onclick="resetNetworkLayout()" style="background:#f59e0b; display:none;">🔄 איפוס סידור</button>
             </div>
             <div id="cy" style="width: 100%; height: 100%; direction: ltr;"></div>
         </div>
@@ -155,6 +156,7 @@
         let edgesInfo = [];
         let inOutMap = {};
         let cy = null;
+        let currentRootId = null; // שומר את ה-ID הנוכחי למטרות שמירה ואיפוס
 
         window.initDashboard = async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -231,15 +233,11 @@
 
                 group.items.forEach(item => {
                     const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
-                    const label = item.type === 'committee' && item.author ? item.author : entity.label;
+                    const label = typeof getCompactLabel === 'function' ? getCompactLabel(item) : entity.label;
+                    const dateStr = typeof formatParsedDate === 'function' ? formatParsedDate(item.parsedDate) : item.date;
 
-                    const mStr = item.month ? String(item.month).padStart(2, '0') : '01';
-                    const yStr = item.year || '1970';
-                    const dateStr = `${mStr}/${yStr}`;
-
-                    // מניעת כפילות בוועדות, והדגשת המקור בלבד
                     let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
-                    if (item.type !== 'committee') {
+                    if (item.type !== 'committee' && item.type !== 'passedLaw') {
                         if (item.source && item.source.trim() !== '') {
                             displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
                         } else if (item.author && item.author.trim() !== '') {
@@ -249,22 +247,25 @@
 
                     const count = item.clusterIds ? item.clusterIds.length : 0;
                     const relationClass = count > 0 ? 'has-relations' : '';
-                    const relationIconHtml = count > 0 ? `<span class="relation-icon-badge">🔗 ${count} קשרים</span>` : '';
+                    const relationIconHtml = typeof getRelationBadgeHtml === 'function' ? getRelationBadgeHtml(count, item.idCode) : '';
+                    const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(item.link) : '';
 
                     cardsHtml += `
                         <div class="timeline-card ${relationClass}"
                              id="card-${item.idCode}"
                              style="border-top-color: ${entity.color}; border-top-width: 4px;"
                              onmouseenter="handleCardEnter(event, '${item.idCode}')"
-                             onmouseleave="handleCardLeave()"
-                             onclick="openNetworkView('${item.idCode}')">
+                             onmouseleave="handleCardLeave()">
 
                             <div class="card-header">
                                 <div style="display:flex; align-items:center;">
                                     <span class="card-type-badge" style="background-color: ${entity.color}">${label}</span>
                                     ${relationIconHtml}
                                 </div>
-                                <span class="card-date">${dateStr}</span>
+                                <div style="display:flex; align-items:center; gap: 4px;">
+                                    <span class="card-date">${dateStr}</span>
+                                    ${docLinkHtml}
+                                </div>
                             </div>
                             <div class="card-title">${displayTitle}</div>
                         </div>
@@ -293,7 +294,6 @@
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
         }
 
-        // --- פתיחה וסגירה של מפת הקשרים ---
         function openNetworkView(rootId) {
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
 
@@ -301,17 +301,13 @@
             if (!rootItem || !rootItem.clusterIds || rootItem.clusterIds.length === 0) return;
 
             savedScrollPosition = window.scrollY;
+            currentRootId = rootId;
 
             document.getElementById('timeline-view').style.display = 'none';
             const cyContainer = document.getElementById('cy-container');
             cyContainer.style.display = 'block';
 
             initCytoscapeForCluster(rootId, rootItem.clusterIds);
-
-            // תן לקנבס שנייה להסתדר ואז עשה Fit מלא
-            setTimeout(() => {
-                if(cy) cy.fit(cy.elements(), 50);
-            }, 100);
 
             cyContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -322,6 +318,7 @@
                 cy = null;
             }
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
+            currentRootId = null;
 
             document.getElementById('cy-container').style.display = 'none';
             document.getElementById('timeline-view').style.display = 'block';
@@ -329,17 +326,46 @@
             window.scrollTo({ top: savedScrollPosition, behavior: 'instant' });
         }
 
-        // --- אתחול Cytoscape באמצעות HTML Labels ---
+        function resetNetworkLayout() {
+            if(!currentRootId) return;
+            // מחיקת השמירה מהזיכרון
+            localStorage.removeItem('gilat_cy_pos_' + currentRootId);
+
+            const rootItem = allItems.find(i => i.idCode === currentRootId);
+            if(cy) { cy.destroy(); cy = null; }
+
+            // אתחול מחדש
+            initCytoscapeForCluster(currentRootId, rootItem.clusterIds);
+            setTimeout(() => {
+                if(cy) cy.fit(cy.elements(), 50);
+            }, 100);
+        }
+
         function initCytoscapeForCluster(rootId, clusterIds) {
             const elements = [];
             const nodesSet = new Set([rootId, ...clusterIds]);
+
+            // קריאת מיקומים שמורים מ- localStorage
+            const savedPositionsStr = localStorage.getItem('gilat_cy_pos_' + rootId);
+            let savedPositions = null;
+            let usePresetLayout = false;
+
+            if (savedPositionsStr) {
+                try {
+                    savedPositions = JSON.parse(savedPositionsStr);
+                    usePresetLayout = true;
+                    document.getElementById('resetLayoutBtn').style.display = 'inline-block';
+                } catch (e) { console.error("Error parsing saved positions", e); }
+            } else {
+                document.getElementById('resetLayoutBtn').style.display = 'none';
+            }
 
             nodesSet.forEach(id => {
                 const item = allItems.find(i => i.idCode === id);
                 if(!item) return;
 
                 const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
-                let label = item.type === 'committee' && item.author ? item.author : entity.label;
+                let label = typeof getCompactLabel === 'function' ? getCompactLabel(item) : entity.label;
 
                 const mStr = item.month ? String(item.month).padStart(2, '0') : '01';
                 const yStr = item.year || '1970';
@@ -354,17 +380,27 @@
                     }
                 }
 
-                elements.push({
+                // Generate the document link badge
+                const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(item.link) : '';
+                let nodeObj = {
                     group: 'nodes',
                     data: {
                         id: item.idCode,
                         typeLabel: label,
                         dateStr: dateStr,
                         displayTitle: displayTitle,
+                        docLinkHtml: docLinkHtml,
                         color: entity.color,
                         isRoot: (id === rootId)
                     }
-                });
+                };
+
+                // החלת המיקום השמור אם קיים
+                if (savedPositions && savedPositions[item.idCode]) {
+                    nodeObj.position = savedPositions[item.idCode];
+                }
+
+                elements.push(nodeObj);
             });
 
             const processedEdges = new Set();
@@ -375,8 +411,6 @@
                     if(!sItem || !tItem) return;
 
                     let realSource, realTarget;
-                    // אנחנו רוצים שהחדש (SortValue גבוה) יהיה למעלה.
-                    // במנוע ELK עם direction:DOWN, ה-Source ממוקם מעל ה-Target.
                     if (sItem.sortValue > tItem.sortValue) {
                         realSource = sItem.idCode; realTarget = tItem.idCode;
                     } else {
@@ -399,6 +433,20 @@
                 }
             });
 
+            // החלטה איזה מנוע פריסה להפעיל (ELK או שמור)
+            const layoutConfig = usePresetLayout ?
+                { name: 'preset' } :
+                {
+                    name: 'elk',
+                    elk: {
+                        'algorithm': 'layered',
+                        'elk.direction': 'DOWN',
+                        'elk.spacing.nodeNode': 80, // הוגדל למניעת צפיפות אופקית
+                        'elk.layered.spacing.nodeNodeBetweenLayers': 180, // הוגדל משמעותית למניעת דריסת קווים ותוויות!
+                        'elk.edgeRouting': 'SPLINES'
+                    }
+                };
+
             cy = cytoscape({
                 container: document.getElementById('cy'),
                 elements: elements,
@@ -406,9 +454,9 @@
                     {
                         selector: 'node',
                         style: {
-                            'width': 220, // תואם לרוחב הקבוע של ה-network-card
-                            'height': 60,
-                            'background-opacity': 0, // שקוף כדי שה-HTML יבלוט
+                            'width': 220,
+                            'height': 100,
+                            'background-opacity': 0,
                             'shape': 'rectangle'
                         }
                     },
@@ -417,12 +465,11 @@
                         style: {
                             'width': 2.5,
                             'line-color': '#94a3b8',
-                            // החץ צריך להצביע מהישן אל החדש (כלומר למעלה, לכיוון ה-Source)
                             'source-arrow-color': '#3b82f6',
                             'source-arrow-shape': 'triangle',
                             'target-arrow-shape': 'none',
                             'curve-style': 'bezier',
-                            'text-margin-y': -14, // מונע מתווית לדרוס את הקו
+                            'text-margin-y': -14,
                             'label': 'data(label)',
                             'font-family': 'Assistant, sans-serif',
                             'font-size': '11px',
@@ -437,20 +484,10 @@
                         }
                     }
                 ],
-                layout: {
-                    name: 'elk',
-                    elk: {
-                        'algorithm': 'layered',
-                        'elk.direction': 'DOWN',
-                        'elk.spacing.nodeNode': 40,
-                        'elk.layered.spacing.nodeNodeBetweenLayers': 80, // רווח אנכי מתאים
-                        'elk.edgeRouting': 'SPLINES'
-                    }
-                },
+                layout: layoutConfig,
                 wheelSensitivity: 0.2
             });
 
-            // הפעלת תוסף ה-HTML: הוא שואב את העיצוב מהמחלקות שיצרנו
             cy.nodeHtmlLabel([{
                 query: 'node',
                 halign: 'center',
@@ -459,12 +496,14 @@
                 valignBox: 'center',
                 tpl: function(data) {
                     const rootClass = data.isRoot ? 'focused-root' : '';
-                    // שימוש ב-network-card المוקטן, ללא סמל הקישורים
                     return `
                         <div class="network-card ${rootClass}" style="border-top-color: ${data.color}; border-top-width: 4px;">
                             <div class="card-header">
                                 <span class="card-type-badge" style="background-color: ${data.color}">${data.typeLabel}</span>
-                                <span class="card-date">${data.dateStr}</span>
+                                <div style="display:flex; align-items:center; gap: 4px;">
+                                    <span class="card-date">${data.dateStr}</span>
+                                    ${data.docLinkHtml || ''}
+                                </div>
                             </div>
                             <div class="card-title">${data.displayTitle}</div>
                         </div>
@@ -472,7 +511,18 @@
                 }
             }]);
 
-            // חיבור הפופאפים
+            // === שמירת מיקומים בסיום גרירה ===
+            cy.on('dragfree', 'node', function(evt) {
+                const positions = {};
+                cy.nodes().forEach(n => {
+                    positions[n.id()] = n.position();
+                });
+                localStorage.setItem('gilat_cy_pos_' + rootId, JSON.stringify(positions));
+
+                // הצגת כפתור האיפוס ברגע שהמשתמש שומר מיקום ידני
+                document.getElementById('resetLayoutBtn').style.display = 'inline-block';
+            });
+
             cy.on('mouseover', 'node', function(evt){
                 const node = evt.target;
                 const id = node.data('id');
@@ -488,6 +538,16 @@
             cy.on('mouseout', 'node', function(evt){
                 if (typeof hideDocTooltip === 'function') hideDocTooltip();
             });
+
+            // אם זה פריסה אוטומטית של ELK (פעם ראשונה), נעשה FIT כשהיא מסתיימת
+            if (!usePresetLayout) {
+                cy.on('layoutstop', function() {
+                    cy.fit(cy.elements(), 50);
+                });
+            } else {
+                // ב-preset נעשה fit מיד
+                setTimeout(() => { if(cy) cy.fit(cy.elements(), 50); }, 50);
+            }
         }
     </script>
 </body>

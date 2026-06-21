@@ -635,14 +635,8 @@
                     const dateStr = `${formattedMonth}/${item.year}`;
                     const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
 
-                    let linkBadgeHtml = '';
-                    let safeLink = item.link ? String(item.link).trim() : '';
-                    if (safeLink !== '' && safeLink !== 'undefined') {
-                        if (!safeLink.startsWith('http')) safeLink = 'https://' + safeLink;
-                        linkBadgeHtml = `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>קישור למסמך</span><span style="font-size:0.75rem">🔗</span></a>`;
-                    }
-
-                    let displayTitle = typeof getDisplayTitle === 'function' ? getDisplayTitle(item) : item.title;
+                    const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(item.link) : '';
+                    let displayTitle = item.title;
 
                     let metadataHtml = '';
                     if (item.type === 'activeLaw') {
@@ -691,16 +685,20 @@
                     colHtml += `
                             <div class="doc-item-wrapper">
                                 <div class="doc-mini-header" onclick="toggleDoc('${detailsId}')">
-                                    <span class="doc-mini-date">${dateStr}</span>
+                                    <!-- הוספנו flex-shrink: 0 כדי לשמור על הפרופורציות המקוריות -->
+                                    <div style="display:flex; align-items:center; gap: 6px; flex-shrink: 0;">
+                                        <span class="doc-mini-date">${dateStr}</span>
+                                        ${docLinkHtml}
+                                    </div>
                                     <span class="doc-mini-title">${displayTitle}</span>
                                 </div>
                                 <div id="${detailsId}" class="doc-full-details">
-                                    ${metadataHtml}
+                                                                ${metadataHtml}
                                     <p class="card-summary-box font-semibold">${item.summary || ''}</p>
                                     ${impactHtml}
                                     <div class="border-t pt-2 mt-auto flex items-center w-full">
                                         <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance || '0'}/10</span>
-                                        <div style="margin-right: auto;">${linkBadgeHtml}</div>
+                                        <!-- הסרנו מכאן את linkBadgeHtml שהיה בעבר -->
                                     </div>
                                 </div>
                             </div>
