@@ -43,29 +43,29 @@
         .timeline-container::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background-color: #e2e8f0; transform: translateX(-50%); border-radius: 2px; z-index: 0; }
         body.filtered-mode .timeline-container::before { background-color: #bfdbfe; }
 
-        /* Grouping by Month styles */
         .month-section { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 10; margin-bottom: 1.5rem; }
         .month-divider { display: flex; align-items: center; width: 100%; margin: 0.5rem 0 1.5rem 0; color: #64748b; font-weight: 800; font-size: 1.25rem; font-family: monospace; }
         .month-line { flex-grow: 1; border-top: 2px dashed #cbd5e1; margin: 0 1rem; }
         body.filtered-mode .month-divider { opacity: 0.5; color: #60a5fa; }
         body.filtered-mode .month-line { border-color: #93c5fd; }
 
+        /* גריד טבעי - האלמנטים יסתדרו לבד ולא ידרסו זה את זה לעולם */
         .cards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: 100%; padding: 0 0.5rem; }
+        body.filtered-mode .cards-grid { gap: 2rem; }
 
-        /* SVG & Labels Layer: Z-index 50 to be in FRONT of cards */
+        /* SVG & Labels Layer */
         #connections-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
         #connections-labels { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
         .connection-label {
             position: absolute; transform: translate(-50%, -50%);
-            background: #eff6ff; color: #1e3a8a; padding: 2px 10px; border-radius: 12px;
-            font-size: 0.8rem; font-weight: bold; border: 1px solid #bfdbfe;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; pointer-events: auto;
+            background: #eff6ff; color: #1e3a8a; padding: 4px 14px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: bold; border: 2px solid #bfdbfe;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); white-space: nowrap; pointer-events: auto;
         }
 
-        /* Compact Cards Restyling */
         .timeline-card {
             background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.35s ease; position: relative;
             width: calc(33.333% - 1rem); min-width: 240px; max-width: 300px;
             text-align: right; display: flex; flex-direction: column; cursor: pointer; z-index: 10;
         }
@@ -143,7 +143,7 @@
 
         let isFilteredMode = false;
         let savedScrollPosition = 0;
-        let edgesInfo = []; // שומר את כל המידע על הקווים לציור
+        let edgesInfo = [];
 
         window.initDashboard = async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -166,7 +166,6 @@
                     return { ...item, parsedDate: parsed, month: parsed.month, year: parsed.year, day: parsed.day, sortValue: parsed.sortValue };
                 });
 
-                // בניית רשת הקשרים המלאה (Bidirectional Network) לחישוב הקבוצה ולציור
                 const inOutMap = {};
                 allItems.forEach(item => inOutMap[item.idCode] = new Set());
 
@@ -177,15 +176,14 @@
                         const label = typeof rel === 'object' ? rel.label : '';
                         if (inOutMap[tId]) {
                             inOutMap[item.idCode].add(tId);
-                            inOutMap[tId].add(item.idCode); // השלמת הדדיות
+                            inOutMap[tId].add(item.idCode);
                             edgesInfo.push({ source: item.idCode, target: tId, label: label });
                         }
                     });
                 });
 
-                // עדכון כל אייטם בסט הקשרים הדו-כיווני שלו
                 allItems.forEach(item => {
-                    inOutMap[item.idCode].delete(item.idCode); // מניעת הפניה עצמית
+                    inOutMap[item.idCode].delete(item.idCode);
                     item.clusterIds = Array.from(inOutMap[item.idCode]);
                 });
 
@@ -206,7 +204,6 @@
                 if(child.id !== 'connections-svg' && child.id !== 'connections-labels') child.remove();
             });
 
-            // קיבוץ לפי חודש ושנה
             const groupsMap = {};
             itemsToRender.forEach(item => {
                 const m = item.month ? String(item.month).padStart(2, '0') : '01';
@@ -270,12 +267,11 @@
             });
         }
 
-        // --- לוגיקת קליק (סינון, פיזור וציור חיצים) ---
+        // --- לוגיקת קליק (סינון ומיקוד, ללא שיבושי Transform) ---
 
         function handleCardClick(event, currentId) {
             event.stopPropagation();
 
-            // העלמה מיידית של הפופאפ המרחף
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
 
             if (isFilteredMode) {
@@ -294,9 +290,8 @@
             document.body.classList.add('filtered-mode');
 
             const threadIds = [currentId, ...rootItem.clusterIds];
-            const scatterOffsets = ['0%', '25%', '-25%', '15%', '-15%', '35%', '-35%'];
-            let visibleCount = 0;
 
+            // הסתרה של כרטיסיות לא רלוונטיות, השאר מסתדרות טבעית בגריד
             document.querySelectorAll('.month-section').forEach(section => {
                 let hasVisibleCard = false;
                 section.querySelectorAll('.timeline-card').forEach(card => {
@@ -306,27 +301,22 @@
                     } else {
                         card.style.display = 'flex';
                         hasVisibleCard = true;
+
                         if(cId === currentId) {
                             card.classList.add('focused-root');
                         }
-
-                        // פיזור ויזואלי להרחקת הכרטיסיות זו מזו
-                        const offset = scatterOffsets[visibleCount % scatterOffsets.length];
-                        card.style.transform = `translateX(${offset})`;
-                        visibleCount++;
                     }
                 });
                 section.style.display = hasVisibleCard ? 'flex' : 'none';
             });
 
-            // ציור החיצים רק אחרי שהאנימציה של הפיזור מסתיימת (0.35s)
             setTimeout(() => {
                 drawFilteredConnections(currentId);
                 const rootEl = document.getElementById(`card-${currentId}`);
                 if(rootEl) {
                     rootEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-            }, 380);
+            }, 50);
         }
 
         function clearFilter() {
@@ -335,7 +325,6 @@
 
             document.querySelectorAll('.timeline-card').forEach(card => {
                 card.style.display = 'flex';
-                card.style.transform = 'none';
                 card.classList.remove('focused-root');
             });
 
@@ -355,10 +344,9 @@
             if (isFilteredMode) clearFilter();
         });
 
-        // --- הופעת פופאפים בלבד (ללא קווים) בהובר ---
+        // --- הופעת פופאפים בהובר ---
 
         function handleCardEnter(event, currentId) {
-            // הופעת פופאפ רגילה, עובד גם בתצוגה המסוננת!
             if (typeof showDocTooltip === 'function') showDocTooltip(event, currentId);
         }
 
@@ -366,7 +354,7 @@
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
         }
 
-        // --- מנגנון שרטוט החיצים בחזית ---
+        // --- מנגנון שרטוט החיצים (חכם, נמנע מדריסה) ---
 
         function clearSVG() {
             const svg = document.getElementById('connections-svg');
@@ -380,7 +368,6 @@
             document.getElementById('connections-labels').innerHTML = '';
         }
 
-        // פונקציה למציאת נקודת החיתוך בגבולות הכרטיסייה (מניעת דריסה)
         function getBorderPoint(rect, targetX, targetY) {
             const MathAbs = Math.abs;
             const cx = rect.left + rect.width / 2;
@@ -388,7 +375,6 @@
             const dx = targetX - cx;
             const dy = targetY - cy;
 
-            // בדיקת פרופורציות כדי להחליט אם נחצה למעלה/למטה או בצדדים
             if (MathAbs(dx) * rect.height > MathAbs(dy) * rect.width) {
                 const x = dx > 0 ? rect.right : rect.left;
                 const y = cy + dy * (rect.width / 2) / MathAbs(dx);
@@ -404,7 +390,6 @@
             clearSVG();
             const svg = document.getElementById('connections-svg');
 
-            // משיכת כל הקשרים שבהם מסמך השורש מעורב
             const activeEdges = edgesInfo.filter(e => e.source === rootId || e.target === rootId);
 
             activeEdges.forEach((edge, index) => {
@@ -413,13 +398,12 @@
                 if (!sourceItem || !targetItem) return;
 
                 let startItem, endItem;
-                // החץ מצביע תמיד אל המסמך החדש יותר!
                 if (sourceItem.sortValue < targetItem.sortValue) {
-                    startItem = sourceItem; // הישן
-                    endItem = targetItem;   // החדש
+                    startItem = sourceItem;
+                    endItem = targetItem;
                 } else {
-                    startItem = targetItem; // הישן
-                    endItem = sourceItem;   // החדש
+                    startItem = targetItem;
+                    endItem = sourceItem;
                 }
 
                 const startEl = document.getElementById(`card-${startItem.idCode}`);
@@ -430,13 +414,11 @@
                 const sRect = startEl.getBoundingClientRect();
                 const eRect = endEl.getBoundingClientRect();
 
-                // חישוב המרכז של כל כרטיס
                 const cx1 = sRect.left + sRect.width/2;
                 const cy1 = sRect.top + sRect.height/2;
                 const cx2 = eRect.left + eRect.width/2;
                 const cy2 = eRect.top + eRect.height/2;
 
-                // חישוב מדויק של הנקודה על מסגרת הכרטיסייה כדי לא לדרוס את התוכן!
                 const startPt = getBorderPoint(sRect, cx2, cy2);
                 const endPt = getBorderPoint(eRect, cx1, cy1);
 
@@ -448,11 +430,12 @@
                 const dx = endX - startX;
                 const dy = endY - startY;
 
-                // יצירת עקומה משתנה כדי שהקווים לא יחפפו אחד את השני
+                // קשתות רחבות עוקפות שזורקות את החץ החוצה לחללים הריקים
                 const sign = (index % 2 === 0) ? 1 : -1;
-                const curveAmount = 0.2;
-                const cx = startX + dx/2 - dy * curveAmount * sign;
-                const cy = startY + dy/2 + dx * curveAmount * sign;
+                // חישוב המרחק החוצה. אם זה ארוך במיוחד, נזרוק רחוק יותר.
+                const bowOut = 250 + (index * 40);
+                const cx = (startX + endX) / 2 + (bowOut * sign);
+                const cy = (startY + endY) / 2;
 
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 const d = `M ${startX},${startY} Q ${cx},${cy} ${endX},${endY}`;
@@ -461,12 +444,13 @@
                 path.setAttribute("stroke", "#2563eb");
                 path.setAttribute("stroke-width", "3");
                 path.setAttribute("fill", "none");
-                path.setAttribute("stroke-dasharray", "6,4");
+                path.setAttribute("stroke-dasharray", "8,6");
                 path.setAttribute("marker-end", "url(#arrowhead)");
 
                 svg.appendChild(path);
 
                 if (edge.label) {
+                    // התווית ממוקמת בשיא הקשת, באזור הבטוח שבצידי המסך
                     let labelX = startX*0.25 + cx*0.5 + endX*0.25;
                     let labelY = startY*0.25 + cy*0.5 + endY*0.25;
 
