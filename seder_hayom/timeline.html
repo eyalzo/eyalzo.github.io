@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ציר זמן פרלמנטרי וקשרים</title>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elkjs@0.8.2/lib/elk.bundled.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape-elk@2.2.0/dist/cytoscape-elk.min.js"></script>
 
     <script>
         (function() {
@@ -26,91 +30,83 @@
         :root { --bg-base: #f8fafc; --text-main: #0f172a; --header-bg: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
 
-        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.5; padding: 16px; overflow-x: hidden; transition: background-color 0.4s ease; }
-        body.filtered-mode { background-color: #e0e7ff; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.4; padding: 16px; overflow-x: hidden; transition: background-color 0.4s ease; }
 
         .max-w-6xl { max-width: 72rem; margin: 0 auto; }
         header { background-color: var(--header-bg); color: white; padding: 1.25rem 1.75rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; z-index: 20; position: relative; }
 
-        .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; text-decoration: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.95rem; cursor: pointer; text-decoration: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-back:hover { background-color: #bfdbfe; }
 
-        .timeline-direction-hint { text-align: center; color: #64748b; font-weight: 800; font-size: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .timeline-direction-hint { text-align: center; color: #64748b; font-weight: 800; font-size: 0.95rem; margin-bottom: 1rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .timeline-direction-hint span.badge { background: #e2e8f0; color: #334155; padding: 2px 16px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        body.filtered-mode .timeline-direction-hint { opacity: 0; pointer-events: none; }
 
-        .timeline-container { position: relative; padding: 0 0 4rem 0; width: 100%; min-height: 600px; display: flex; flex-direction: column; align-items: center; }
+        .timeline-container { position: relative; padding: 0 0 4rem 0; width: 100%; min-height: 600px; display: flex; flex-direction: column; align-items: center; transition: opacity 0.3s; }
         .timeline-container::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background-color: #e2e8f0; transform: translateX(-50%); border-radius: 2px; z-index: 0; }
-        body.filtered-mode .timeline-container::before { background-color: #bfdbfe; }
 
         .month-section { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 10; margin-bottom: 1.5rem; }
-        .month-divider { display: flex; align-items: center; width: 100%; margin: 0.5rem 0 1.5rem 0; color: #64748b; font-weight: 800; font-size: 1.25rem; font-family: monospace; }
+        .month-divider { display: flex; align-items: center; width: 100%; margin: 0.5rem 0 1rem 0; color: #64748b; font-weight: 800; font-size: 1.1rem; font-family: monospace; }
         .month-line { flex-grow: 1; border-top: 2px dashed #cbd5e1; margin: 0 1rem; }
-        body.filtered-mode .month-divider { opacity: 0.5; color: #60a5fa; }
-        body.filtered-mode .month-line { border-color: #93c5fd; }
 
-        /* גריד טבעי - האלמנטים יסתדרו לבד ולא ידרסו זה את זה לעולם */
         .cards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: 100%; padding: 0 0.5rem; }
-        body.filtered-mode .cards-grid { gap: 2rem; }
 
-        /* SVG & Labels Layer */
-        #connections-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
-        #connections-labels { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
-        .connection-label {
-            position: absolute; transform: translate(-50%, -50%);
-            background: #eff6ff; color: #1e3a8a; padding: 4px 14px; border-radius: 20px;
-            font-size: 0.85rem; font-weight: bold; border: 2px solid #bfdbfe;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); white-space: nowrap; pointer-events: auto;
-        }
-
+        /* קומפקטיות לכרטיסיות ה-HTML */
         .timeline-card {
-            background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.35s ease; position: relative;
-            width: calc(33.333% - 1rem); min-width: 240px; max-width: 300px;
+            background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s; position: relative;
+            width: calc(33.333% - 1rem); min-width: 220px; max-width: 280px;
             text-align: right; display: flex; flex-direction: column; cursor: pointer; z-index: 10;
         }
 
         .timeline-card.has-relations { border-width: 2px; border-color: #94a3b8; }
-        .timeline-card.has-relations:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 6px 12px -3px rgba(0,0,0,0.1); }
-        .timeline-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important; z-index: 20; }
+        .timeline-card.has-relations:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 8px -2px rgba(0,0,0,0.1); }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
-        .card-date { font-weight: 800; color: #64748b; font-size: 0.85rem; font-family: monospace; }
-        .card-type-badge { color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
+        .card-date { font-weight: 700; color: #475569; font-size: 0.8rem; font-family: monospace; }
+        .card-type-badge { color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
 
         .relation-icon-badge {
             display: inline-flex; align-items: center; justify-content: center;
-            background: #eff6ff; color: #2563eb; font-size: 0.7rem; padding: 2px 6px;
+            background: #eff6ff; color: #2563eb; font-size: 0.65rem; padding: 2px 6px;
             border-radius: 12px; margin-right: auto; font-weight: bold; border: 1px solid #bfdbfe;
             margin-left: 6px;
         }
 
-        .card-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; line-height: 1.25; }
+        .card-title { font-size: 0.85rem; color: #0f172a; line-height: 1.25; font-weight: 400; }
 
-        .filter-notice-badge {
-            position: fixed; top: 20px; left: 20px;
-            background: #1e3a8a; color: white; padding: 8px 16px;
-            border-radius: 20px; font-weight: bold; font-size: 0.95rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000;
-            display: none; cursor: pointer; align-items: center; gap: 8px;
-            border: 2px solid #bfdbfe;
+        /* קונטיינר ל-Cytoscape */
+        #cy-container {
+            display: none;
+            width: 100%;
+            height: 80vh;
+            min-height: 600px;
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 1rem;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
         }
-        body.filtered-mode .filter-notice-badge { display: flex; animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
+
+        .cy-toolbar {
+            position: absolute; top: 16px; right: 16px; z-index: 100;
+            display: flex; gap: 12px;
+        }
+
+        .btn-cy {
+            background: #1e3a8a; color: white; border: none; padding: 6px 12px;
+            border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-cy:hover { background: #1e40af; }
 
     </style>
 </head>
 <body>
 
-    <div class="filter-notice-badge" id="filterNotice" title="לחץ לביטול הסינון">
-        <span>🔄</span> כל קליק נוסף יחזיר לתצוגה רגילה
-    </div>
-
     <div class="max-w-6xl">
         <header>
             <div>
                 <h1 class="text-2xl font-bold mb-1" id="page-title">ציר זמן וקשרים</h1>
-                <p class="text-gray-300" style="font-size: 0.9rem;">היסטוריית החקיקה, המחקר ודיוני הוועדות. לחיצה על כרטיסייה תבודד את המסמכים הקשורים אליה.</p>
+                <p class="text-gray-300" style="font-size: 0.9rem;">היסטוריית החקיקה, המחקר ודיוני הוועדות. לחיצה על מסמך תפתח מפת קשרים דינמית.</p>
                 <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem;">
                     עודכן לאחרונה: <span id="last-update-text">בטעינה...</span>
                 </div>
@@ -120,30 +116,37 @@
             </div>
         </header>
 
-        <div class="timeline-direction-hint">
-            <span style="font-size: 1.4rem; margin-bottom: -4px;">⬆️</span>
-            <span class="badge">החדש ביותר</span>
+        <div id="timeline-view">
+            <div class="timeline-direction-hint">
+                <span style="font-size: 1.4rem; margin-bottom: -4px;">⬆️</span>
+                <span class="badge">החדש ביותר</span>
+            </div>
+            <div id="timelineContainer" class="timeline-container">
+                </div>
         </div>
 
-        <div id="timelineContainer" class="timeline-container">
-            <svg id="connections-svg">
-                <defs>
-                    <marker id="arrowhead" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto">
-                        <polygon points="0 0, 14 5, 0 10" fill="#2563eb" />
-                    </marker>
-                </defs>
-            </svg>
-            <div id="connections-labels"></div>
+        <div id="cy-container">
+            <div class="cy-toolbar">
+                <button class="btn-cy" onclick="closeNetworkView()">✖ סגור מפת קשרים וחזור לציר הזמן</button>
+                <button class="btn-cy" onclick="cy.fit()" style="background:#475569;">מרכז תצוגה</button>
             </div>
+            <div id="cy" style="width: 100%; height: 100%;"></div>
+        </div>
+
     </div>
 
     <script>
+        if(typeof cytoscape !== 'undefined' && typeof cytoscapeElk !== 'undefined') {
+            cytoscape.use(cytoscapeElk);
+        }
+
         let allItems = [];
         window.appConfiguration = { items: [] };
 
-        let isFilteredMode = false;
         let savedScrollPosition = 0;
         let edgesInfo = [];
+        let inOutMap = {};
+        let cy = null;
 
         window.initDashboard = async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -166,7 +169,7 @@
                     return { ...item, parsedDate: parsed, month: parsed.month, year: parsed.year, day: parsed.day, sortValue: parsed.sortValue };
                 });
 
-                const inOutMap = {};
+                inOutMap = {};
                 allItems.forEach(item => inOutMap[item.idCode] = new Set());
 
                 allItems.forEach(item => {
@@ -199,10 +202,7 @@
 
         function renderTimeline(itemsToRender) {
             const container = document.getElementById('timelineContainer');
-
-            Array.from(container.children).forEach(child => {
-                if(child.id !== 'connections-svg' && child.id !== 'connections-labels') child.remove();
-            });
+            container.innerHTML = '';
 
             const groupsMap = {};
             itemsToRender.forEach(item => {
@@ -224,21 +224,31 @@
                 group.items.forEach(item => {
                     const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
                     const label = item.type === 'committee' && item.author ? item.author : entity.label;
-                    const dateStr = typeof formatParsedDate === 'function' ? formatParsedDate(item.parsedDate) : item.date;
-                    const displayTitle = item.type === 'committee' ? `<strong style="font-weight: 800; color: #0f172a;">${item.author}</strong>: ${item.title}` : item.title;
+
+                    // תאריך מקוצר רק עם חודש ושנה
+                    const mStr = item.month ? String(item.month).padStart(2, '0') : '01';
+                    const yStr = item.year || '1970';
+                    const dateStr = `${mStr}/${yStr}`;
+
+                    // כותרת - מדגיש רק את המקור/מחבר (לפי בקשתך) והשאר בטקסט רגיל
+                    let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
+                    if (item.type === 'committee' && item.author) {
+                        displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.author}</strong>: ${displayTitle}`;
+                    } else if (item.source) {
+                        displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
+                    }
 
                     const count = item.clusterIds ? item.clusterIds.length : 0;
                     const relationClass = count > 0 ? 'has-relations' : '';
-                    const relationIconHtml = count > 0 ? `<span class="relation-icon-badge">🔗 ${count} קשרים</span>` : '';
+                    const relationIconHtml = count > 0 ? `<span class="relation-icon-badge">🔗 ${count}</span>` : '';
 
                     cardsHtml += `
                         <div class="timeline-card ${relationClass}"
                              id="card-${item.idCode}"
-                             data-id="${item.idCode}"
                              style="border-top-color: ${entity.color}; border-top-width: 4px;"
                              onmouseenter="handleCardEnter(event, '${item.idCode}')"
                              onmouseleave="handleCardLeave()"
-                             onclick="handleCardClick(event, '${item.idCode}')">
+                             onclick="openNetworkView('${item.idCode}')">
 
                             <div class="card-header">
                                 <div style="display:flex; align-items:center;">
@@ -267,201 +277,199 @@
             });
         }
 
-        // --- לוגיקת קליק (סינון ומיקוד, ללא שיבושי Transform) ---
-
-        function handleCardClick(event, currentId) {
-            event.stopPropagation();
-
-            if (typeof hideDocTooltip === 'function') hideDocTooltip();
-
-            if (isFilteredMode) {
-                clearFilter();
-                return;
-            }
-
-            const currentCard = document.getElementById(`card-${currentId}`);
-            if(!currentCard) return;
-
-            const rootItem = allItems.find(i => i.idCode === currentId);
-            if (!rootItem || !rootItem.clusterIds || rootItem.clusterIds.length === 0) return;
-
-            savedScrollPosition = window.scrollY;
-            isFilteredMode = true;
-            document.body.classList.add('filtered-mode');
-
-            const threadIds = [currentId, ...rootItem.clusterIds];
-
-            // הסתרה של כרטיסיות לא רלוונטיות, השאר מסתדרות טבעית בגריד
-            document.querySelectorAll('.month-section').forEach(section => {
-                let hasVisibleCard = false;
-                section.querySelectorAll('.timeline-card').forEach(card => {
-                    const cId = card.getAttribute('data-id');
-                    if (!threadIds.includes(cId)) {
-                        card.style.display = 'none';
-                    } else {
-                        card.style.display = 'flex';
-                        hasVisibleCard = true;
-
-                        if(cId === currentId) {
-                            card.classList.add('focused-root');
-                        }
-                    }
-                });
-                section.style.display = hasVisibleCard ? 'flex' : 'none';
-            });
-
-            setTimeout(() => {
-                drawFilteredConnections(currentId);
-                const rootEl = document.getElementById(`card-${currentId}`);
-                if(rootEl) {
-                    rootEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 50);
-        }
-
-        function clearFilter() {
-            isFilteredMode = false;
-            document.body.classList.remove('filtered-mode');
-
-            document.querySelectorAll('.timeline-card').forEach(card => {
-                card.style.display = 'flex';
-                card.classList.remove('focused-root');
-            });
-
-            document.querySelectorAll('.month-section').forEach(section => {
-                section.style.display = 'flex';
-            });
-
-            clearSVG();
-            if(typeof hideDocTooltip === 'function') hideDocTooltip();
-
-            setTimeout(() => {
-                window.scrollTo({ top: savedScrollPosition, behavior: 'instant' });
-            }, 10);
-        }
-
-        document.addEventListener('click', () => {
-            if (isFilteredMode) clearFilter();
-        });
-
-        // --- הופעת פופאפים בהובר ---
-
         function handleCardEnter(event, currentId) {
             if (typeof showDocTooltip === 'function') showDocTooltip(event, currentId);
         }
-
         function handleCardLeave() {
             if (typeof hideDocTooltip === 'function') hideDocTooltip();
         }
 
-        // --- מנגנון שרטוט החיצים (חכם, נמנע מדריסה) ---
+        // --- פתיחה וסגירה של ה-Network ---
+        function openNetworkView(rootId) {
+            if (typeof hideDocTooltip === 'function') hideDocTooltip();
 
-        function clearSVG() {
-            const svg = document.getElementById('connections-svg');
-            svg.innerHTML = `
-                <defs>
-                    <marker id="arrowhead" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto">
-                        <polygon points="0 0, 14 5, 0 10" fill="#2563eb" />
-                    </marker>
-                </defs>
-            `;
-            document.getElementById('connections-labels').innerHTML = '';
+            const rootItem = allItems.find(i => i.idCode === rootId);
+            if (!rootItem || !rootItem.clusterIds || rootItem.clusterIds.length === 0) return;
+
+            savedScrollPosition = window.scrollY;
+
+            document.getElementById('timeline-view').style.display = 'none';
+            const cyContainer = document.getElementById('cy-container');
+            cyContainer.style.display = 'block';
+
+            initCytoscapeForCluster(rootId, rootItem.clusterIds);
+
+            cyContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function getBorderPoint(rect, targetX, targetY) {
-            const MathAbs = Math.abs;
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const dx = targetX - cx;
-            const dy = targetY - cy;
-
-            if (MathAbs(dx) * rect.height > MathAbs(dy) * rect.width) {
-                const x = dx > 0 ? rect.right : rect.left;
-                const y = cy + dy * (rect.width / 2) / MathAbs(dx);
-                return { x, y };
-            } else {
-                const y = dy > 0 ? rect.bottom : rect.top;
-                const x = cx + dx * (rect.height / 2) / MathAbs(dy);
-                return { x, y };
+        function closeNetworkView() {
+            if(cy) {
+                cy.destroy();
+                cy = null;
             }
+            if (typeof hideDocTooltip === 'function') hideDocTooltip();
+
+            document.getElementById('cy-container').style.display = 'none';
+            document.getElementById('timeline-view').style.display = 'block';
+
+            window.scrollTo({ top: savedScrollPosition, behavior: 'instant' });
         }
 
-        function drawFilteredConnections(rootId) {
-            clearSVG();
-            const svg = document.getElementById('connections-svg');
+        // --- אתחול Cytoscape ---
+        function initCytoscapeForCluster(rootId, clusterIds) {
+            const elements = [];
+            const nodesSet = new Set([rootId, ...clusterIds]);
 
-            const activeEdges = edgesInfo.filter(e => e.source === rootId || e.target === rootId);
+            nodesSet.forEach(id => {
+                const item = allItems.find(i => i.idCode === id);
+                if(!item) return;
 
-            activeEdges.forEach((edge, index) => {
-                const sourceItem = allItems.find(i => i.idCode === edge.source);
-                const targetItem = allItems.find(i => i.idCode === edge.target);
-                if (!sourceItem || !targetItem) return;
+                const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
+                let label = item.type === 'committee' && item.author ? item.author : entity.label;
 
-                let startItem, endItem;
-                if (sourceItem.sortValue < targetItem.sortValue) {
-                    startItem = sourceItem;
-                    endItem = targetItem;
-                } else {
-                    startItem = targetItem;
-                    endItem = sourceItem;
+                // תאריך ללא יום
+                const mStr = item.month ? String(item.month).padStart(2, '0') : '01';
+                const yStr = item.year || '1970';
+                const dateStr = `${mStr}/${yStr}`;
+
+                let shortTitle = item.title;
+                if(shortTitle.length > 50) shortTitle = shortTitle.substring(0, 47) + '...';
+
+                // אם יש מחבר, נוסיף אותו כדי לתת קונטקסט
+                let prefix = '';
+                if(item.type === 'committee' && item.author) prefix = item.author + ': ';
+                else if(item.source) prefix = item.source + ': ';
+
+                elements.push({
+                    group: 'nodes',
+                    data: {
+                        id: item.idCode,
+                        label: `${label} | ${dateStr}\n${prefix}${shortTitle}`,
+                        bgColor: entity.color,
+                        isRoot: (id === rootId)
+                    }
+                });
+            });
+
+            const processedEdges = new Set();
+            edgesInfo.forEach(edge => {
+                if (nodesSet.has(edge.source) && nodesSet.has(edge.target)) {
+                    const sItem = allItems.find(i => i.idCode === edge.source);
+                    const tItem = allItems.find(i => i.idCode === edge.target);
+                    if(!sItem || !tItem) return;
+
+                    let realSource, realTarget;
+                    // כדי שהחדש יהיה למעלה ב-ELK DOWN, ה-Source צריך להיות החדש ביותר
+                    if (sItem.sortValue > tItem.sortValue) {
+                        realSource = sItem.idCode; realTarget = tItem.idCode;
+                    } else {
+                        realSource = tItem.idCode; realTarget = sItem.idCode;
+                    }
+
+                    const edgeId = `${realSource}-${realTarget}`;
+                    if(!processedEdges.has(edgeId)) {
+                        processedEdges.add(edgeId);
+                        elements.push({
+                            group: 'edges',
+                            data: {
+                                id: edgeId,
+                                source: realSource,
+                                target: realTarget,
+                                label: edge.label || ''
+                            }
+                        });
+                    }
                 }
+            });
 
-                const startEl = document.getElementById(`card-${startItem.idCode}`);
-                const endEl = document.getElementById(`card-${endItem.idCode}`);
-                if(!startEl || !endEl) return;
+            cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'shape': 'round-rectangle',
+                            'background-color': '#ffffff',
+                            'border-width': function(ele) { return ele.data('isRoot') ? 4 : 2; },
+                            'border-color': 'data(bgColor)',
+                            'label': 'data(label)',
+                            'text-wrap': 'wrap',
+                            'text-max-width': '200px',
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                            'width': '220px',
+                            'height': '65px',
+                            'font-family': 'Assistant, sans-serif',
+                            'font-size': '11px',
+                            'font-weight': 'normal', // טקסט רגיל לא מודגש
+                            'color': '#0f172a',
+                            'box-shadow': '0 2px 4px rgba(0,0,0,0.05)'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 2.5,
+                            'line-color': '#94a3b8',
+                            /* החץ מצביע תמיד אל החדש (Source) */
+                            'source-arrow-color': '#3b82f6',
+                            'source-arrow-shape': 'triangle',
+                            'target-arrow-shape': 'none',
+                            'curve-style': 'bezier',
+                            'text-margin-y': -12, /* מרחיק את התווית מהקו עצמו למניעת דריסה */
+                            'label': 'data(label)',
+                            'font-family': 'Assistant, sans-serif',
+                            'font-size': '11px',
+                            'font-weight': 'bold',
+                            'text-background-color': '#eff6ff',
+                            'text-background-opacity': 1,
+                            'text-background-padding': '3px',
+                            'text-background-shape': 'round-rectangle',
+                            'text-border-color': '#bfdbfe',
+                            'text-border-width': 1,
+                            'color': '#1e3a8a'
+                        }
+                    },
+                    {
+                        selector: 'node:selected',
+                        style: {
+                            'background-color': '#e0e7ff',
+                            'border-color': '#2563eb'
+                        }
+                    }
+                ],
+                layout: {
+                    name: 'elk',
+                    elk: {
+                        'algorithm': 'layered',
+                        'elk.direction': 'DOWN',
+                        'elk.spacing.nodeNode': 80,
+                        'elk.layered.spacing.nodeNodeBetweenLayers': 150, // מרווח גדול כדי שהתוויות לא יסתירו כרטיסיות
+                        'elk.edgeRouting': 'SPLINES' // קווים עוקפים למניעת דריסות
+                    }
+                },
+                wheelSensitivity: 0.2
+            });
 
-                const svgRect = svg.getBoundingClientRect();
-                const sRect = startEl.getBoundingClientRect();
-                const eRect = endEl.getBoundingClientRect();
+            cy.on('mouseover', 'node', function(evt){
+                const node = evt.target;
+                const id = node.data('id');
+                const renderedPos = node.renderedPosition();
+                const containerRect = document.getElementById('cy-container').getBoundingClientRect();
+                const mockEvent = {
+                    clientX: containerRect.left + renderedPos.x,
+                    clientY: containerRect.top + renderedPos.y
+                };
+                if (typeof showDocTooltip === 'function') showDocTooltip(mockEvent, id);
+            });
 
-                const cx1 = sRect.left + sRect.width/2;
-                const cy1 = sRect.top + sRect.height/2;
-                const cx2 = eRect.left + eRect.width/2;
-                const cy2 = eRect.top + eRect.height/2;
+            cy.on('mouseout', 'node', function(evt){
+                if (typeof hideDocTooltip === 'function') hideDocTooltip();
+            });
 
-                const startPt = getBorderPoint(sRect, cx2, cy2);
-                const endPt = getBorderPoint(eRect, cx1, cy1);
-
-                const startX = startPt.x - svgRect.left;
-                const startY = startPt.y - svgRect.top;
-                const endX = endPt.x - svgRect.left;
-                const endY = endPt.y - svgRect.top;
-
-                const dx = endX - startX;
-                const dy = endY - startY;
-
-                // קשתות רחבות עוקפות שזורקות את החץ החוצה לחללים הריקים
-                const sign = (index % 2 === 0) ? 1 : -1;
-                // חישוב המרחק החוצה. אם זה ארוך במיוחד, נזרוק רחוק יותר.
-                const bowOut = 250 + (index * 40);
-                const cx = (startX + endX) / 2 + (bowOut * sign);
-                const cy = (startY + endY) / 2;
-
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                const d = `M ${startX},${startY} Q ${cx},${cy} ${endX},${endY}`;
-
-                path.setAttribute("d", d);
-                path.setAttribute("stroke", "#2563eb");
-                path.setAttribute("stroke-width", "3");
-                path.setAttribute("fill", "none");
-                path.setAttribute("stroke-dasharray", "8,6");
-                path.setAttribute("marker-end", "url(#arrowhead)");
-
-                svg.appendChild(path);
-
-                if (edge.label) {
-                    // התווית ממוקמת בשיא הקשת, באזור הבטוח שבצידי המסך
-                    let labelX = startX*0.25 + cx*0.5 + endX*0.25;
-                    let labelY = startY*0.25 + cy*0.5 + endY*0.25;
-
-                    const labelDiv = document.createElement('div');
-                    labelDiv.className = 'connection-label';
-                    labelDiv.innerText = edge.label;
-                    labelDiv.style.left = labelX + 'px';
-                    labelDiv.style.top = labelY + 'px';
-
-                    document.getElementById('connections-labels').appendChild(labelDiv);
-                }
+            cy.on('tap', function(evt){
+                if (typeof hideDocTooltip === 'function') hideDocTooltip();
             });
         }
     </script>
