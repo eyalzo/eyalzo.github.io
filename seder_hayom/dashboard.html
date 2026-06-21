@@ -642,10 +642,7 @@
                         linkBadgeHtml = `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="doc-id-badge" style="color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="למעבר למסמך המקור"><span>קישור למסמך</span><span style="font-size:0.75rem">🔗</span></a>`;
                     }
 
-                    let displayTitle = item.title;
-                    if (item.type === 'committee') {
-                        displayTitle = `<strong style="font-weight: 800; color: #0f172a;">${item.author}</strong>: ${item.title}`;
-                    }
+                    let displayTitle = typeof getDisplayTitle === 'function' ? getDisplayTitle(item) : item.title;
 
                     let metadataHtml = '';
                     if (item.type === 'activeLaw') {

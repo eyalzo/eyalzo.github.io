@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/elkjs@0.8.2/lib/elk.bundled.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cytoscape-elk@2.2.0/dist/cytoscape-elk.min.js"></script>
+    <script src="https://unpkg.com/cytoscape-node-html-label@1.2.2/dist/cytoscape-node-html-label.min.js"></script>
 
     <script>
         (function() {
@@ -50,7 +51,7 @@
 
         .cards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: 100%; padding: 0 0.5rem; }
 
-        /* קומפקטיות לכרטיסיות ה-HTML */
+        /* כרטיסיית עיצוב משותף לציר הזמן ול-Cytoscape */
         .timeline-card {
             background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem 0.75rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s; position: relative;
@@ -60,6 +61,7 @@
 
         .timeline-card.has-relations { border-width: 2px; border-color: #94a3b8; }
         .timeline-card.has-relations:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 8px -2px rgba(0,0,0,0.1); }
+        .timeline-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important; z-index: 20; }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
         .card-date { font-weight: 700; color: #475569; font-size: 0.8rem; font-family: monospace; }
@@ -136,6 +138,7 @@
     </div>
 
     <script>
+        // רישום הפלאגינים של Cytoscape
         if(typeof cytoscape !== 'undefined' && typeof cytoscapeElk !== 'undefined') {
             cytoscape.use(cytoscapeElk);
         }
@@ -225,22 +228,23 @@
                     const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
                     const label = item.type === 'committee' && item.author ? item.author : entity.label;
 
-                    // תאריך מקוצר רק עם חודש ושנה
                     const mStr = item.month ? String(item.month).padStart(2, '0') : '01';
                     const yStr = item.year || '1970';
                     const dateStr = `${mStr}/${yStr}`;
 
-                    // כותרת - מדגיש רק את המקור/מחבר (לפי בקשתך) והשאר בטקסט רגיל
+                    // הלוגיקה החדשה והנקייה - מונעת כפילות בוועדות!
                     let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
-                    if (item.type === 'committee' && item.author) {
-                        displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.author}</strong>: ${displayTitle}`;
-                    } else if (item.source) {
-                        displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
+                    if (item.type !== 'committee') {
+                        if (item.source && item.source.trim() !== '') {
+                            displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
+                        } else if (item.author && item.author.trim() !== '') {
+                            displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.author}</strong>: ${displayTitle}`;
+                        }
                     }
 
                     const count = item.clusterIds ? item.clusterIds.length : 0;
                     const relationClass = count > 0 ? 'has-relations' : '';
-                    const relationIconHtml = count > 0 ? `<span class="relation-icon-badge">🔗 ${count}</span>` : '';
+                    const relationIconHtml = count > 0 ? `<span class="relation-icon-badge">🔗 ${count} קשרים</span>` : '';
 
                     cardsHtml += `
                         <div class="timeline-card ${relationClass}"
@@ -315,11 +319,12 @@
             window.scrollTo({ top: savedScrollPosition, behavior: 'instant' });
         }
 
-        // --- אתחול Cytoscape ---
+        // --- אתחול Cytoscape באמצעות HTML Labels ---
         function initCytoscapeForCluster(rootId, clusterIds) {
             const elements = [];
             const nodesSet = new Set([rootId, ...clusterIds]);
 
+            // יצירת צמתים (Nodes) - מאחסנים את כל המידע כדי להזריק ל-HTML
             nodesSet.forEach(id => {
                 const item = allItems.find(i => i.idCode === id);
                 if(!item) return;
@@ -327,30 +332,34 @@
                 const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
                 let label = item.type === 'committee' && item.author ? item.author : entity.label;
 
-                // תאריך ללא יום
                 const mStr = item.month ? String(item.month).padStart(2, '0') : '01';
                 const yStr = item.year || '1970';
                 const dateStr = `${mStr}/${yStr}`;
 
-                let shortTitle = item.title;
-                if(shortTitle.length > 50) shortTitle = shortTitle.substring(0, 47) + '...';
-
-                // אם יש מחבר, נוסיף אותו כדי לתת קונטקסט
-                let prefix = '';
-                if(item.type === 'committee' && item.author) prefix = item.author + ': ';
-                else if(item.source) prefix = item.source + ': ';
+                // הסרת כפילויות גם בתצוגת הרשת
+                let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
+                if (item.type !== 'committee') {
+                    if (item.source && item.source.trim() !== '') {
+                        displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
+                    } else if (item.author && item.author.trim() !== '') {
+                        displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.author}</strong>: ${displayTitle}`;
+                    }
+                }
 
                 elements.push({
                     group: 'nodes',
                     data: {
                         id: item.idCode,
-                        label: `${label} | ${dateStr}\n${prefix}${shortTitle}`,
-                        bgColor: entity.color,
+                        typeLabel: label,
+                        dateStr: dateStr,
+                        displayTitle: displayTitle,
+                        color: entity.color,
                         isRoot: (id === rootId)
                     }
                 });
             });
 
+            // יצירת קשתות
             const processedEdges = new Set();
             edgesInfo.forEach(edge => {
                 if (nodesSet.has(edge.source) && nodesSet.has(edge.target)) {
@@ -359,7 +368,7 @@
                     if(!sItem || !tItem) return;
 
                     let realSource, realTarget;
-                    // כדי שהחדש יהיה למעלה ב-ELK DOWN, ה-Source צריך להיות החדש ביותר
+                    // כיוון החץ: מהישן לחדש (כדי שהחדש יהיה למעלה במפה)
                     if (sItem.sortValue > tItem.sortValue) {
                         realSource = sItem.idCode; realTarget = tItem.idCode;
                     } else {
@@ -389,22 +398,11 @@
                     {
                         selector: 'node',
                         style: {
-                            'shape': 'round-rectangle',
-                            'background-color': '#ffffff',
-                            'border-width': function(ele) { return ele.data('isRoot') ? 4 : 2; },
-                            'border-color': 'data(bgColor)',
-                            'label': 'data(label)',
-                            'text-wrap': 'wrap',
-                            'text-max-width': '200px',
-                            'text-valign': 'center',
-                            'text-halign': 'center',
-                            'width': '220px',
-                            'height': '65px',
-                            'font-family': 'Assistant, sans-serif',
-                            'font-size': '11px',
-                            'font-weight': 'normal', // טקסט רגיל לא מודגש
-                            'color': '#0f172a',
-                            'box-shadow': '0 2px 4px rgba(0,0,0,0.05)'
+                            'width': 260,
+                            'height': 80,
+                            'background-opacity': 0, // שקוף לחלוטין! ה-HTML יעשה את העבודה
+                            'border-width': 0,
+                            'shape': 'rectangle'
                         }
                     },
                     {
@@ -412,30 +410,22 @@
                         style: {
                             'width': 2.5,
                             'line-color': '#94a3b8',
-                            /* החץ מצביע תמיד אל החדש (Source) */
                             'source-arrow-color': '#3b82f6',
-                            'source-arrow-shape': 'triangle',
+                            'source-arrow-shape': 'triangle', // מצביע על המקור (המסמך החדש)
                             'target-arrow-shape': 'none',
                             'curve-style': 'bezier',
-                            'text-margin-y': -12, /* מרחיק את התווית מהקו עצמו למניעת דריסה */
+                            'text-margin-y': -14, // מרחיק את התווית מהקו
                             'label': 'data(label)',
                             'font-family': 'Assistant, sans-serif',
                             'font-size': '11px',
                             'font-weight': 'bold',
                             'text-background-color': '#eff6ff',
                             'text-background-opacity': 1,
-                            'text-background-padding': '3px',
+                            'text-background-padding': '4px',
                             'text-background-shape': 'round-rectangle',
                             'text-border-color': '#bfdbfe',
                             'text-border-width': 1,
                             'color': '#1e3a8a'
-                        }
-                    },
-                    {
-                        selector: 'node:selected',
-                        style: {
-                            'background-color': '#e0e7ff',
-                            'border-color': '#2563eb'
                         }
                     }
                 ],
@@ -444,14 +434,39 @@
                     elk: {
                         'algorithm': 'layered',
                         'elk.direction': 'DOWN',
-                        'elk.spacing.nodeNode': 80,
-                        'elk.layered.spacing.nodeNodeBetweenLayers': 150, // מרווח גדול כדי שהתוויות לא יסתירו כרטיסיות
-                        'elk.edgeRouting': 'SPLINES' // קווים עוקפים למניעת דריסות
+                        'elk.spacing.nodeNode': 60,
+                        'elk.layered.spacing.nodeNodeBetweenLayers': 110, // רווח אנכי גדול
+                        'elk.edgeRouting': 'SPLINES'
                     }
                 },
                 wheelSensitivity: 0.2
             });
 
+            // הפעלת תוסף ה-HTML Label שמזריק את הקוביות שלנו מעל ל-Cytoscape
+            cy.nodeHtmlLabel([{
+                query: 'node',
+                halign: 'center',
+                valign: 'center',
+                halignBox: 'center',
+                valignBox: 'center',
+                tpl: function(data) {
+                    const rootClass = data.isRoot ? 'focused-root' : '';
+                    // שימו לב: הוסר ה-relationIconHtml מפה!
+                    return `
+                        <div class="timeline-card ${rootClass}" style="width: 260px; height: auto; min-height: 80px; margin: 0; pointer-events: none; border-top-color: ${data.color}; border-top-width: 4px;">
+                            <div class="card-header">
+                                <div style="display:flex; align-items:center;">
+                                    <span class="card-type-badge" style="background-color: ${data.color}">${data.typeLabel}</span>
+                                </div>
+                                <span class="card-date">${data.dateStr}</span>
+                            </div>
+                            <div class="card-title">${data.displayTitle}</div>
+                        </div>
+                    `;
+                }
+            }]);
+
+            // חיבור הפופאפים לקוביות השקופות שנמצאות מתחת ל-HTML
             cy.on('mouseover', 'node', function(evt){
                 const node = evt.target;
                 const id = node.data('id');
@@ -465,10 +480,6 @@
             });
 
             cy.on('mouseout', 'node', function(evt){
-                if (typeof hideDocTooltip === 'function') hideDocTooltip();
-            });
-
-            cy.on('tap', function(evt){
                 if (typeof hideDocTooltip === 'function') hideDocTooltip();
             });
         }

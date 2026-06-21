@@ -174,3 +174,23 @@ function hideDocTooltip() {
     const tooltip = document.getElementById('docHoverTooltip');
     if(tooltip) tooltip.style.opacity = '0';
 }
+
+// 8. עיצוב כותרות לכרטיסיות (ללא כפילות, ועם הדגשת מקור)
+function getDisplayTitle(item) {
+    // הכותרת עצמה בטקסט רגיל (לא מובלט)
+    let titleHtml = `<span style="font-weight: 400;">${item.title}</span>`;
+
+    // אם זו ועדה - מחזירים רק את הכותרת (שם הוועדה כבר מופיע בבאדג' באדום)
+    if (item.type === 'committee') {
+        return titleHtml;
+    }
+
+    // לשאר המסמכים: אם יש מקור או מחבר, מבליטים רק אותו בהתחלה
+    if (item.source && item.source.trim() !== '') {
+        return `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${titleHtml}`;
+    } else if (item.author && item.author.trim() !== '') {
+        return `<strong style="font-weight: 700; color: #0f172a;">${item.author}</strong>: ${titleHtml}`;
+    }
+
+    return titleHtml;
+}
