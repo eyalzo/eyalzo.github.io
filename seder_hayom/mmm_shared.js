@@ -233,3 +233,18 @@ function getCompactLabel(item) {
 
     return compactLabels[item.type] || entity.label;
 }
+
+function getDocLinkBadgeHtml(link) {
+    let safeLink = link ? String(link).trim() : '';
+    if (safeLink !== '' && safeLink !== 'undefined') {
+        if (!safeLink.startsWith('http')) safeLink = 'https://' + safeLink;
+        // הוספנו onmousedown="event.stopPropagation()" כדי לעצור את הגרירה ברגע המגע הראשוני
+        return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="doc-link-btn"
+                style="text-decoration: none; cursor: pointer; padding: 1px 5px; border-radius: 4px; display: inline-flex; border: 1px solid #bfdbfe; background-color: #eff6ff;"
+                onclick="event.stopPropagation();"
+                onmousedown="event.stopPropagation();"
+                title="לחץ למעבר למסמך המקור">📄</a>`;
+    } else {
+        return `<span class="doc-link-btn" style="padding: 1px 5px; border-radius: 4px; display: inline-flex; border: 1px solid #e2e8f0; background-color: #f1f5f9; opacity: 0.5; cursor: not-allowed;" title="אין קישור למסמך כרגע">📄</span>`;
+    }
+}

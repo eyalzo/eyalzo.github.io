@@ -69,13 +69,23 @@
         }
         .timeline-card .card-title { font-size: 0.95rem; color: #0f172a; line-height: 1.25; font-weight: 400; }
 
-        /* === עיצוב ייעודי ומוקטן לכרטיסיות בתוך מפת הקשרים === */
+        /* Update the styles in timeline.html */
         .network-card {
             background: white; border: 1px solid #cbd5e1; border-radius: 0.4rem; padding: 0.4rem 0.6rem;
             box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: right; display: flex; flex-direction: column;
-            width: 220px;
-            margin: 0; pointer-events: auto; cursor: pointer; direction: rtl;
+            width: 220px; margin: 0; pointer-events: auto; cursor: grab; direction: rtl;
         }
+
+        /* Force the link to be interactive and capture mouse events */
+        .network-card .doc-link-btn {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+
+        .network-card:active { cursor: grabbing; }
+
+        .doc-link-btn { cursor: pointer !important; } /* Force pointer for link icon */
+
         .network-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; }
         .network-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.2rem; }
         .network-card .card-date { font-weight: 700; color: #475569; font-size: 0.75rem; font-family: monospace; }
@@ -496,6 +506,7 @@
                 valignBox: 'center',
                 tpl: function(data) {
                     const rootClass = data.isRoot ? 'focused-root' : '';
+                    // The link button is now inside the header with a specific class for cursor handling
                     return `
                         <div class="network-card ${rootClass}" style="border-top-color: ${data.color}; border-top-width: 4px;">
                             <div class="card-header">
