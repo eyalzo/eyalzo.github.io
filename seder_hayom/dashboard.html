@@ -438,6 +438,7 @@
                 renderEcosystem();
                 renderCards();
                 renderExternalFrames();
+                renderExternalLinks();
 
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
@@ -450,6 +451,55 @@
                 console.error(e);
             }
         };
+
+        // Render external link blocks injected at specific rows
+        function renderExternalLinks() {
+            if (!window.appConfiguration || !window.appConfiguration.externalLinkBlocks) return;
+            const linkBlocks = window.appConfiguration.externalLinkBlocks;
+            const contentDiv = document.getElementById('dashboard-content');
+
+            // Array mapping row indices to specific DOM elements (same as external frames logic)
+            const blocks = [
+                contentDiv.querySelector('header'),
+                document.querySelector('.exec-block'),
+                document.getElementById('eco-title-1')?.closest('.mb-8.bg-white'),
+                document.getElementById('documentsStream')?.closest('.mb-8.bg-white'),
+                document.getElementById('timelineLinkBtn')?.closest('.mb-8.bg-white'),
+                document.getElementById('d-media-val')?.closest('.grid.gap-6')
+            ];
+
+            linkBlocks.forEach(block => {
+                const targetBlock = blocks[block.row - 1];
+                if (targetBlock) {
+
+                    // Determine layout direction based on JSON config
+                    const flexDirection = block.layout === 'vertical' ? 'flex-col' : 'flex-row flex-wrap';
+
+                    // Build the HTML for individual links
+                    const linksHtml = block.links.map(link => `
+                        <a href="${link.url}" target="_blank" rel="noopener noreferrer"
+                           class="bg-white border border-slate-300 rounded-lg p-4 shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-3"
+                           style="flex: 1; min-width: 200px; text-decoration: none;">
+                            <span class="text-2xl">${link.icon || '🔗'}</span>
+                            <span class="font-bold text-slate-800">${link.title}</span>
+                        </a>
+                    `).join('');
+
+                    // Construct the outer container HTML
+                    const blockHtml = `
+                        <div class="mb-8 bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100">
+                            ${block.title ? `<h3 class="text-xl mb-4 font-bold text-blue-900 border-b border-blue-200 pb-2">${block.title}</h3>` : ''}
+                            <div class="flex ${flexDirection} gap-4">
+                                ${linksHtml}
+                            </div>
+                        </div>
+                    `;
+
+                    // Inject the block before the target row
+                    targetBlock.insertAdjacentHTML('beforebegin', blockHtml);
+                }
+            });
+        }
 
         function renderExternalFrames() {
             if (!window.appConfiguration || !window.appConfiguration.externalFrames) return;
