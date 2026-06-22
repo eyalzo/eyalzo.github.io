@@ -636,7 +636,19 @@
                     const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
 
                     const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(item.link) : '';
+
+                    // Extract source or author
+                    let sourceOrAuthor = (item.author && item.author.trim() !== '') ? item.author.trim() :
+                                         ((item.source && item.source.trim() !== '') ? item.source.trim() : '');
+
                     let displayTitle = item.title;
+                    let sourceMovedToTitle = false;
+
+                    // Add bold source to title for specific types
+                    if (['committee', 'comptroller', 'govDecision'].includes(item.type) && sourceOrAuthor !== '') {
+                        displayTitle = `<strong style="font-weight: 800; color: #0f172a;">${sourceOrAuthor}:</strong> ${item.title}`;
+                        sourceMovedToTitle = true;
+                    }
 
                     let metadataHtml = '';
                     if (item.type === 'activeLaw') {
@@ -669,11 +681,14 @@
                                 <div><span class="font-bold">סוג:</span> ${safeCategory}</div>
                             </div>`;
                     } else {
-                        let safeSource = (item.source || item.author) ? String(item.source || item.author).trim() : 'לא צוין';
-                        metadataHtml = `
-                            <div class="flex justify-between items-center mb-2 border-b pb-2">
-                                <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${safeSource}</span></span>
-                            </div>`;
+                        // Display the source line in metadata ONLY if it wasn't moved to the title
+                        if (!sourceMovedToTitle) {
+                            let safeSource = sourceOrAuthor !== '' ? sourceOrAuthor : 'לא צוין';
+                            metadataHtml = `
+                                <div class="flex justify-between items-center mb-2 border-b pb-2">
+                                    <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${safeSource}</span></span>
+                                </div>`;
+                        }
                     }
 
                     let impactHtml = '';

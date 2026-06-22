@@ -247,7 +247,7 @@
                     const dateStr = typeof formatParsedDate === 'function' ? formatParsedDate(item.parsedDate) : item.date;
 
                     let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
-                    if (item.type !== 'committee' && item.type !== 'passedLaw') {
+                    if (item.type !== 'passedLaw') {
                         if (item.source && item.source.trim() !== '') {
                             displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
                         } else if (item.author && item.author.trim() !== '') {

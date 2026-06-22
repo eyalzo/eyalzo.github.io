@@ -223,13 +223,9 @@ function getCompactLabel(item) {
         'activeLaw': 'הצעת חוק',
         'mmm': 'מסמך ממ״מ',
         'govDecision': 'החלטת ממשלה',
-        'passedLaw': 'חוק'
+        'passedLaw': 'חוק',
+        'committee': 'ועדה'
     };
-
-    // Use author name for committees, otherwise use compact label or default
-    if (item.type === 'committee' && item.author) {
-        return item.author;
-    }
 
     return compactLabels[item.type] || entity.label;
 }
