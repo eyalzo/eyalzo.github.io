@@ -5,6 +5,12 @@
       "title": "פשיעה במגזר הערבי",
       "description": "המאבק בפשיעה המאורגנת, נשק בלתי חוקי, דמי חסות (פרוטקשן) ומקרי רצח.",
       "file": "data_arab_crime.json"
+    },
+    {
+      "id": "arab_crime_orly",
+      "title": "פשיעה במגזר הערבי (גרסת אורלי)",
+      "description": "",
+      "file": "data_arab_crime_orly.json"
     }
   ]
 }
