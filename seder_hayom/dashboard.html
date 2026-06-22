@@ -245,7 +245,6 @@
                         <input type="text" id="searchInput" class="search-input" placeholder="חיפוש חופשי במסמכים...">
                         <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש" style="display: none;">✖</button>
                     </div>
-                    <div class="flex flex-wrap gap-2 justify-end" id="filterContainer"></div>
                 </div>
             </div>
 
@@ -485,51 +484,7 @@
         }
 
         function setupFilters() {
-            const filterContainer = document.getElementById('filterContainer');
-            const items = window.appConfiguration.items;
 
-            const typeCounts = {};
-            items.forEach(item => {
-                typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;
-            });
-
-            // ENTITIES מוגדר ב-mmm_shared.js
-            const sortedEntities = [...ENTITIES].sort((a, b) => {
-                return (typeSortOrder[a.key] || 99) - (typeSortOrder[b.key] || 99);
-            });
-
-            let filtersHtml = `
-            <label class="flex items-center gap-2 text-sm text-gray-500 cursor-pointer ml-4">
-                <input type="checkbox" id="relevanceToggle" class="cursor-pointer">
-                הצג ציוני קשר
-            </label>
-            <button class="filter-btn btn-active" data-filter="all">הכל (${items.length})</button>`;
-
-            sortedEntities.forEach(e => {
-                const count = typeCounts[e.key] || 0;
-                filtersHtml += `<button class="filter-btn btn-inactive" data-filter="${e.key}">${e.label} (${count})</button>`;
-            });
-
-            filterContainer.innerHTML = filtersHtml;
-
-            document.getElementById('relevanceToggle').addEventListener('change', (e) => {
-                if(e.target.checked) {
-                    document.body.classList.add('show-relevance');
-                } else {
-                    document.body.classList.remove('show-relevance');
-                }
-            });
-
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-btn').forEach(b => {
-                        b.classList.remove('btn-active'); b.classList.add('btn-inactive');
-                    });
-                    e.target.classList.remove('btn-inactive'); e.target.classList.add('btn-active');
-                    currentFilterType = e.target.dataset.filter;
-                    renderCards();
-                });
-            });
         }
 
         function setupSearch() {
@@ -698,7 +653,7 @@
                     }
 
                     colHtml += `
-                            <div class="doc-item-wrapper">
+                            <div class="doc-item-wrapper" style="border-right: 4px solid ${group.color};">
                                 <div class="doc-mini-header" onclick="toggleDoc('${detailsId}')">
                                     <!-- הוספנו flex-shrink: 0 כדי לשמור על הפרופורציות המקוריות -->
                                     <div style="display:flex; align-items:center; gap: 6px; flex-shrink: 0;">
@@ -711,10 +666,6 @@
                                                                 ${metadataHtml}
                                     <p class="card-summary-box font-semibold">${item.summary || ''}</p>
                                     ${impactHtml}
-                                    <div class="border-t pt-2 mt-auto flex items-center w-full">
-                                        <span class="relevance-element relevance-badge bg-gray-100 px-2 py-1 rounded text-sm font-bold border border-slate-300">🔗 קשר: ${item.relevance || '0'}/10</span>
-                                        <!-- הסרנו מכאן את linkBadgeHtml שהיה בעבר -->
-                                    </div>
                                 </div>
                             </div>
                     `;
