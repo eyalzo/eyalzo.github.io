@@ -244,3 +244,43 @@ function getDocLinkBadgeHtml(link) {
         return `<span class="doc-link-btn" style="padding: 1px 5px; border-radius: 4px; display: inline-flex; border: 1px solid #e2e8f0; background-color: #f1f5f9; opacity: 0.5; cursor: not-allowed;" title="אין קישור למסמך כרגע">📄</span>`;
     }
 }
+
+// Sort and slice items based on sort mode ('latest', 'relevant', 'all') and max items allowed
+function getSortedAndSlicedItems(items, sortMode, maxItems) {
+    let itemsToShow = [...items];
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+
+    if (sortMode === 'latest') {
+        itemsToShow.sort((a, b) => (b.year + b.month / 12) - (a.year + a.month / 12));
+        if (maxItems && itemsToShow.length > maxItems) {
+            itemsToShow = itemsToShow.slice(0, maxItems);
+        }
+    } else if (sortMode === 'relevant') {
+        // Calculate weighted score: relevance minus years passed
+        itemsToShow.forEach(item => {
+            const rel = item.relevance !== undefined ? parseFloat(item.relevance) : 5;
+            const monthsPassed = (currentYear - item.year) * 12 + (currentMonth - item.month);
+            const yearsPassed = Math.floor(Math.max(0, monthsPassed) / 12);
+            item.weightedScore = rel - yearsPassed;
+        });
+
+        // Sort by weighted score descending, fallback to newer documents
+        itemsToShow.sort((a, b) => {
+            if (b.weightedScore !== a.weightedScore) {
+                return b.weightedScore - a.weightedScore;
+            }
+            return (b.year + b.month / 12) - (a.year + a.month / 12);
+        });
+
+        if (maxItems && itemsToShow.length > maxItems) {
+            itemsToShow = itemsToShow.slice(0, maxItems);
+        }
+    } else {
+        // 'all' mode: just sort chronologically
+        itemsToShow.sort((a, b) => (b.year + b.month / 12) - (a.year + a.month / 12));
+    }
+
+    return itemsToShow;
+}
