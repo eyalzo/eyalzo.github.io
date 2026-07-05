@@ -526,30 +526,40 @@
                 document.getElementById('meta-update-label').innerText = `גרסה: ${data.meta.version || '4.0.0'} | עודכן: ${data.meta.lastUpdate}`;
                 document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
 
-                // עיבוד והזרקת תקציר מנהלים עם תיוגי אירוח (Hover tooltips)// עיבוד והזרקת תקציר מנהלים עם כפתורי רפרנס בסוף משפט
+                // עיבוד והזרקת תקציר מנהלים עם מספור דינמי לפי סדר הופעה
                 if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
                     const sentences = data.execSummary.text.split('. ');
+
+                    // מפה שתשמור את המספרים שהוקצו לכל refId
+                    const refMap = {};
+                    let refCounter = 1;
+
                     const processedText = sentences.map((sentence, index) => {
                         const sIndex = index + 1;
                         const refs = data.execSummary.textRefs.filter(r => r.sentenceIndex === sIndex);
 
                         let textToWrap = sentence.trim();
-                        // מסירים נקודה זמנית כדי למקם את הכפתורים לפני הרווח הבא
                         if (textToWrap.endsWith('.')) {
                             textToWrap = textToWrap.slice(0, -1);
                         }
 
                         if (refs.length > 0) {
                             let buttonsHtml = '';
+
+                            // לולאה על הרפרנסים במשפט הנוכחי
                             refs.forEach(r => {
                                 const doc = data.appConfiguration.items.find(d => d.idCode === r.refId);
                                 if (doc) {
-                                    // מציאת צבע תואם למסמך
+                                    // אם הרפרנס הזה עדיין לא קיבל מספר, נקצה לו אחד חדש
+                                    if (!refMap[r.refId]) {
+                                        refMap[r.refId] = refCounter++;
+                                    }
+
                                     const entity = (typeof entityMap !== 'undefined' && entityMap[doc.type]) ? entityMap[doc.type] : { color: '#64748b' };
-                                    buttonsHtml += `<button class="ref-btn" style="background-color: ${entity.color};" onclick="openDocModal('${doc.idCode}')" title="לפרטי המסמך">${doc.serialNumber}</button>`;
+                                    // שימוש במספר מהמפה במקום ב-doc.serialNumber
+                                    buttonsHtml += `<button class="ref-btn" style="background-color: ${entity.color};" onclick="openDocModal('${doc.idCode}')" title="לפרטי המסמך">${refMap[r.refId]}</button>`;
                                 }
                             });
-                            // החזרת המשפט עם הכפתורים צמודים אליו, והוספת הנקודה בסוף
                             return `<span>${textToWrap}${buttonsHtml}.</span> `;
                         }
                         return textToWrap ? `${textToWrap}. ` : '';
