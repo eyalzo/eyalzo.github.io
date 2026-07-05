@@ -762,11 +762,15 @@
                 return;
             }
 
+            // סדר הקטגוריות המעודכן בגריד (3 עמודות בשורה)
             const categoryGroups = [
-                { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },
-                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },
-                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] },
-                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] },
+                // שורה 1
+                { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },       // מיקום 1
+                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] }, // מיקום 2 (היה 4)
+                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },   // מיקום 3 (היה 2)
+
+                // שורה 2
+                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] }, // מיקום 4 (עבר לשורה 2)
                 { key: 'comptroller', icon: '🔍', title: 'מבקר המדינה', color: '#f59e0b', items: [] },
                 { key: 'govDecision', icon: '📜', title: 'החלטות ממשלה', color: '#14b8a6', items: [] }
             ];
