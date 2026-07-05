@@ -456,7 +456,7 @@
     <!-- טולטיפים משותפים צפים -->
     <div id="chartTooltip"></div>
     <div id="docModalOverlay" class="doc-modal-overlay" onclick="closeDocModal(event)">
-        <div id="docModalBox" class="doc-modal-box" onclick="event.stopPropagation()">
+        <div id="docModalBox" class="doc-modal-box">
             <button onclick="closeDocModal()" class="doc-modal-close">✖</button>
             <div id="docModalInner"></div>
         </div>
@@ -632,23 +632,55 @@
             const navContainer = document.getElementById('dynamicTabsNav');
             navContainer.innerHTML = '';
 
-            // 1. הזרקת הטאבים הסטטיים הראשיים
-            tabDefinitions.forEach(tab => {
+            // 1. יצירת מערך סופי המשלב טאבים סטטיים וחיצוניים לפי מיקום
+            let finalTabs = [...tabDefinitions];
+            let unpositionedFrames = []; // טאבים חיצוניים ללא מיקום (יופיעו בסוף)
+
+            if (externalFrames && externalFrames.length > 0) {
+                let positionedFrames = [];
+
+                externalFrames.forEach((frame, idx) => {
+                    const frameTabId = `extframe-${idx}`;
+                    // אובייקט הטאב החיצוני עם אייקון ייעודי 🌐
+                    const tabObj = {
+                        id: frameTabId,
+                        label: `🌐 ${frame.title}`,
+                        isExternal: true
+                    };
+
+                    if (typeof frame.tab === 'number') {
+                        // מיקום 1 שווה לאינדקס 0 במערך
+                        positionedFrames.push({ ...tabObj, targetIndex: frame.tab - 1 });
+                    } else {
+                        // אם לא הוגדר מאפיין tab ב-JSON
+                        unpositionedFrames.push(tabObj);
+                    }
+                });
+
+                // מיון והכנסת הטאבים בעלי המיקום המוגדר למערך הסופי
+                positionedFrames.sort((a, b) => a.targetIndex - b.targetIndex);
+                positionedFrames.forEach(pf => {
+                    // מוודא שהמיקום לא חורג מגבולות המערך הנוכחי
+                    let insertAt = Math.max(0, Math.min(pf.targetIndex, finalTabs.length));
+                    finalTabs.splice(insertAt, 0, pf); // 'דוחף' את שאר הטאבים קדימה
+                });
+
+                // הוספת הטאבים החיצוניים חסרי המיקום בסוף הרשימה (ברירת מחדל)
+                finalTabs.push(...unpositionedFrames);
+            }
+
+            // 2. הזרקת כפתורי הטאבים לפי הסדר הסופי שחושב
+            finalTabs.forEach(tab => {
                 navContainer.innerHTML += `<button class="tab-btn" id="btn-tab-${tab.id}" onclick="switchTab('${tab.id}')">${tab.label}</button>`;
             });
 
-            // 2. הזרקת טאבים דינמיים עבור כל iframe שנמצא ב-externalFrames
+            // 3. הזרקת הקונטיינרים עבור ה-iframes (סדר ה-DOM הפנימי לא משנה כי הם מוסתרים)
             const framesContainer = document.getElementById('dynamicFramesContainers');
             framesContainer.innerHTML = '';
 
             if (externalFrames && externalFrames.length > 0) {
                 externalFrames.forEach((frame, idx) => {
                     const frameTabId = `extframe-${idx}`;
-                    
-                    // הזרקת כפתור הטאב
-                    navContainer.innerHTML += `<button class="tab-btn" id="btn-tab-${frameTabId}" onclick="switchTab('${frameTabId}')">📈 ${frame.title}</button>`;
-                    
-                    // הזרקת קונטיינר ה-HTML התואם (Lazy loading מובנה ללא כתובת src בהתחלה!)
                     framesContainer.innerHTML += `
                         <div class="tab-content" id="content-${frameTabId}">
                             <div class="bg-white p-4 rounded-xl shadow-md border">
@@ -1358,11 +1390,30 @@
         }
 
         function closeDocModal(event) {
-            // אם event לא הועבר (קריאה מה-✖) או שלחצו על הרקע
-            if (!event || event.target.id === 'docModalOverlay') {
+            // אם קראנו לפונקציה ישרות (מה-X או ממקש Esc), פשוט נסגור
+            if (!event) {
                 document.getElementById('docModalOverlay').style.display = 'none';
+                return;
             }
+
+            // אם המשתמש לחץ על קישור (תגית <a>) או אלמנט בתוך קישור, לא נסגור כדי שהדפדפן יפתח את הטאב
+            if (event.target.closest('a')) {
+                return;
+            }
+
+            // בכל לחיצה אחרת (על הטקסט, על הרקע הלבן, או על הרקע הכהה) – נסגור את החלון
+            document.getElementById('docModalOverlay').style.display = 'none';
         }
+
+        // מאזין למקלדת לסגירת המודל בלחיצה על Esc
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const overlay = document.getElementById('docModalOverlay');
+                if (overlay && overlay.style.display === 'flex') {
+                    closeDocModal();
+                }
+            }
+        });
     </script>
 </body>
 </html>
