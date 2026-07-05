@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סדר היום הפרלמנטרי - דשבורד</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        (function() {
+            const isLocal = window.location.hostname === 'localhost' ||
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.protocol === 'file:';
+
+            const scriptUrl = isLocal ? './mmm_shared.js' : 'https://mmm.beniad.com/seder_hayom/mmm_shared.js';
+            console.log("🌐 זיהוי סביבת עבודה:", isLocal ? "מקומית (Local)" : "שרת (Production)");
+            console.log("📥 טוען סקריפט משותף מכתובת:", scriptUrl);
+
+            const script = document.createElement('script');
+            script.src = scriptUrl;
+            script.onload = () => {
+                console.log("✅ הסקריפט המשותף נטען בהצלחה. מאתחל את הדשבורד...");
+                if (typeof initDashboard === 'function') {
+                    initDashboard();
+                }
+            };
+            document.head.appendChild(script);
+        })();
+    </script>
+
+    <style>
+        :root {
+            --bg-base: #f8fafc;
+            --text-main: #0f172a;
+            --header-bg: #0f172a;
+            --c-comptroller-hex: #f59e0b;
+            --c-mmm-hex: #8b5cf6;
+            --c-active-hex: #3b82f6;
+            --c-passed-hex: #10b981;
+            --c-committee-hex: #ef4444;
+            --c-gov-hex: #14b8a6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; padding: 24px; font-size: 16px; }
+
+        .max-w-7xl { max-width: 80rem; margin: 0 auto; }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (min-width: 1280px) {
+            .xl\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        .flex { display: flex; } .flex-col { flex-direction: column; }
+        @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
+        .items-center { align-items: center; } .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
+        .flex-wrap { flex-wrap: wrap; }
+        .gap-1 { gap: 0.25rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
+
+        .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; }
+        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; }
+
+        .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
+        .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-auto { margin-top: auto; }
+
+        .w-full { width: 100%; } .h-full { height: 100%; }
+        .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; } .rounded-full { border-radius: 9999px; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+        .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; } .border-t { border-top: 1px solid #e2e8f0; }
+
+        .text-xs { font-size: 0.8rem; } .text-sm { font-size: 0.95rem; } .text-base { font-size: 1.05rem; }
+        .text-lg { font-size: 1.2rem; font-weight: 700; } .text-xl { font-size: 1.4rem; font-weight: 700; } .text-2xl { font-size: 1.8rem; font-weight: 700; } .text-3xl { font-size: 2.2rem; font-weight: 700; }
+        .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
+
+        .bg-white { background-color: #ffffff; } .bg-blue-50 { background-color: #eff6ff; } .bg-gray-50 { background-color: #f9fafb; } .bg-gray-100 { background-color: #f3f4f6; }
+        .text-gray-200 { color: #e2e8f0; } .text-gray-400 { color: #94a3b8; } .text-gray-500 { color: #64748b; } .text-gray-700 { color: #334155; } .text-gray-800 { color: #1e293b; } .text-gray-900 { color: #0f172a; }
+        .text-red-500 { color: #ef4444; } .text-orange-500 { color: #f97316; } .text-blue-900 { color: #1e3a8a; } .text-amber-700 { color: #b45309; }
+        .text-blue-400 { color: #60a5fa; }
+
+        header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .badge-mono { font-family: monospace; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; display: flex; gap: 1rem; align-items: center; }
+
+        .exec-block { background-color: #eff6ff; border-right: 4px solid #2563eb; color: #1e3a8a; }
+        .whats-new { background-color: #ffffff; border: 1px solid #bfdbfe; border-right: 4px solid #fbbf24; border-radius: 0.25rem; padding: 1.25rem; margin-top: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(30, 64, 175, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0); }
+        }
+        .btn-read-aloud, .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .btn-read-aloud:hover, .btn-back:hover { background-color: #bfdbfe; }
+        .btn-back.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; background-color: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
+        .is-reading { background-color: #1e40af; color: #ffffff; animation: pulse 2s infinite; }
+
+        .progress-bar-bg { width: 100%; height: 0.85rem; background-color: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 0.25rem; }
+        .progress-media { height: 100%; background-color: #ef4444; }
+        .progress-social { height: 100%; background-color: #f97316; }
+
+        .eco-grid-col { padding-right: 0.25rem; }
+        .eco-item { background: #f8fafc; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.25rem; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;}
+        .eco-item:hover { background: #f1f5f9; }
+
+        .trends-container { height: 100px; width: 100%; margin-top: 0.75rem; direction: ltr; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .filter-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; border: none; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
+        .btn-active { background-color: #0f172a; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-inactive { background-color: #e2e8f0; color: #334155; }
+        .btn-inactive:hover { background-color: #cbd5e1; }
+
+        .search-container { position: relative; width: 100%; max-width: 350px; display: flex; align-items: center; }
+        .search-input { width: 100%; padding: 0.5rem 1rem 0.5rem 2.2rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #f8fafc; }
+        .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); background: white; }
+        .search-clear-btn { position: absolute; left: 0.5rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; display: none; align-items: center; justify-content: center; }
+        .search-clear-btn:hover { color: #ef4444; }
+
+        #error-message { display: none; background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; text-align: center; }
+        #loading-message { display: flex; justify-content: center; align-items: center; height: 50vh; font-size: 1.5rem; color: #64748b; }
+        #dashboard-content { display: none; }
+
+        .relevance-element { display: none !important; }
+        .show-relevance .relevance-element { display: inline-flex !important; }
+
+        .btn-action {
+            background: white; border: 1px solid #cbd5e1; color: #334155;
+            padding: 8px 16px; border-radius: 0.5rem; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-action:hover { background: #f8fafc; border-color: #94a3b8; }
+
+        .accordion-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-content { display: none; overflow: hidden; }
+        .accordion-content.open { display: block; }
+        .accordion-icon { transition: transform 0.3s; }
+        .accordion-icon.open { transform: rotate(180deg); }
+
+        .category-col { background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
+        .category-title { display: flex; justify-content: space-between; align-items: center; padding: 1rem; font-weight: bold; font-size: 1.1rem; background: white; border-bottom: 1px solid #e2e8f0; }
+        .category-items { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; flex-grow: 1; overflow-y: auto; max-height: 800px; }
+
+        .doc-item-wrapper { background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); flex-shrink: 0; }
+        .doc-mini-header { padding: 0.75rem 1rem; display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer; transition: background-color 0.2s; }
+        .doc-mini-header:hover { background-color: #f1f5f9; }
+        .doc-mini-date { font-weight: bold; color: #64748b; font-size: 0.9rem; white-space: nowrap; padding-top: 0.1rem;}
+        .doc-mini-title { font-weight: 600; color: #0f172a; line-height: 1.3; font-size: 1rem;}
+
+        .doc-full-details { display: none; padding: 1rem; border-top: 1px solid #e2e8f0; background: #fafafa; }
+        .doc-full-details.open { display: flex; flex-direction: column; }
+
+        .card-summary-box { background: #ffffff; border: 1px solid #f1f5f9; padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; line-height: 1.5; color: #334155;}
+        .card-impact-box { background: rgba(255,255,255,0.5); padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; border-right: 4px solid #cbd5e1; }
+        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
+        .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #475569; }
+    </style>
+</head>
+<body>
+    <div id="loading-message">טוען נתונים...</div>
+    <div id="error-message"></div>
+
+    <div id="dashboard-content" class="max-w-7xl mt-4">
+
+        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl mb-1" id="d-title">בטעינה...</h1>
+            </div>
+            <div class="flex flex-col items-end gap-3 mr-auto">
+                <div class="flex gap-3 items-center justify-end w-full">
+                    <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
+                    <a id="btn-vaadot" href="#" class="btn-back disabled" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">ישיבות ועדות 🏛️</a>
+                    <a id="timelineLinkBtn" href="timeline.html" class="btn-back" title="צפו בהשתלשלות הכרונולוגית של הדיונים, החוקים והמחקרים, וגלו כיצד המסמכים קשורים זה לזה">ציר הזמן ⏱️</a>
+
+                    <div style="border: 1px solid #60a5fa; padding: 8px 16px; border-radius: 6px; background-color: rgba(96, 165, 250, 0.1); font-family: 'Segoe UI', Tahoma, Verdana, sans-serif; font-weight: 800; color: #60a5fa; display: inline-flex; align-items: center; letter-spacing: 0.5px;">
+                        Gilat AI
+                    </div>
+                </div>
+
+                <div class="badge-mono" style="padding: 0.5rem 1rem;">
+                    <span class="font-bold text-white">סדר היום הפרלמנטרי</span>
+                    <span style="color: rgba(255,255,255,0.3)">|</span>
+                    <span class="text-sm">גרסה: 2.6.0 | עודכן ב-16/06/2026 15:20</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="exec-block p-6 rounded-xl shadow-sm mb-8 relative">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="font-bold text-xl md:text-3xl" id="d-exec-title">📋 תקציר מנהלים</h2>
+                <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
+                    <span>🔊</span> <span id="tts-text">הקראת התקציר</span>
+                </button>
+            </div>
+            <div id="execSummaryWrapper">
+                <p class="text-base md:text-xl leading-relaxed mb-4 text-blue-900 font-semibold" id="d-exec-text"></p>
+                <div class="whats-new">
+                    <h3 class="font-bold text-amber-700 text-xl mb-3" id="d-whatsnew-title">🔥 מה התחדש לאחרונה?</h3>
+                    <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;">
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
+            <h3 class="text-2xl mb-4 border-b pb-3">מפת הגורמים המעורבים</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md border">
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1">🏛️ משרדי ממשלה ואכיפה</h3>
+                    <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border">
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-2">💼 ועדות הכנסת</h3>
+                    <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border">
+                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3">🤝 חברה אזרחית וארגונים</h3>
+                    <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
+
+    <div class="flex items-center gap-4 flex-wrap">
+        <h3 class="text-2xl mb-1">מסמכים</h3>
+
+        <select id="sortFilterDropdown" class="search-input" style="width: auto; padding: 0.4rem 2rem 0.4rem 1rem; font-weight: bold; color: #334155; cursor: pointer; outline: none; margin-right: 0.5rem;" onchange="renderCards()" title="פילטר זה משאיר X מסמכים מכל סוג לפי בחירתך, ומעדכן את המונה בכל קטגוריה בהתאם.">
+            <option value="relevant-5">5 הכי רלוונטי</option>
+            <option value="relevant-10">10 הכי רלוונטי</option>
+            <option value="latest-5">5 אחרונים</option>
+            <option value="latest-10">10 אחרונים</option>
+            <option value="all">הכל</option>
+        </select>
+
+        <div class="flex gap-2">
+            <button class="btn-back" style="font-size: 0.85rem; padding: 2px 8px;" onclick="toggleAllDocs(true)">פתיחת הכל</button>
+            <button class="btn-back" style="font-size: 0.85rem; padding: 2px 8px;" onclick="toggleAllDocs(false)">סגירת הכל</button>
+        </div>
+    </div>
+
+    <div class="flex flex-col md:items-end gap-3 w-full md:w-auto">
+        <div class="search-container" style="max-width: 300px; width: 100%;">
+            <input type="text" id="searchInput" class="search-input" placeholder="חיפוש חופשי במסמכים...">
+            <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש" style="display: none;">✖</button>
+        </div>
+    </div>
+</div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="documentsStream">
+                </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
+                <div class="mb-5">
+                    <div class="flex justify-between text-base mb-2">
+                        <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
+                        <span class="text-red-500 font-bold" id="d-media-val"></span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-media" id="d-media-bar" style="width: 0%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2" id="d-media-text"></p>
+                </div>
+                <div>
+                    <div class="flex justify-between text-base mb-2">
+                        <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
+                        <span class="text-orange-500 font-bold" id="d-social-val"></span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-social" id="d-social-bar" style="width: 0%;"></div></div>
+                    <p class="text-sm text-gray-500 mt-2 mb-2" id="d-social-text"></p>
+                    <div class="trends-container relative">
+                        <canvas id="trendsChart"></canvas>
+                        <div class="absolute bottom-0 w-full flex justify-between px-1 text-[11px] text-gray-400 font-mono font-bold" dir="ltr">
+                            <span>2022</span><span>2024</span><span>2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <h3 class="text-xl mb-4 border-b pb-3">📰 הדהוד בתקשורת</h3>
+                <div class="grid grid-cols-1 gap-3 h-full" id="media-echo-container">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let isSpeaking = false;
+        window.appConfiguration = null;
+        let currentFilterType = 'all';
+
+        const typeSortOrder = {
+            'mmm': 1, 'activeLaw': 2, 'committee': 3,
+            'passedLaw': 4, 'govDecision': 5, 'comptroller': 6
+        };
+
+        // הפונקציה המרכזית שנקראת על ידי הטוען החכם!
+        window.initDashboard = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fileUrl = urlParams.get('file') || 'https://mmm.beniad.com/seder_hayom/data_arab_crime.json';
+            document.getElementById('timelineLinkBtn').href = `timeline.html?file=${encodeURIComponent(fileUrl)}`;
+
+            if (fileUrl.includes('data_')) {
+                const vaadotUrl = fileUrl.replace('data_', 'vaadot_');
+
+                fetch(vaadotUrl, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            const btnVaadot = document.getElementById('btn-vaadot');
+                            btnVaadot.href = `vaadot.html?file=${encodeURIComponent(vaadotUrl)}`;
+                            btnVaadot.classList.remove('disabled');
+                            btnVaadot.style.backgroundColor = '';
+                            btnVaadot.style.color = '';
+                            btnVaadot.style.borderColor = '';
+                        }
+                    })
+                    .catch(err => console.log('Vaadot file check failed:', err));
+            }
+
+            if (!fileUrl) {
+                document.getElementById('loading-message').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch(fileUrl);
+                if (!response.ok) throw new Error("File not found");
+                const data = await response.json();
+
+                window.appConfiguration = data.appConfiguration;
+
+                window.appConfiguration.items.forEach(item => {
+                    const parsed = parseFlexibleDate(item.date);
+                    item.parsedDate = parsed;
+                    item.year = parsed.year;
+                    item.month = parsed.month;
+                    item.day = parsed.day;
+                    item.sortValue = parsed.sortValue;
+                });
+
+                document.getElementById('d-title').innerText = data.meta.title;
+                document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
+
+                if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
+                    const sentences = data.execSummary.text.split('. ');
+                    const processedText = sentences.map((sentence, index) => {
+                        const sIndex = index + 1;
+                        const refs = data.execSummary.textRefs.filter(r => r.sentenceIndex === sIndex);
+                        let textToWrap = sentence;
+                        if (index < sentences.length - 1 || !textToWrap.endsWith('.')) {
+                            textToWrap += '. ';
+                        }
+                        if (refs.length > 0) {
+                            const idCodes = refs.map(r => r.refId).join(',');
+                            return `<span style="cursor: help; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color=''" onmousemove="if(typeof showDocTooltip === 'function') showDocTooltip(event, '${idCodes}')" onmouseleave="if(typeof hideDocTooltip === 'function') hideDocTooltip()">${textToWrap}</span>`;
+                        }
+                        return textToWrap;
+                    }).join('');
+                    document.getElementById('d-exec-text').innerHTML = processedText;
+                } else {
+                    document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
+                }
+
+                document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(item => {
+                    if (typeof item === 'string') return `<li style="margin-bottom: 0.5rem;">${item}</li>`;
+
+                    let doc = null;
+                    let parsedDate = null;
+
+                    if (item.refId) {
+                        doc = data.appConfiguration.items.find(d => d.idCode === item.refId);
+                        if (doc) parsedDate = doc.parsedDate;
+                    } else if (item.date) {
+                        parsedDate = parseFlexibleDate(item.date);
+                    }
+
+                    if (!parsedDate && doc) return `<li style="margin-bottom: 0.5rem;">${item.text}</li>`;
+
+                    const dateStr = formatParsedDate(parsedDate);
+                    const dateDisplay = dateStr ? `<strong>${dateStr}</strong> - ` : '';
+
+                    let linkHtml = '';
+                    if (doc && doc.link && (doc.link.startsWith('http://') || doc.link.startsWith('https://'))) {
+                        linkHtml = ` <a href="${doc.link}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;" title="למעבר למסמך המקור">🔗 מסמך</a>`;
+                    } else if (item.externalLink) {
+                        linkHtml = ` <a href="${item.externalLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;" title="למעבר לכתבה">🔗 קישור לכתבה</a>`;
+                    }
+
+                    if (item.refId && doc) {
+                        return `<li style="cursor: help; margin-bottom: 0.5rem;" onmousemove="if(typeof showDocTooltip === 'function') showDocTooltip(event, '${doc.idCode}')" onmouseleave="if(typeof hideDocTooltip === 'function') hideDocTooltip()">
+                            ${dateDisplay}${item.text}${linkHtml}
+                        </li>`;
+                    } else {
+                        return `<li style="margin-bottom: 0.5rem;">
+                            ${dateDisplay}${item.text}${linkHtml}
+                        </li>`;
+                    }
+                }).join('');
+
+                document.getElementById('d-media-val').innerText = data.metrics.media.score + '%';
+                document.getElementById('d-media-bar').style.width = data.metrics.media.score + '%';
+                document.getElementById('d-media-text').innerHTML = data.metrics.media.text;
+
+                document.getElementById('d-social-val').innerText = data.metrics.social.score + '%';
+                document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
+                document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
+
+                const echoContainer = document.getElementById('media-echo-container');
+                if (data.mediaEcho && data.mediaEcho.length > 0) {
+                    echoContainer.innerHTML = data.mediaEcho.map(item => `
+                        <a href="${item.url}" target="_blank" class="p-3 border rounded-lg hover:bg-gray-50 transition block" style="text-decoration:none;">
+                            <strong class="text-blue-900 block mb-1 text-base">${item.title}</strong>
+                            <span class="text-sm text-gray-600 block">${item.source} | ${item.subtitle}</span>
+                        </a>
+                    `).join('');
+                } else {
+                    echoContainer.innerHTML = '<span class="text-gray-500">אין נתונים זמינים</span>';
+                }
+
+                setupFilters();
+                setupSearch();
+                renderEcosystem();
+                renderCards();
+                renderExternalFrames();
+                renderExternalLinks();
+
+                document.getElementById('loading-message').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+
+                setTimeout(() => {
+                    renderTrendsChart();
+                }, 100);
+
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        // Render external link blocks injected at specific rows
+        function renderExternalLinks() {
+            if (!window.appConfiguration || !window.appConfiguration.externalLinkBlocks) return;
+            const linkBlocks = window.appConfiguration.externalLinkBlocks;
+            const contentDiv = document.getElementById('dashboard-content');
+
+            // Array mapping row indices to specific DOM elements (same as external frames logic)
+            const blocks = [
+                contentDiv.querySelector('header'),
+                document.querySelector('.exec-block'),
+                document.getElementById('eco-title-1')?.closest('.mb-8.bg-white'),
+                document.getElementById('documentsStream')?.closest('.mb-8.bg-white'),
+                document.getElementById('timelineLinkBtn')?.closest('.mb-8.bg-white'),
+                document.getElementById('d-media-val')?.closest('.grid.gap-6')
+            ];
+
+            linkBlocks.forEach(block => {
+                const targetBlock = blocks[block.row - 1];
+                if (targetBlock) {
+
+                    // Determine layout direction based on JSON config
+                    const flexDirection = block.layout === 'vertical' ? 'flex-col' : 'flex-row flex-wrap';
+
+                    // Build the HTML for individual links
+                    const linksHtml = block.links.map(link => `
+                        <a href="${link.url}" target="_blank" rel="noopener noreferrer"
+                           class="bg-white border border-slate-300 rounded-lg p-4 shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-3"
+                           style="flex: 1; min-width: 200px; text-decoration: none;">
+                            <span class="text-2xl">${link.icon || '🔗'}</span>
+                            <span class="font-bold text-slate-800">${link.title}</span>
+                        </a>
+                    `).join('');
+
+                    // Construct the outer container HTML
+                    const blockHtml = `
+                        <div class="mb-8 bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100">
+                            ${block.title ? `<h3 class="text-xl mb-4 font-bold text-blue-900 border-b border-blue-200 pb-2">${block.title}</h3>` : ''}
+                            <div class="flex ${flexDirection} gap-4">
+                                ${linksHtml}
+                            </div>
+                        </div>
+                    `;
+
+                    // Inject the block before the target row
+                    targetBlock.insertAdjacentHTML('beforebegin', blockHtml);
+                }
+            });
+        }
+
+        function renderExternalFrames() {
+            if (!window.appConfiguration || !window.appConfiguration.externalFrames) return;
+            const frames = window.appConfiguration.externalFrames;
+            const contentDiv = document.getElementById('dashboard-content');
+
+            const blocks = [
+                contentDiv.querySelector('header'),
+                document.querySelector('.exec-block'),
+                document.getElementById('eco-title-1')?.closest('.mb-8.bg-white'),
+                document.getElementById('documentsStream')?.closest('.mb-8.bg-white'),
+                document.getElementById('timelineLinkBtn')?.closest('.mb-8.bg-white'),
+                document.getElementById('d-media-val')?.closest('.grid.gap-6')
+            ];
+
+            frames.forEach(frame => {
+                const targetBlock = blocks[frame.row - 1];
+                if (targetBlock) {
+                    const frameHtml = `
+                        <div class="mb-8 bg-white p-4 rounded-xl shadow-md border position-relative">
+                            <div class="accordion-header" onclick="toggleFrame(this)">
+                                <h3 class="text-xl mb-4 border-b pb-3 font-bold text-gray-800" style="margin-bottom:0; border:none; padding-bottom:0;">
+                                    ${frame.title}
+                                    <a href="${frame.url}" target="_blank" style="font-size:0.8rem; margin-right:10px; text-decoration:none; color:#2563eb;" title="פתיחה בחלון חדש">🔗 מקור</a>
+                                </h3>
+                                <span class="accordion-icon text-xl open">▼</span>
+                            </div>
+                            <div class="accordion-content open" style="margin-top:1rem;">
+                                <iframe src="${frame.url}" class="w-full rounded-lg" style="height: 700px; border: none; width: 100%;"></iframe>
+                            </div>
+                        </div>
+                    `;
+                    targetBlock.insertAdjacentHTML('beforebegin', frameHtml);
+                }
+            });
+        }
+
+        function toggleFrame(headerEl) {
+            const content = headerEl.nextElementSibling;
+            const icon = headerEl.querySelector('.accordion-icon');
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        function setupFilters() {
+
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+
+            searchInput.addEventListener('input', (e) => {
+                clearBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
+                renderCards();
+            });
+
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                clearBtn.style.display = 'none';
+                renderCards();
+            });
+        }
+
+        function renderEcosystemList(elementId, dataArray, borderColor) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            const sortedArray = [...dataArray].sort((a, b) => b.relevance - a.relevance);
+            sortedArray.forEach(item => {
+                container.innerHTML += `
+                    <div class="eco-item" style="border-right: 4px solid ${borderColor};">
+                        <div class="flex justify-between items-start gap-2 mb-1">
+                            <strong class="text-gray-900 text-base block leading-tight">${item.name}</strong>
+                        </div>
+                        <span class="text-sm text-gray-600 font-semibold">${item.desc}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function renderEcosystem() {
+            renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries, '#3b82f6');
+            renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees, '#ef4444');
+            renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs, '#10b981');
+        }
+
+// ==========================================
+        // UI Helpers for renderCards
+        // ==========================================
+
+        // Filter documents based on search text and selected category
+        function filterItemsBySearchAndType(items, filterType, searchTerm) {
+            return items.filter(item => {
+                const matchesType = filterType === 'all' || item.type === filterType;
+                let matchesSearch = true;
+                if (searchTerm !== '') {
+                    const searchableText = `${item.title} ${item.summary} ${item.author} ${item.source} ${item.impact} ${(item.keywords || []).join(' ')}`.toLowerCase();
+                    matchesSearch = searchableText.includes(searchTerm);
+                }
+                return matchesType && matchesSearch;
+            });
+        }
+
+        // Build the expanded details HTML (metadata) for a specific card
+        function buildMetadataHtml(item, sourceMovedToTitle, sourceOrAuthor) {
+            let metadataHtml = '';
+
+            if (item.type === 'activeLaw') {
+                let vaadaHtml = '';
+                let safeVaada = item.activeLawVaada ? String(item.activeLawVaada).trim() : '';
+                if (safeVaada !== '') vaadaHtml = `<div style="margin-top: 4px;"><span class="font-bold">ועדה מטפלת:</span> ${safeVaada}</div>`;
+
+                let safeStatus = item.activeLawStatus ? String(item.activeLawStatus).trim() : '';
+                const statusVisualHtml = typeof generateLawProgressHtml === 'function' ? generateLawProgressHtml(safeStatus) : safeStatus;
+                let safeType = item.activeLawType ? String(item.activeLawType).trim() : 'לא צוין';
+
+                metadataHtml = `
+                    <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-2">
+                        <div><span class="font-bold">סוג:</span> ${safeType}</div>
+                        ${vaadaHtml}
+                        <div><span class="font-bold">סטטוס:</span> ${statusVisualHtml}</div>
+                    </div>`;
+            }
+            else if (item.type === 'mmm') {
+                let safeRequester = item.mmmRequester ? String(item.mmmRequester).trim() : 'לא צוין';
+                let safeCategory = item.mmmCategory ? String(item.mmmCategory).trim() : 'לא צוין';
+                metadataHtml = `
+                    <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-1">
+                        <div><span class="font-bold">מבקש המסמך:</span> ${safeRequester}</div>
+                        <div><span class="font-bold">סוג:</span> ${safeCategory}</div>
+                    </div>`;
+            }
+            else {
+                if (!sourceMovedToTitle) {
+                    let safeSource = sourceOrAuthor !== '' ? sourceOrAuthor : 'לא צוין';
+                    metadataHtml = `
+                        <div class="flex justify-between items-center mb-2 border-b pb-2">
+                            <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${safeSource}</span></span>
+                        </div>`;
+                }
+            }
+            return metadataHtml;
+        }
+
+        // Build the complete HTML block for a single document card
+        function buildCardHtml(item, index, groupColor) {
+            if (!item.type) return '';
+            if (!item.idCode) item.idCode = `${item.type}_${index + 1}`;
+
+            const formattedMonth = item.month.toString().padStart(2, '0');
+            const dateStr = `${formattedMonth}/${item.year}`;
+            const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
+            const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(item.link) : '';
+
+            let sourceOrAuthor = (item.author && item.author.trim() !== '') ? item.author.trim() : ((item.source && item.source.trim() !== '') ? item.source.trim() : '');
+            let displayTitle = item.title;
+            let sourceMovedToTitle = false;
+
+            if (['committee', 'comptroller', 'govDecision'].includes(item.type) && sourceOrAuthor !== '') {
+                displayTitle = `<strong style="font-weight: 800; color: #0f172a;">${sourceOrAuthor}:</strong> ${item.title}`;
+                sourceMovedToTitle = true;
+            }
+
+            let metadataHtml = buildMetadataHtml(item, sourceMovedToTitle, sourceOrAuthor);
+
+            let impactHtml = '';
+            let safeImpact = item.impact ? String(item.impact).trim() : '';
+            if (safeImpact !== '') {
+                impactHtml = `<div class="card-impact-box text-sm mb-3"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${safeImpact}</div>`;
+            }
+
+            return `
+                <div class="doc-item-wrapper" style="border-right: 4px solid ${groupColor};">
+                    <div class="doc-mini-header" onclick="toggleDoc('${detailsId}')">
+                        <div style="display:flex; align-items:center; gap: 6px; flex-shrink: 0;">
+                            <span class="doc-mini-date">${dateStr}</span>
+                            ${docLinkHtml}
+                        </div>
+                        <span class="doc-mini-title">${displayTitle}</span>
+                    </div>
+                    <div id="${detailsId}" class="doc-full-details">
+                        ${metadataHtml}
+                        <p class="card-summary-box font-semibold">${item.summary || ''}</p>
+                        ${impactHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // Main Render Function
+        // ==========================================
+
+        function renderCards() {
+            const container = document.getElementById('documentsStream');
+            container.innerHTML = '';
+
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            let filteredItems = filterItemsBySearchAndType(window.appConfiguration.items, currentFilterType, searchTerm);
+
+            if (filteredItems.length === 0 && searchTerm !== '') {
+                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b; font-size: 1.1rem;">לא נמצאו מסמכים התואמים את החיפוש.</div>`;
+                return;
+            }
+
+            const categoryGroups = [
+                { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },
+                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },
+                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] },
+                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] },
+                { key: 'comptroller', icon: '🔍', title: 'מבקר המדינה', color: '#f59e0b', items: [] },
+                { key: 'govDecision', icon: '📜', title: 'החלטות ותוכניות ממשלה', color: '#14b8a6', items: [] }
+            ];
+
+            filteredItems.forEach(item => {
+                const group = categoryGroups.find(g => g.key === item.type);
+                if (group) group.items.push(item);
+            });
+
+            // --- Sort and Limit Logic ---
+            const dropdown = document.getElementById('sortFilterDropdown');
+
+            // Check if any category has more than 5 items
+            const maxItemsInAnyCategory = Math.max(0, ...categoryGroups.map(g => g.items.length));
+            const hasEnoughItems = maxItemsInAnyCategory > 5;
+
+            if (dropdown) {
+                dropdown.disabled = !hasEnoughItems;
+                dropdown.style.opacity = hasEnoughItems ? '1' : '0.5';
+            }
+
+            // Parse selected value (e.g., "relevant-5" -> mode: "relevant", limit: 5)
+            let dropdownVal = dropdown ? dropdown.value : 'relevant-5';
+            let sortMode = 'relevant';
+            let limit = 5;
+
+            if (dropdownVal === 'all') {
+                sortMode = 'all';
+                limit = null;
+            } else {
+                const parts = dropdownVal.split('-');
+                sortMode = parts[0];
+                limit = parseInt(parts[1], 10);
+            }
+
+            categoryGroups.forEach(group => {
+                if (currentFilterType !== 'all' && currentFilterType !== group.key) return;
+
+                const totalInGroup = group.items.length;
+
+                // Apply sorting and slice dynamically based on user limit (5, 10, or null)
+                let itemsToShow = typeof getSortedAndSlicedItems === 'function' ?
+                                  getSortedAndSlicedItems(group.items, sortMode, limit) :
+                                  group.items;
+
+                const displayCountStr = itemsToShow.length === totalInGroup ? totalInGroup : `${itemsToShow.length} / ${totalInGroup}`;
+
+                let colHtml = `
+                    <div class="category-col" style="border-top: 4px solid ${group.color}">
+                        <div class="category-title" style="border-color: ${group.color}">
+                            <span>${group.icon} ${group.title}</span>
+                            <span class="text-sm font-normal text-gray-500 bg-gray-100 px-2 rounded-full" dir="ltr" style="display: inline-block;">${displayCountStr}</span>
+                        </div>
+                        <div class="category-items">
+                `;
+
+                if (itemsToShow.length === 0) {
+                    colHtml += `<div style="text-align: center; color: #94a3b8; font-size: 0.95rem; margin-top: 1rem;">אין מסמכים בקטגוריה זו</div>`;
+                }
+
+                itemsToShow.forEach((item, index) => {
+                    colHtml += buildCardHtml(item, index, group.color);
+                });
+
+                colHtml += `</div></div>`;
+                container.innerHTML += colHtml;
+            });
+        }
+
+        function toggleDoc(detailsId) {
+            const details = document.getElementById(detailsId);
+            if(details) {
+                details.classList.toggle('open');
+            }
+        }
+
+        function toggleAllDocs(open) {
+            document.querySelectorAll('.doc-full-details').forEach(el => {
+                if(open) {
+                    el.classList.add('open');
+                } else {
+                    el.classList.remove('open');
+                }
+            });
+        }
+
+        function toggleTTS() {
+            const btn = document.getElementById('ttsBtn');
+            const textEl = document.getElementById('tts-text');
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                btn.classList.remove('is-reading');
+                textEl.innerText = 'הקראת התקציר';
+            } else {
+                const text = document.getElementById('d-exec-text').innerText;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'he-IL';
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    btn.classList.remove('is-reading');
+                    textEl.innerText = 'הקראת התקציר';
+                };
+                window.speechSynthesis.speak(utterance);
+                isSpeaking = true;
+                btn.classList.add('is-reading');
+                textEl.innerText = 'עצירת הקראה';
+            }
+        }
+
+        function renderTrendsChart() {
+            const canvas = document.getElementById('trendsChart');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            if(!container) return;
+            const dpr = window.devicePixelRatio || 1;
+            const rect = container.getBoundingClientRect();
+            if(rect.width === 0) return;
+
+            canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            const w = rect.width; const h = rect.height;
+            const data = window.appConfiguration.trendsData;
+
+            ctx.clearRect(0, 0, w, h);
+            if (!data || data.length === 0) return;
+
+            const maxVal = 100; const xStep = w / (data.length - 1);
+
+            ctx.beginPath(); ctx.moveTo(0, h);
+            data.forEach((d, i) => {
+                const x = i * xStep; const y = h - (d.val / maxVal * h);
+                if(i === 0) { ctx.moveTo(x, h); ctx.lineTo(x, y); } else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(w, h); ctx.closePath();
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, h);
+            gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
+            gradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
+            ctx.fillStyle = gradient; ctx.fill();
+
+            ctx.beginPath();
+            data.forEach((d, i) => {
+                const x = i * xStep; const y = h - (d.val / maxVal * h);
+                if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.stroke();
+
+            data.forEach((d, i) => {
+                const x = i * xStep; const y = h - (d.val / maxVal * h);
+                ctx.beginPath(); ctx.arc(x, y, 5, 0, 2*Math.PI);
+                ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if(document.getElementById('dashboard-content').style.display === 'block') {
+                renderTrendsChart();
+            }
+        });
+    </script>
+</body>
+</html>

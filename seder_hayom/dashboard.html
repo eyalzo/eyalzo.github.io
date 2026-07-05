@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>סדר היום הפרלמנטרי - דשבורד</title>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>סדר היום הפרלמנטרי - דשבורד מפוצל לטאבים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- ספריות עבור ציר הזמן ומפת הקשרים הדינמית -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elkjs@0.8.2/lib/elk.bundled.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape-elk@2.2.0/dist/cytoscape-elk.min.js"></script>
+    <script src="https://unpkg.com/cytoscape-node-html-label@1.2.2/dist/cytoscape-node-html-label.min.js"></script>
 
     <script>
         (function() {
@@ -13,15 +19,14 @@
                             window.location.protocol === 'file:';
 
             const scriptUrl = isLocal ? './mmm_shared.js' : 'https://mmm.beniad.com/seder_hayom/mmm_shared.js';
-            console.log("🌐 זיהוי סביבת עבודה:", isLocal ? "מקומית (Local)" : "שרת (Production)");
-            console.log("📥 טוען סקריפט משותף מכתובת:", scriptUrl);
+            console.log("🌐 זיהוי סביבת עבודה בטאבים:", isLocal ? "מקומית (Local)" : "שרת (Production)");
 
             const script = document.createElement('script');
             script.src = scriptUrl;
             script.onload = () => {
-                console.log("✅ הסקריפט המשותף נטען בהצלחה. מאתחל את הדשבורד...");
-                if (typeof initDashboard === 'function') {
-                    initDashboard();
+                console.log("✅ הסקריפט המשותף נטען בהצלחה בדשבורד הטאבים החדש.");
+                if (typeof initDashboardTabs === 'function') {
+                    initDashboardTabs();
                 }
             };
             document.head.appendChild(script);
@@ -39,6 +44,8 @@
             --c-passed-hex: #10b981;
             --c-committee-hex: #ef4444;
             --c-gov-hex: #14b8a6;
+            --accent-blue: #2563eb;
+            --border-muted: #e2e8f0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Assistant', sans-serif; }
@@ -47,6 +54,7 @@
         .max-w-7xl { max-width: 80rem; margin: 0 auto; }
         .grid { display: grid; gap: 1.5rem; }
         .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+
         @media (min-width: 768px) {
             .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -58,14 +66,15 @@
         .flex { display: flex; } .flex-col { flex-direction: column; }
         @media (min-width: 768px) { .md\:flex-row { flex-direction: row; } }
         .items-center { align-items: center; } .items-start { align-items: flex-start; }
-        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
+        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
         .flex-wrap { flex-wrap: wrap; }
         .gap-1 { gap: 0.25rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
 
-        .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; }
+        .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; }
         .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; }
 
-        .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
+        .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
         .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-auto { margin-top: auto; }
 
         .w-full { width: 100%; } .h-full { height: 100%; }
@@ -75,17 +84,36 @@
         .border { border: 1px solid #e2e8f0; } .border-b { border-bottom: 1px solid #e2e8f0; } .border-t { border-top: 1px solid #e2e8f0; }
 
         .text-xs { font-size: 0.8rem; } .text-sm { font-size: 0.95rem; } .text-base { font-size: 1.05rem; }
-        .text-lg { font-size: 1.2rem; font-weight: 700; } .text-xl { font-size: 1.4rem; font-weight: 700; } .text-2xl { font-size: 1.8rem; font-weight: 700; } .text-3xl { font-size: 2.2rem; font-weight: 700; }
+        .text-lg { font-size: 1.2rem; font-weight: 700; } .text-xl { font-size: 1.4rem; font-weight: 700; }
+        .text-2xl { font-size: 1.8rem; font-weight: 700; } .text-3xl { font-size: 2.2rem; font-weight: 700; }
         .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
 
-        .bg-white { background-color: #ffffff; } .bg-blue-50 { background-color: #eff6ff; } .bg-gray-50 { background-color: #f9fafb; } .bg-gray-100 { background-color: #f3f4f6; }
-        .text-gray-200 { color: #e2e8f0; } .text-gray-400 { color: #94a3b8; } .text-gray-500 { color: #64748b; } .text-gray-700 { color: #334155; } .text-gray-800 { color: #1e293b; } .text-gray-900 { color: #0f172a; }
-        .text-red-500 { color: #ef4444; } .text-orange-500 { color: #f97316; } .text-blue-900 { color: #1e3a8a; } .text-amber-700 { color: #b45309; }
-        .text-blue-400 { color: #60a5fa; }
+        .bg-white { background-color: #ffffff; } .bg-blue-50 { background-color: #eff6ff; }
+        .bg-gray-50 { background-color: #f9fafb; } .bg-gray-100 { background-color: #f3f4f6; }
+        .text-gray-200 { color: #e2e8f0; } .text-gray-400 { color: #94a3b8; } .text-gray-500 { color: #64748b; }
+        .text-gray-600 { color: #475569; } .text-gray-700 { color: #334155; } .text-gray-800 { color: #1e293b; } .text-gray-900 { color: #0f172a; }
+        .text-red-500 { color: #ef4444; } .text-orange-500 { color: #f97316; } .text-blue-900 { color: #1e3a8a; }
+        .text-amber-700 { color: #b45309; } .text-blue-400 { color: #60a5fa; }
 
         header { background-color: var(--header-bg); color: white; padding: 1.75rem; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .badge-mono { font-family: monospace; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; display: flex; gap: 1rem; align-items: center; }
 
+        /* ניווט הטאבים המשודרג - רקע לטאב פעיל ואייקונים מימין */
+        .tabs-nav-container { display: flex; border-bottom: 2px solid var(--border-muted); margin-bottom: 1.5rem; gap: 0.5rem; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; }
+        .tab-btn { padding: 10px 20px; font-size: 1.15rem; font-weight: 700; border: none; background: transparent; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; border-radius: 8px 8px 0 0; }
+        .tab-btn:hover { color: var(--text-main); background-color: #f1f5f9; }
+        /* רקע ברור וקבוע לטאב הפעיל כעת */
+        .tab-btn.active-tab { color: var(--accent-blue); background-color: #e2e8f0; border-bottom: 3px solid var(--accent-blue); font-weight: 800; }
+        .tab-content { display: none; }
+        .tab-content.active-content { display: block; }
+
+        /* חלוקת טקסט התקציר לשתי עמודות במסכים רחבים */
+        .exec-text-columns { column-count: 1; gap: 2.5rem; }
+        @media (min-width: 768px) {
+            .exec-text-columns { column-count: 2; }
+        }
+
+        /* סגנונות מתוך עמודי הבסיס */
         .exec-block { background-color: #eff6ff; border-right: 4px solid #2563eb; color: #1e3a8a; }
         .whats-new { background-color: #ffffff; border: 1px solid #bfdbfe; border-right: 4px solid #fbbf24; border-radius: 0.25rem; padding: 1.25rem; margin-top: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
@@ -96,7 +124,6 @@
         }
         .btn-read-aloud, .btn-back { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .btn-read-aloud:hover, .btn-back:hover { background-color: #bfdbfe; }
-        .btn-back.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; background-color: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
         .is-reading { background-color: #1e40af; color: #ffffff; animation: pulse 2s infinite; }
 
         .progress-bar-bg { width: 100%; height: 0.85rem; background-color: #e5e7eb; border-radius: 999px; overflow: hidden; margin-top: 0.25rem; }
@@ -110,36 +137,11 @@
         .trends-container { height: 100px; width: 100%; margin-top: 0.75rem; direction: ltr; }
         canvas { display: block; width: 100%; height: 100%; }
 
-        .filter-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; border: none; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
-        .btn-active { background-color: #0f172a; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .btn-inactive { background-color: #e2e8f0; color: #334155; }
-        .btn-inactive:hover { background-color: #cbd5e1; }
-
-        .search-container { position: relative; width: 100%; max-width: 350px; display: flex; align-items: center; }
         .search-input { width: 100%; padding: 0.5rem 1rem 0.5rem 2.2rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #f8fafc; }
         .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); background: white; }
+        .search-container { position: relative; width: 100%; max-width: 350px; display: flex; align-items: center; }
         .search-clear-btn { position: absolute; left: 0.5rem; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; display: none; align-items: center; justify-content: center; }
         .search-clear-btn:hover { color: #ef4444; }
-
-        #error-message { display: none; background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; text-align: center; }
-        #loading-message { display: flex; justify-content: center; align-items: center; height: 50vh; font-size: 1.5rem; color: #64748b; }
-        #dashboard-content { display: none; }
-
-        .relevance-element { display: none !important; }
-        .show-relevance .relevance-element { display: inline-flex !important; }
-
-        .btn-action {
-            background: white; border: 1px solid #cbd5e1; color: #334155;
-            padding: 8px 16px; border-radius: 0.5rem; font-weight: 600; font-size: 1rem;
-            cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .btn-action:hover { background: #f8fafc; border-color: #94a3b8; }
-
-        .accordion-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .accordion-content { display: none; overflow: hidden; }
-        .accordion-content.open { display: block; }
-        .accordion-icon { transition: transform 0.3s; }
-        .accordion-icon.open { transform: rotate(180deg); }
 
         .category-col { background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
         .category-title { display: flex; justify-content: space-between; align-items: center; padding: 1rem; font-weight: bold; font-size: 1.1rem; background: white; border-bottom: 1px solid #e2e8f0; }
@@ -156,140 +158,308 @@
 
         .card-summary-box { background: #ffffff; border: 1px solid #f1f5f9; padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; line-height: 1.5; color: #334155;}
         .card-impact-box { background: rgba(255,255,255,0.5); padding: 0.75rem; border-radius: 0.25rem; font-size: 0.9rem; margin-bottom: 0.75rem; border-right: 4px solid #cbd5e1; }
-        .relevance-badge { background: #f8fafc; color: #334155; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.85rem; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center;}
         .doc-id-badge { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #475569; }
+
+        /* סגנונות מתוך טבלת ועדות מורחבת (vaadot.html) */
+        .table-container { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-top: 1rem; width: 100%; }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th { background: #f1f5f9; padding: 16px; font-weight: 700; font-size: 1.1rem; color: #334155; cursor: pointer; user-select: none; border-bottom: 2px solid #cbd5e1; transition: background-color 0.2s; }
+        th:hover { background: #e2e8f0; }
+        td { padding: 16px; border-top: 1px solid #e2e8f0; font-size: 1.1rem; color: #0f172a; vertical-align: middle; }
+        tr:hover td { background-color: #f8fafc; }
+        .sort-direction { display: inline-block; margin-right: 6px; font-size: 0.85rem; color: #64748b; vertical-align: middle; }
+        .score-cell { font-weight: bold; border-radius: 6px; padding: 6px 12px; display: inline-block; min-width: 45px; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
+        .subject-cell { max-width: 550px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help; font-weight: 600; }
+        #chartTooltip { position: absolute; background: rgba(15, 23, 42, 0.98); color: #fff; padding: 16px; border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 1000; max-width: 500px; min-width: 320px; line-height: 1.5; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); direction: rtl; font-size: 1.05rem; }
+
+        /* סגנונות מתוך ציר זמן (timeline.html) */
+        .timeline-direction-hint { text-align: center; color: #64748b; font-weight: 800; font-size: 0.95rem; margin-bottom: 1rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .timeline-direction-hint span.badge { background: #e2e8f0; color: #334155; padding: 2px 16px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .timeline-container { position: relative; padding: 0 0 4rem 0; width: 100%; min-height: 500px; display: flex; flex-direction: column; align-items: center; }
+        .timeline-container::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background-color: #e2e8f0; transform: translateX(-50%); border-radius: 2px; z-index: 0; }
+        .month-section { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 10; margin-bottom: 1.5rem; }
+        .month-divider { display: flex; align-items: center; width: 100%; margin: 0.5rem 0 1rem 0; color: #64748b; font-weight: 800; font-size: 1.1rem; font-family: monospace; }
+        .month-line { flex-grow: 1; border-top: 2px dashed #cbd5e1; margin: 0 1rem; }
+        .cards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: 100%; padding: 0 0.5rem; }
+        .timeline-card { background: white; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.75rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s; position: relative; width: calc(33.333% - 1rem); min-width: 220px; max-width: 280px; text-align: right; display: flex; flex-direction: column; cursor: pointer; z-index: 10; }
+        .timeline-card.has-relations { border-width: 2px; border-color: #94a3b8; }
+        .timeline-card.has-relations:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 8px -2px rgba(0,0,0,0.1); }
+        .timeline-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
+        .timeline-card .card-date { font-weight: 700; color: #475569; font-size: 0.85rem; font-family: monospace; }
+        .timeline-card .card-type-badge { color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .timeline-card .relation-icon-badge { display: inline-flex; align-items: center; justify-content: center; background: #eff6ff; color: #2563eb; font-size: 0.7rem; padding: 2px 6px; border-radius: 12px; margin-right: auto; font-weight: bold; border: 1px solid #bfdbfe; margin-left: 6px; }
+        .timeline-card .card-title { font-size: 0.95rem; color: #0f172a; line-height: 1.25; font-weight: 400; }
+
+        /* קונטיינר ומבנה Cytoscape */
+        #cy-container { display: none; width: 100%; height: 75vh; min-height: 550px; background-color: #f8fafc; border: 2px solid #cbd5e1; border-radius: 1rem; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); position: relative; margin-top: 1rem; }
+        .cy-toolbar { position: absolute; top: 16px; right: 16px; z-index: 100; display: flex; gap: 12px; }
+        .btn-cy { background: #1e3a8a; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-cy:hover { background: #1e40af; }
+        .network-card { background: white; border: 1px solid #cbd5e1; border-radius: 0.4rem; padding: 0.4rem 0.6rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: right; display: flex; flex-direction: column; width: 220px; margin: 0; pointer-events: auto; cursor: grab; direction: rtl; }
+        .network-card.focused-root { border-width: 3px !important; border-color: #2563eb !important; }
+        .network-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.2rem; }
+        .network-card .card-date { font-weight: 700; color: #475569; font-size: 0.75rem; font-family: monospace; }
+        .network-card .card-type-badge { color: white; padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
+        .network-card .card-title { font-size: 0.8rem; color: #0f172a; line-height: 1.2; font-weight: 400; }
+
+        #error-message { display: none; background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; text-align: center; }
+        #loading-message { display: flex; justify-content: center; align-items: center; height: 50vh; font-size: 1.5rem; color: #64748b; }
+        #dashboard-content { display: none; }
+        /* כפתורי הרפרנס הקטנים בתוך הטקסט */
+        .ref-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            height: 1.4em; min-width: 1.4em; padding: 0 5px;
+            border-radius: 4px; color: white; font-size: 0.85rem; font-weight: bold; font-family: monospace;
+            border: none; cursor: pointer; margin: 0 3px; vertical-align: baseline;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15); transition: transform 0.1s, filter 0.1s;
+        }
+        .ref-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+        /* עיצוב חלון הפופאפ (Modal) החדש למסמכים */
+        .doc-modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
+            z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+        }
+        .doc-modal-box {
+            background: white; width: 90%; max-width: 550px; border-radius: 12px; padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; border-top: 6px solid #cbd5e1;
+        }
+        .doc-modal-close {
+            position: absolute; top: 16px; left: 16px; background: #f1f5f9; border: none;
+            width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; color: #64748b;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .doc-modal-close:hover { background: #e2e8f0; color: #0f172a; }
     </style>
 </head>
 <body>
-    <div id="loading-message">טוען נתונים...</div>
+    <div id="loading-message">טוען את סביבת העבודה החדשה...</div>
     <div id="error-message"></div>
 
     <div id="dashboard-content" class="max-w-7xl mt-4">
 
-        <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <h1 class="text-3xl mb-1" id="d-title">בטעינה...</h1>
-            </div>
-            <div class="flex flex-col items-end gap-3 mr-auto">
-                <div class="flex gap-3 items-center justify-end w-full">
-                    <a href="index.html" class="btn-back">חזרה לתפריט 🏠</a>
-                    <a id="btn-vaadot" href="#" class="btn-back disabled" style="background-color: #f1f5f9; color: #334155; border-color: #cbd5e1;">ישיבות ועדות 🏛️</a>
-                    <a id="timelineLinkBtn" href="timeline.html" class="btn-back" title="צפו בהשתלשלות הכרונולוגית של הדיונים, החוקים והמחקרים, וגלו כיצד המסמכים קשורים זה לזה">ציר הזמן ⏱️</a>
+        <!-- כותרת אחידה המותאמת להחלפת כפתורים בטאבים -->
+        <header class="mb-6 flex flex-col gap-4">
+            <div class="flex justify-between items-center w-full">
+                <div class="text-lg font-semibold" style="color: #94a3b8;">מערכת סדר-היום</div>
 
-                    <div style="border: 1px solid #60a5fa; padding: 8px 16px; border-radius: 6px; background-color: rgba(96, 165, 250, 0.1); font-family: 'Segoe UI', Tahoma, Verdana, sans-serif; font-weight: 800; color: #60a5fa; display: inline-flex; align-items: center; letter-spacing: 0.5px;">
+                <div class="flex items-center gap-3">
+                    <span id="meta-update-label" class="text-xs font-mono" style="color: #94a3b8;">גרסה: בטעינה...</span>
+
+                    <div style="border: 1px solid #60a5fa; padding: 4px 12px; border-radius: 6px; background-color: rgba(96, 165, 250, 0.1); font-family: 'Segoe UI', Tahoma, Verdana, sans-serif; font-weight: 800; color: #60a5fa; font-size: 0.85rem; letter-spacing: 0.5px; display: inline-flex; align-items: center;">
                         Gilat AI
                     </div>
                 </div>
+            </div>
 
-                <div class="badge-mono" style="padding: 0.5rem 1rem;">
-                    <span class="font-bold text-white">סדר היום הפרלמנטרי</span>
-                    <span style="color: rgba(255,255,255,0.3)">|</span>
-                    <span class="text-sm">גרסה: 2.6.0 | עודכן ב-16/06/2026 15:20</span>
-                </div>
+            <div class="flex justify-between items-center w-full" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.75rem;">
+                <h1 class="text-2xl md:text-3xl font-extrabold text-white" id="d-title" style="margin: 0;">בטעינה...</h1>
+
+                <a href="index.html" class="btn-back" style="padding: 6px 14px; font-size: 1rem; flex-shrink: 0;">
+                    ראשי 🏠
+                </a>
             </div>
         </header>
 
-        <div class="exec-block p-6 rounded-xl shadow-sm mb-8 relative">
-            <div class="flex justify-between items-start mb-4">
-                <h2 class="font-bold text-xl md:text-3xl" id="d-exec-title">📋 תקציר מנהלים</h2>
-                <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
-                    <span>🔊</span> <span id="tts-text">הקראת התקציר</span>
-                </button>
-            </div>
-            <div id="execSummaryWrapper">
-                <p class="text-base md:text-xl leading-relaxed mb-4 text-blue-900 font-semibold" id="d-exec-text"></p>
-                <div class="whats-new">
-                    <h3 class="font-bold text-amber-700 text-xl mb-3" id="d-whatsnew-title">🔥 מה התחדש לאחרונה?</h3>
-                    <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;">
-                    </ul>
-                </div>
-            </div>
+        <!-- בר הטאבים הדינמי המיוצר מתוך קובץ ה-JSON -->
+        <div class="tabs-nav-container" id="dynamicTabsNav">
+            <!-- הטאבים יוזרקו כאן דינמית על ידי ה-JS -->
         </div>
 
-        <div class="mb-8 bg-white p-6 rounded-xl shadow-md border">
-            <h3 class="text-2xl mb-4 border-b pb-3">מפת הגורמים המעורבים</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-md border">
-                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-1">🏛️ משרדי ממשלה ואכיפה</h3>
-                    <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+        <!-- ========================================== -->
+        <!-- טאב 1: תמונת מצב וסיכום מנהלים -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="content-overview">
+            <div class="exec-block p-6 rounded-xl shadow-sm mb-6 relative">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="font-bold text-xl md:text-3xl" id="d-exec-title">📋 תקציר מנהלים</h2>
+                    <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
+                        <span>🔊</span> <span id="tts-text">הקראת התקציר</span>
+                    </button>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border">
-                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-2">💼 ועדות הכנסת</h3>
-                    <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+                <div id="execSummaryWrapper">
+                    <p class="text-base md:text-xl leading-relaxed text-blue-900 font-semibold exec-text-columns" id="d-exec-text"></p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border">
-                    <h3 class="text-lg mb-3 border-b pb-2" id="eco-title-3">🤝 חברה אזרחית וארגונים</h3>
-                    <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
-                </div>
+            </div>
+
+            <div class="whats-new mb-6">
+                <h3 class="font-bold text-amber-700 text-xl mb-3" id="d-whatsnew-title">🔥 מה התחדש לאחרונה?</h3>
+                <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;"></ul>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-center w-full mb-8">
+                <button class="btn-back w-full text-center justify-center py-3 text-lg font-bold" style="background-color: #f1f5f9; border-color: #cbd5e1;">⚙️ הגדרות</button>
+                <button class="btn-back w-full text-center justify-center py-3 text-lg font-bold" style="background-color: #f1f5f9; border-color: #cbd5e1;">📖 מילון מונחים</button>
+                <button class="btn-back w-full text-center justify-center py-3 text-lg font-bold" style="background-color: #f1f5f9; border-color: #cbd5e1;">🔬 מתודולוגיה</button>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b gap-4">
-
-    <div class="flex items-center gap-4 flex-wrap">
-        <h3 class="text-2xl mb-1">מסמכים</h3>
-
-        <select id="sortFilterDropdown" class="search-input" style="width: auto; padding: 0.4rem 2rem 0.4rem 1rem; font-weight: bold; color: #334155; cursor: pointer; outline: none; margin-right: 0.5rem;" onchange="renderCards()" title="פילטר זה משאיר X מסמכים מכל סוג לפי בחירתך, ומעדכן את המונה בכל קטגוריה בהתאם.">
-            <option value="relevant-5">5 הכי רלוונטי</option>
-            <option value="relevant-10">10 הכי רלוונטי</option>
-            <option value="latest-5">5 אחרונים</option>
-            <option value="latest-10">10 אחרונים</option>
-            <option value="all">הכל</option>
-        </select>
-
-        <div class="flex gap-2">
-            <button class="btn-back" style="font-size: 0.85rem; padding: 2px 8px;" onclick="toggleAllDocs(true)">פתיחת הכל</button>
-            <button class="btn-back" style="font-size: 0.85rem; padding: 2px 8px;" onclick="toggleAllDocs(false)">סגירת הכל</button>
-        </div>
-    </div>
-
-    <div class="flex flex-col md:items-end gap-3 w-full md:w-auto">
-        <div class="search-container" style="max-width: 300px; width: 100%;">
-            <input type="text" id="searchInput" class="search-input" placeholder="חיפוש חופשי במסמכים...">
-            <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש" style="display: none;">✖</button>
-        </div>
-    </div>
-</div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="documentsStream">
-                </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
-                <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
-                <div class="mb-5">
-                    <div class="flex justify-between text-base mb-2">
-                        <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
-                        <span class="text-red-500 font-bold" id="d-media-val"></span>
+        <div class="tab-content" id="content-communication">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                    <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
+                    <div class="mb-5">
+                        <div class="flex justify-between text-base mb-2">
+                            <span class="font-bold text-gray-700">רמת חשיפה תקשורתית</span>
+                            <span class="text-red-500 font-bold" id="d-media-val"></span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-media" id="d-media-bar" style="width: 0%;"></div></div>
+                        <p class="text-sm text-gray-500 mt-2" id="d-media-text"></p>
                     </div>
-                    <div class="progress-bar-bg"><div class="progress-media" id="d-media-bar" style="width: 0%;"></div></div>
-                    <p class="text-sm text-gray-500 mt-2" id="d-media-text"></p>
-                </div>
-                <div>
-                    <div class="flex justify-between text-base mb-2">
-                        <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
-                        <span class="text-orange-500 font-bold" id="d-social-val"></span>
-                    </div>
-                    <div class="progress-bar-bg"><div class="progress-social" id="d-social-bar" style="width: 0%;"></div></div>
-                    <p class="text-sm text-gray-500 mt-2 mb-2" id="d-social-text"></p>
-                    <div class="trends-container relative">
-                        <canvas id="trendsChart"></canvas>
-                        <div class="absolute bottom-0 w-full flex justify-between px-1 text-[11px] text-gray-400 font-mono font-bold" dir="ltr">
-                            <span>2022</span><span>2024</span><span>2026</span>
+                    <div>
+                        <div class="flex justify-between text-base mb-2">
+                            <span class="font-bold text-gray-700">עניין ברשתות - Google Trends</span>
+                            <span class="text-orange-500 font-bold" id="d-social-val"></span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-social" id="d-social-bar" style="width: 0%;"></div></div>
+                        <p class="text-sm text-gray-500 mt-2 mb-2" id="d-social-text"></p>
+                        <div class="trends-container relative">
+                            <canvas id="trendsChart"></canvas>
+                            <div class="absolute bottom-0 w-full flex justify-between px-1 text-[11px] text-gray-400 font-mono font-bold" dir="ltr">
+                                <span>2022</span><span>2024</span><span>2026</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
-                <h3 class="text-xl mb-4 border-b pb-3">📰 הדהוד בתקשורת</h3>
-                <div class="grid grid-cols-1 gap-3 h-full" id="media-echo-container">
-                    </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                    <h3 class="text-xl mb-4 border-b pb-3">📰 הדהוד בתקשורת</h3>
+                    <div class="grid grid-cols-1 gap-3 h-full" id="media-echo-container"></div>
+                </div>
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- טאב 2: זירת מסמכים וחקיקה פרלמנטרית -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="content-documents">
+            <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b gap-4">
+
+                    <div class="flex items-center gap-4 w-full md:w-auto flex-wrap">
+
+                        <div class="relative flex items-center" style="min-width: 160px;">
+                            <span style="position: absolute; right: 10px; color: #64748b; pointer-events: none; z-index: 10; font-size: 0.95rem;">🎛️</span>
+                            <select id="sortFilterDropdown" class="search-input" style="width: 100%; padding: 0.4rem 2rem 0.4rem 1rem; font-weight: bold; color: #334155; cursor: pointer;" onchange="renderCards()">
+                                <option value="relevant-5">5 הכי רלוונטי</option>
+                                <option value="relevant-10">10 הכי רלוונטי</option>
+                                <option value="latest-5">5 אחרונים</option>
+                                <option value="latest-10">10 אחרונים</option>
+                                <option value="all">הכל</option>
+                            </select>
+                        </div>
+
+                        <div class="search-container" style="max-width: 300px; width: 100%; position: relative; display: flex; align-items: center;">
+                            <span style="position: absolute; right: 10px; color: #64748b; z-index: 10; font-size: 0.95rem;">🔎</span>
+                            <input type="text" id="searchInput" class="search-input" style="padding-right: 2.2rem; width: 100%;" placeholder="חיפוש חופשי במסמכים...">
+                            <button id="clearSearchBtn" class="search-clear-btn" aria-label="נקה חיפוש">✖</button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 w-full md:w-auto justify-end">
+                        <button class="btn-back" style="font-size: 0.95rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;" onclick="toggleAllDocs(true)">
+                            📂 פתיחת הכל
+                        </button>
+                        <button class="btn-back" style="font-size: 0.95rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;" onclick="toggleAllDocs(false)">
+                            📁 סגירת הכל
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="documentsStream"></div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- טאב 3: מפת גורמים מעורבים (אקוסיסטם) -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="content-ecosystem">
+            <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-md border">
+                        <h3 class="text-lg mb-3 border-b pb-2">🏛️ משרדי ממשלה ואכיפה</h3>
+                        <div class="space-y-3 eco-grid-col" id="eco-ministries"></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border">
+                        <h3 class="text-lg mb-3 border-b pb-2">💼 ועדות הכנסת</h3>
+                        <div class="space-y-3 eco-grid-col" id="eco-committees"></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border">
+                        <h3 class="text-lg mb-3 border-b pb-2">🤝 חברה אזרחית וארגונים</h3>
+                        <div class="space-y-3 eco-grid-col" id="eco-orgs"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- טאב 4: ריכוז דיוני ועדות (טבלה חכמה) -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="content-vaadot">
+            <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+                <h3 class="text-2xl mb-2" id="vaadot-table-title">ריכוז ישיבות ועדות מורחב</h3>
+                <p class="text-gray-500 text-sm mb-4" id="vaadot-table-sync-time">טוען נתוני Supabase מרוכזים...</p>
+
+                <div class="table-container">
+                    <table id="meetingsTable">
+                        <thead>
+                            <tr>
+                                <th onclick="handleVaadotSort(0)">עוצמה <span class="sort-direction" id="dir-0">▼</span></th>
+                                <th onclick="handleVaadotSort(1)">ועדה <span class="sort-direction" id="dir-1"></span></th>
+                                <th onclick="handleVaadotSort(2)">נושא הדיון <span class="sort-direction" id="dir-2"></span></th>
+                                <th onclick="handleVaadotSort(3)">מספר ישיבות <span class="sort-direction" id="dir-3"></span></th>
+                                <th onclick="handleVaadotSort(4)">מתאריך <span class="sort-direction" id="dir-4"></span></th>
+                                <th onclick="handleVaadotSort(5)">עד תאריך <span class="sort-direction" id="dir-5"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="vaadotTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- טאב 5: ציר זמן ורשת קשרים אינטראקטיבית -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="content-timeline">
+            <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+
+                <!-- תצוגת ציר הזמן הרגיל -->
+                <div id="timeline-view">
+                    <div class="timeline-direction-hint">
+                        <span style="font-size: 1.4rem; margin-bottom: -4px;">⬆️</span>
+                        <span class="badge">החדש ביותר</span>
+                    </div>
+                    <div id="timelineContainer" class="timeline-container"></div>
+                </div>
+
+                <!-- תצוגת מפת הרשת הדינמית (Cytoscape) המתגלה רק בלחיצה על באדג' הקישורים -->
+                <div id="cy-container">
+                    <div class="cy-toolbar">
+                        <button class="btn-cy" onclick="closeNetworkView()">✖ סגור מפה וחזור לציר הזמן</button>
+                        <button class="btn-cy" onclick="cy.fit()" style="background:#475569;">מרכז תצוגה</button>
+                        <button class="btn-cy" id="resetLayoutBtn" onclick="resetNetworkLayout()" style="background:#f59e0b; display:none;">🔄 איפוס סידור</button>
+                    </div>
+                    <div id="cy" style="width: 100%; height: 100%; direction: ltr;"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- דינמי: קונטיינרים עבור iframes חיצוניים יוזרקו כאן בסוף לפי הצורך -->
+        <div id="dynamicFramesContainers"></div>
+
+    </div>
+
+    <!-- טולטיפים משותפים צפים -->
+    <div id="chartTooltip"></div>
+    <div id="docModalOverlay" class="doc-modal-overlay" onclick="closeDocModal(event)">
+        <div id="docModalBox" class="doc-modal-box">
+            <button onclick="closeDocModal()" class="doc-modal-close">✖</button>
+            <div id="docModalInner"></div>
+        </div>
     </div>
 
     <script>
@@ -297,115 +467,119 @@
         window.appConfiguration = null;
         let currentFilterType = 'all';
 
-        const typeSortOrder = {
-            'mmm': 1, 'activeLaw': 2, 'committee': 3,
-            'passedLaw': 4, 'govDecision': 5, 'comptroller': 6
-        };
+        // משתנים עבור טאב הועדות המורחב
+        let vaadotTableData = [];
+        let currentVaadotSortKey = 'Score';
+        let currentVaadotSortDirection = 'desc';
+        const vaadotKeysMap = ['Score', 'CommitteeName', 'ItemSubject', 'MeetingsCount', 'FromDate', 'ToDate'];
 
-        // הפונקציה המרכזית שנקראת על ידי הטוען החכם!
-        window.initDashboard = async () => {
+        // משתנים עבור טאב ציר הזמן והקשרים
+        let allTimelineItems = [];
+        let savedScrollPosition = 0;
+        let edgesInfo = [];
+        let inOutMap = {};
+        let cy = null;
+        let currentRootId = null;
+
+        const tabDefinitions = [
+            { id: 'overview', label: '📋 תקציר' },
+            { id: 'documents', label: '📄 מסמכים' },
+            { id: 'ecosystem', label: '🏛️ גורמים' },
+            { id: 'communication', label: '📢 תקשורת' },
+            { id: 'vaadot', label: '🏛️ ועדות (מורחב)' },
+            { id: 'timeline', label: '⏱️ ציר הזמן' }
+        ];
+
+        // פונקציית האתחול הראשית של דשבורד הטאבים המאוחד
+        window.initDashboardTabs = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const fileUrl = urlParams.get('file') || 'https://mmm.beniad.com/seder_hayom/data_arab_crime.json';
-            document.getElementById('timelineLinkBtn').href = `timeline.html?file=${encodeURIComponent(fileUrl)}`;
-
-            if (fileUrl.includes('data_')) {
-                const vaadotUrl = fileUrl.replace('data_', 'vaadot_');
-
-                fetch(vaadotUrl, { method: 'HEAD' })
-                    .then(response => {
-                        if (response.ok) {
-                            const btnVaadot = document.getElementById('btn-vaadot');
-                            btnVaadot.href = `vaadot.html?file=${encodeURIComponent(vaadotUrl)}`;
-                            btnVaadot.classList.remove('disabled');
-                            btnVaadot.style.backgroundColor = '';
-                            btnVaadot.style.color = '';
-                            btnVaadot.style.borderColor = '';
-                        }
-                    })
-                    .catch(err => console.log('Vaadot file check failed:', err));
-            }
 
             if (!fileUrl) {
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').innerText = "שגיאה: לא זוהה קובץ נתונים מבוקש.";
                 return;
             }
 
             try {
                 const response = await fetch(fileUrl);
-                if (!response.ok) throw new Error("File not found");
+                if (!response.ok) throw new Error("Primary JSON file not found");
                 const data = await response.json();
 
                 window.appConfiguration = data.appConfiguration;
 
-                window.appConfiguration.items.forEach(item => {
+                // עיבוד תאריכים מוקדם עבור כל הפריטים
+                // עיבוד תאריכים מוקדם עבור כל הפריטים והוספת מספר סידורי
+                window.appConfiguration.items.forEach((item, index) => {
                     const parsed = parseFlexibleDate(item.date);
                     item.parsedDate = parsed;
                     item.year = parsed.year;
                     item.month = parsed.month;
                     item.day = parsed.day;
                     item.sortValue = parsed.sortValue;
+                    item.serialNumber = index + 1; // יצירת מספר רפרנס עוקב
                 });
 
+                // עדכון תוכן מטא-דאטה עליון
                 document.getElementById('d-title').innerText = data.meta.title;
+                document.getElementById('meta-update-label').innerText = `גרסה: ${data.meta.version || '4.0.0'} | עודכן: ${data.meta.lastUpdate}`;
                 document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
 
+                // עיבוד והזרקת תקציר מנהלים עם תיוגי אירוח (Hover tooltips)// עיבוד והזרקת תקציר מנהלים עם כפתורי רפרנס בסוף משפט
                 if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
                     const sentences = data.execSummary.text.split('. ');
                     const processedText = sentences.map((sentence, index) => {
                         const sIndex = index + 1;
                         const refs = data.execSummary.textRefs.filter(r => r.sentenceIndex === sIndex);
-                        let textToWrap = sentence;
-                        if (index < sentences.length - 1 || !textToWrap.endsWith('.')) {
-                            textToWrap += '. ';
+
+                        let textToWrap = sentence.trim();
+                        // מסירים נקודה זמנית כדי למקם את הכפתורים לפני הרווח הבא
+                        if (textToWrap.endsWith('.')) {
+                            textToWrap = textToWrap.slice(0, -1);
                         }
+
                         if (refs.length > 0) {
-                            const idCodes = refs.map(r => r.refId).join(',');
-                            return `<span style="cursor: help; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color=''" onmousemove="if(typeof showDocTooltip === 'function') showDocTooltip(event, '${idCodes}')" onmouseleave="if(typeof hideDocTooltip === 'function') hideDocTooltip()">${textToWrap}</span>`;
+                            let buttonsHtml = '';
+                            refs.forEach(r => {
+                                const doc = data.appConfiguration.items.find(d => d.idCode === r.refId);
+                                if (doc) {
+                                    // מציאת צבע תואם למסמך
+                                    const entity = (typeof entityMap !== 'undefined' && entityMap[doc.type]) ? entityMap[doc.type] : { color: '#64748b' };
+                                    buttonsHtml += `<button class="ref-btn" style="background-color: ${entity.color};" onclick="openDocModal('${doc.idCode}')" title="לפרטי המסמך">${doc.serialNumber}</button>`;
+                                }
+                            });
+                            // החזרת המשפט עם הכפתורים צמודים אליו, והוספת הנקודה בסוף
+                            return `<span>${textToWrap}${buttonsHtml}.</span> `;
                         }
-                        return textToWrap;
-                    }).join('');
+                        return textToWrap ? `${textToWrap}. ` : '';
+                    }).join('').trim();
                     document.getElementById('d-exec-text').innerHTML = processedText;
                 } else {
                     document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
                 }
 
+                // הזרקת רשימת "מה התחדש לאחרונה"
                 document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(item => {
                     if (typeof item === 'string') return `<li style="margin-bottom: 0.5rem;">${item}</li>`;
-
-                    let doc = null;
-                    let parsedDate = null;
-
-                    if (item.refId) {
-                        doc = data.appConfiguration.items.find(d => d.idCode === item.refId);
-                        if (doc) parsedDate = doc.parsedDate;
-                    } else if (item.date) {
-                        parsedDate = parseFlexibleDate(item.date);
-                    }
-
-                    if (!parsedDate && doc) return `<li style="margin-bottom: 0.5rem;">${item.text}</li>`;
-
+                    let doc = data.appConfiguration.items.find(d => d.idCode === item.refId);
+                    let parsedDate = doc ? doc.parsedDate : (item.date ? parseFlexibleDate(item.date) : null);
                     const dateStr = formatParsedDate(parsedDate);
                     const dateDisplay = dateStr ? `<strong>${dateStr}</strong> - ` : '';
 
                     let linkHtml = '';
-                    if (doc && doc.link && (doc.link.startsWith('http://') || doc.link.startsWith('https://'))) {
-                        linkHtml = ` <a href="${doc.link}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;" title="למעבר למסמך המקור">🔗 מסמך</a>`;
-                    } else if (item.externalLink) {
-                        linkHtml = ` <a href="${item.externalLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;" title="למעבר לכתבה">🔗 קישור לכתבה</a>`;
+                    if (doc && doc.link && doc.link.startsWith('http')) {
+                        linkHtml = ` <a href="${doc.link}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;">🔗 מסמך</a>`;
                     }
-
                     if (item.refId && doc) {
-                        return `<li style="cursor: help; margin-bottom: 0.5rem;" onmousemove="if(typeof showDocTooltip === 'function') showDocTooltip(event, '${doc.idCode}')" onmouseleave="if(typeof hideDocTooltip === 'function') hideDocTooltip()">
-                            ${dateDisplay}${item.text}${linkHtml}
-                        </li>`;
-                    } else {
-                        return `<li style="margin-bottom: 0.5rem;">
+                        return `<li style="cursor: help; margin-bottom: 0.5rem;" onmousemove="showDocTooltip(event, '${doc.idCode}')" onmouseleave="hideDocTooltip()">
                             ${dateDisplay}${item.text}${linkHtml}
                         </li>`;
                     }
+                    return `<li style="margin-bottom: 0.5rem;">${dateDisplay}${item.text}</li>`;
                 }).join('');
 
+                // מדדי חשיפה
                 document.getElementById('d-media-val').innerText = data.metrics.media.score + '%';
                 document.getElementById('d-media-bar').style.width = data.metrics.media.score + '%';
                 document.getElementById('d-media-text').innerHTML = data.metrics.media.text;
@@ -414,6 +588,7 @@
                 document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
                 document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
 
+                // הדהוד בתקשורת
                 const echoContainer = document.getElementById('media-echo-container');
                 if (data.mediaEcho && data.mediaEcho.length > 0) {
                     echoContainer.innerHTML = data.mediaEcho.map(item => `
@@ -426,121 +601,137 @@
                     echoContainer.innerHTML = '<span class="text-gray-500">אין נתונים זמינים</span>';
                 }
 
-                setupFilters();
+                // אתחול רכיבי משנה של הטאבים הסטטיים
                 setupSearch();
                 renderEcosystem();
                 renderCards();
-                renderExternalFrames();
-                renderExternalLinks();
+                initTimelineLayout(data.appConfiguration.items);
 
+                // בנייה ורינדור של מערך הטאבים הדינמי (כולל הזרקת ה-externalFrames מתוך ה-JSON)
+                buildTabsInterface(data.appConfiguration.externalFrames, fileUrl);
+
+                // הסרת הודעת הטעינה והצגת הקוד הראשי
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
 
-                setTimeout(() => {
-                    renderTrendsChart();
-                }, 100);
+                // ברירת מחדל - הפעלת טאב ה-Overview וציור הגרף שלו
+                switchTab('overview');
 
             } catch (e) {
-                console.error(e);
+                console.error("Critical error mapping dynamic tabs dashboard:", e);
+                document.getElementById('loading-message').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').innerText = "שגיאה קריטית בטעינת המערכת או בעיבוד המבנה המרובה.";
             }
         };
 
-        // Render external link blocks injected at specific rows
-        function renderExternalLinks() {
-            if (!window.appConfiguration || !window.appConfiguration.externalLinkBlocks) return;
-            const linkBlocks = window.appConfiguration.externalLinkBlocks;
-            const contentDiv = document.getElementById('dashboard-content');
+        // ==========================================
+        // מנגנון ניהול והחלפת טאבים (SPA - קונטיינרים מוסתרים)
+        // ==========================================
+        function buildTabsInterface(externalFrames, fileUrl) {
+            const navContainer = document.getElementById('dynamicTabsNav');
+            navContainer.innerHTML = '';
 
-            // Array mapping row indices to specific DOM elements (same as external frames logic)
-            const blocks = [
-                contentDiv.querySelector('header'),
-                document.querySelector('.exec-block'),
-                document.getElementById('eco-title-1')?.closest('.mb-8.bg-white'),
-                document.getElementById('documentsStream')?.closest('.mb-8.bg-white'),
-                document.getElementById('timelineLinkBtn')?.closest('.mb-8.bg-white'),
-                document.getElementById('d-media-val')?.closest('.grid.gap-6')
-            ];
+            // 1. יצירת מערך סופי המשלב טאבים סטטיים וחיצוניים לפי מיקום
+            let finalTabs = [...tabDefinitions];
+            let unpositionedFrames = []; // טאבים חיצוניים ללא מיקום (יופיעו בסוף)
 
-            linkBlocks.forEach(block => {
-                const targetBlock = blocks[block.row - 1];
-                if (targetBlock) {
+            if (externalFrames && externalFrames.length > 0) {
+                let positionedFrames = [];
 
-                    // Determine layout direction based on JSON config
-                    const flexDirection = block.layout === 'vertical' ? 'flex-col' : 'flex-row flex-wrap';
+                externalFrames.forEach((frame, idx) => {
+                    const frameTabId = `extframe-${idx}`;
+                    // אובייקט הטאב החיצוני עם אייקון ייעודי 🌐
+                    const tabObj = {
+                        id: frameTabId,
+                        label: `🌐 ${frame.title}`,
+                        isExternal: true
+                    };
 
-                    // Build the HTML for individual links
-                    const linksHtml = block.links.map(link => `
-                        <a href="${link.url}" target="_blank" rel="noopener noreferrer"
-                           class="bg-white border border-slate-300 rounded-lg p-4 shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-3"
-                           style="flex: 1; min-width: 200px; text-decoration: none;">
-                            <span class="text-2xl">${link.icon || '🔗'}</span>
-                            <span class="font-bold text-slate-800">${link.title}</span>
-                        </a>
-                    `).join('');
+                    if (typeof frame.tab === 'number') {
+                        // מיקום 1 שווה לאינדקס 0 במערך
+                        positionedFrames.push({ ...tabObj, targetIndex: frame.tab - 1 });
+                    } else {
+                        // אם לא הוגדר מאפיין tab ב-JSON
+                        unpositionedFrames.push(tabObj);
+                    }
+                });
 
-                    // Construct the outer container HTML
-                    const blockHtml = `
-                        <div class="mb-8 bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100">
-                            ${block.title ? `<h3 class="text-xl mb-4 font-bold text-blue-900 border-b border-blue-200 pb-2">${block.title}</h3>` : ''}
-                            <div class="flex ${flexDirection} gap-4">
-                                ${linksHtml}
-                            </div>
-                        </div>
-                    `;
+                // מיון והכנסת הטאבים בעלי המיקום המוגדר למערך הסופי
+                positionedFrames.sort((a, b) => a.targetIndex - b.targetIndex);
+                positionedFrames.forEach(pf => {
+                    // מוודא שהמיקום לא חורג מגבולות המערך הנוכחי
+                    let insertAt = Math.max(0, Math.min(pf.targetIndex, finalTabs.length));
+                    finalTabs.splice(insertAt, 0, pf); // 'דוחף' את שאר הטאבים קדימה
+                });
 
-                    // Inject the block before the target row
-                    targetBlock.insertAdjacentHTML('beforebegin', blockHtml);
-                }
+                // הוספת הטאבים החיצוניים חסרי המיקום בסוף הרשימה (ברירת מחדל)
+                finalTabs.push(...unpositionedFrames);
+            }
+
+            // 2. הזרקת כפתורי הטאבים לפי הסדר הסופי שחושב
+            finalTabs.forEach(tab => {
+                navContainer.innerHTML += `<button class="tab-btn" id="btn-tab-${tab.id}" onclick="switchTab('${tab.id}')">${tab.label}</button>`;
             });
-        }
 
-        function renderExternalFrames() {
-            if (!window.appConfiguration || !window.appConfiguration.externalFrames) return;
-            const frames = window.appConfiguration.externalFrames;
-            const contentDiv = document.getElementById('dashboard-content');
+            // 3. הזרקת הקונטיינרים עבור ה-iframes (סדר ה-DOM הפנימי לא משנה כי הם מוסתרים)
+            const framesContainer = document.getElementById('dynamicFramesContainers');
+            framesContainer.innerHTML = '';
 
-            const blocks = [
-                contentDiv.querySelector('header'),
-                document.querySelector('.exec-block'),
-                document.getElementById('eco-title-1')?.closest('.mb-8.bg-white'),
-                document.getElementById('documentsStream')?.closest('.mb-8.bg-white'),
-                document.getElementById('timelineLinkBtn')?.closest('.mb-8.bg-white'),
-                document.getElementById('d-media-val')?.closest('.grid.gap-6')
-            ];
-
-            frames.forEach(frame => {
-                const targetBlock = blocks[frame.row - 1];
-                if (targetBlock) {
-                    const frameHtml = `
-                        <div class="mb-8 bg-white p-4 rounded-xl shadow-md border position-relative">
-                            <div class="accordion-header" onclick="toggleFrame(this)">
-                                <h3 class="text-xl mb-4 border-b pb-3 font-bold text-gray-800" style="margin-bottom:0; border:none; padding-bottom:0;">
+            if (externalFrames && externalFrames.length > 0) {
+                externalFrames.forEach((frame, idx) => {
+                    const frameTabId = `extframe-${idx}`;
+                    framesContainer.innerHTML += `
+                        <div class="tab-content" id="content-${frameTabId}">
+                            <div class="bg-white p-4 rounded-xl shadow-md border">
+                                <h3 class="text-xl mb-4 border-b pb-2 font-bold text-gray-800">
                                     ${frame.title}
-                                    <a href="${frame.url}" target="_blank" style="font-size:0.8rem; margin-right:10px; text-decoration:none; color:#2563eb;" title="פתיחה בחלון חדש">🔗 מקור</a>
+                                    <a href="${frame.url}" target="_blank" style="font-size:0.85rem; margin-right:12px; text-decoration:none; color:#2563eb;">🔗 פתיחה בחלון מקור מלא</a>
                                 </h3>
-                                <span class="accordion-icon text-xl open">▼</span>
-                            </div>
-                            <div class="accordion-content open" style="margin-top:1rem;">
-                                <iframe src="${frame.url}" class="w-full rounded-lg" style="height: 700px; border: none; width: 100%;"></iframe>
+                                <iframe data-src="${frame.url}" class="w-full rounded-lg frame-lazy-load" style="height: 75vh; border: none; width: 100%;"></iframe>
                             </div>
                         </div>
                     `;
-                    targetBlock.insertAdjacentHTML('beforebegin', frameHtml);
+                });
+            }
+
+            // שמירת נתיב הועדות המשלים עבור טעינה עצלנית בהמשך בלחיצה על הטאב
+            if (fileUrl.includes('data_')) {
+                window.vaadotComputedUrl = fileUrl.replace('data_', 'vaadot_');
+            }
+        }
+
+        function switchTab(tabId) {
+            // 1. עדכון ויזואלי של כפתורי הניווט
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+            const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+            if (activeBtn) activeBtn.classList.add('active-tab');
+
+            // 2. החלפת קונטיינר התוכן הגלוי
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active-content'));
+            const activeContent = document.getElementById(`content-${tabId}`);
+            if (activeContent) activeContent.classList.add('active-content');
+
+            // 3. טיפול ייעודי ברכיבים תלויי רוחב/רשת (Lazy Render / Lazy Load)
+            if (tabId === 'communication' || tabId === 'overview') {
+                setTimeout(renderTrendsChart, 50);
+            }
+            else if (tabId === 'vaadot') {
+                // טעינה עצלנית של קובץ הועדות המשלים מ-Supabase רק בעת מעבר לטאב
+                lazyLoadVaadotTable();
+            }
+            else if (tabId.startsWith('extframe-')) {
+                // פתרון באג גודל 0px וחיסכון במשאבים - הזרקת src לאייפריים רק כשהוא הופך לגלוי!
+                const iframe = activeContent.querySelector('.frame-lazy-load');
+                if (iframe && !iframe.src) {
+                    iframe.src = iframe.getAttribute('data-src');
                 }
-            });
+            }
         }
 
-        function toggleFrame(headerEl) {
-            const content = headerEl.nextElementSibling;
-            const icon = headerEl.querySelector('.accordion-icon');
-            content.classList.toggle('open');
-            icon.classList.toggle('open');
-        }
-
-        function setupFilters() {
-
-        }
-
+        // ==========================================
+        // לוגיקת רינדור וסינון של כרטיסיות מסמכים (זירת מסמכים)
+        // ==========================================
         function setupSearch() {
             const searchInput = document.getElementById('searchInput');
             const clearBtn = document.getElementById('clearSearchBtn');
@@ -557,91 +748,49 @@
             });
         }
 
-        function renderEcosystemList(elementId, dataArray, borderColor) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = '';
-            const sortedArray = [...dataArray].sort((a, b) => b.relevance - a.relevance);
-            sortedArray.forEach(item => {
-                container.innerHTML += `
-                    <div class="eco-item" style="border-right: 4px solid ${borderColor};">
-                        <div class="flex justify-between items-start gap-2 mb-1">
-                            <strong class="text-gray-900 text-base block leading-tight">${item.name}</strong>
-                        </div>
-                        <span class="text-sm text-gray-600 font-semibold">${item.desc}</span>
-                    </div>
-                `;
-            });
-        }
-
-        function renderEcosystem() {
-            renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries, '#3b82f6');
-            renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees, '#ef4444');
-            renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs, '#10b981');
-        }
-
-// ==========================================
-        // UI Helpers for renderCards
-        // ==========================================
-
-        // Filter documents based on search text and selected category
         function filterItemsBySearchAndType(items, filterType, searchTerm) {
             return items.filter(item => {
                 const matchesType = filterType === 'all' || item.type === filterType;
                 let matchesSearch = true;
                 if (searchTerm !== '') {
-                    const searchableText = `${item.title} ${item.summary} ${item.author} ${item.source} ${item.impact} ${(item.keywords || []).join(' ')}`.toLowerCase();
+                    const searchableText = `${item.title} ${item.summary} ${item.author || ''} ${item.source || ''} ${item.impact || ''} ${(item.keywords || []).join(' ')}`.toLowerCase();
                     matchesSearch = searchableText.includes(searchTerm);
                 }
                 return matchesType && matchesSearch;
             });
         }
 
-        // Build the expanded details HTML (metadata) for a specific card
         function buildMetadataHtml(item, sourceMovedToTitle, sourceOrAuthor) {
-            let metadataHtml = '';
-
             if (item.type === 'activeLaw') {
                 let vaadaHtml = '';
                 let safeVaada = item.activeLawVaada ? String(item.activeLawVaada).trim() : '';
                 if (safeVaada !== '') vaadaHtml = `<div style="margin-top: 4px;"><span class="font-bold">ועדה מטפלת:</span> ${safeVaada}</div>`;
-
                 let safeStatus = item.activeLawStatus ? String(item.activeLawStatus).trim() : '';
                 const statusVisualHtml = typeof generateLawProgressHtml === 'function' ? generateLawProgressHtml(safeStatus) : safeStatus;
-                let safeType = item.activeLawType ? String(item.activeLawType).trim() : 'לא צוין';
-
-                metadataHtml = `
+                return `
                     <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-2">
-                        <div><span class="font-bold">סוג:</span> ${safeType}</div>
+                        <div><span class="font-bold">סוג:</span> ${item.activeLawType || 'לא צוין'}</div>
                         ${vaadaHtml}
                         <div><span class="font-bold">סטטוס:</span> ${statusVisualHtml}</div>
                     </div>`;
-            }
-            else if (item.type === 'mmm') {
-                let safeRequester = item.mmmRequester ? String(item.mmmRequester).trim() : 'לא צוין';
-                let safeCategory = item.mmmCategory ? String(item.mmmCategory).trim() : 'לא צוין';
-                metadataHtml = `
+            } else if (item.type === 'mmm') {
+                return `
                     <div class="text-sm text-gray-600 mb-3 border-b pb-3 flex flex-col gap-1">
-                        <div><span class="font-bold">מבקש המסמך:</span> ${safeRequester}</div>
-                        <div><span class="font-bold">סוג:</span> ${safeCategory}</div>
+                        <div><span class="font-bold">מבקש המסמך:</span> ${item.mmmRequester || 'לא צוין'}</div>
+                        <div><span class="font-bold">סוג:</span> ${item.mmmCategory || 'לא צוין'}</div>
                     </div>`;
-            }
-            else {
+            } else {
                 if (!sourceMovedToTitle) {
-                    let safeSource = sourceOrAuthor !== '' ? sourceOrAuthor : 'לא צוין';
-                    metadataHtml = `
+                    return `
                         <div class="flex justify-between items-center mb-2 border-b pb-2">
-                            <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${safeSource}</span></span>
+                            <span class="text-sm text-gray-500">מקור: <span class="font-bold text-gray-800">${sourceOrAuthor || 'לא צוין'}</span></span>
                         </div>`;
                 }
             }
-            return metadataHtml;
+            return '';
         }
 
-        // Build the complete HTML block for a single document card
         function buildCardHtml(item, index, groupColor) {
-            if (!item.type) return '';
-            if (!item.idCode) item.idCode = `${item.type}_${index + 1}`;
-
             const formattedMonth = item.month.toString().padStart(2, '0');
             const dateStr = `${formattedMonth}/${item.year}`;
             const detailsId = `details-${item.idCode.replace(/[^a-zA-Z0-9א-ת]/g, '-')}-${Math.floor(Math.random()*10000)}`;
@@ -657,12 +806,7 @@
             }
 
             let metadataHtml = buildMetadataHtml(item, sourceMovedToTitle, sourceOrAuthor);
-
-            let impactHtml = '';
-            let safeImpact = item.impact ? String(item.impact).trim() : '';
-            if (safeImpact !== '') {
-                impactHtml = `<div class="card-impact-box text-sm mb-3"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${safeImpact}</div>`;
-            }
+            let impactHtml = item.impact ? `<div class="card-impact-box text-sm mb-3"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${item.impact}</div>` : '';
 
             return `
                 <div class="doc-item-wrapper" style="border-right: 4px solid ${groupColor};">
@@ -682,10 +826,6 @@
             `;
         }
 
-        // ==========================================
-        // Main Render Function
-        // ==========================================
-
         function renderCards() {
             const container = document.getElementById('documentsStream');
             container.innerHTML = '';
@@ -693,18 +833,22 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             let filteredItems = filterItemsBySearchAndType(window.appConfiguration.items, currentFilterType, searchTerm);
 
-            if (filteredItems.length === 0 && searchTerm !== '') {
-                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b; font-size: 1.1rem;">לא נמצאו מסמכים התואמים את החיפוש.</div>`;
+            if (filteredItems.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b; font-size: 1.1rem;">לא נמצאו מסמכים תואמים.</div>`;
                 return;
             }
 
+            // סדר הקטגוריות המעודכן בגריד (3 עמודות בשורה)
             const categoryGroups = [
-                { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },
-                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },
-                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] },
-                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] },
+                // שורה 1
+                { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },       // מיקום 1
+                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] }, // מיקום 2 (היה 4)
+                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },   // מיקום 3 (היה 2)
+
+                // שורה 2
+                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] }, // מיקום 4 (עבר לשורה 2)
                 { key: 'comptroller', icon: '🔍', title: 'מבקר המדינה', color: '#f59e0b', items: [] },
-                { key: 'govDecision', icon: '📜', title: 'החלטות ותוכניות ממשלה', color: '#14b8a6', items: [] }
+                { key: 'govDecision', icon: '📜', title: 'החלטות ממשלה', color: '#14b8a6', items: [] }
             ];
 
             filteredItems.forEach(item => {
@@ -712,49 +856,20 @@
                 if (group) group.items.push(item);
             });
 
-            // --- Sort and Limit Logic ---
             const dropdown = document.getElementById('sortFilterDropdown');
-
-            // Check if any category has more than 5 items
-            const maxItemsInAnyCategory = Math.max(0, ...categoryGroups.map(g => g.items.length));
-            const hasEnoughItems = maxItemsInAnyCategory > 5;
-
-            if (dropdown) {
-                dropdown.disabled = !hasEnoughItems;
-                dropdown.style.opacity = hasEnoughItems ? '1' : '0.5';
-            }
-
-            // Parse selected value (e.g., "relevant-5" -> mode: "relevant", limit: 5)
             let dropdownVal = dropdown ? dropdown.value : 'relevant-5';
-            let sortMode = 'relevant';
-            let limit = 5;
-
-            if (dropdownVal === 'all') {
-                sortMode = 'all';
-                limit = null;
-            } else {
-                const parts = dropdownVal.split('-');
-                sortMode = parts[0];
-                limit = parseInt(parts[1], 10);
-            }
+            let sortMode = dropdownVal === 'all' ? 'all' : dropdownVal.split('-')[0];
+            let limit = dropdownVal === 'all' ? null : parseInt(dropdownVal.split('-')[1], 10);
 
             categoryGroups.forEach(group => {
-                if (currentFilterType !== 'all' && currentFilterType !== group.key) return;
-
-                const totalInGroup = group.items.length;
-
-                // Apply sorting and slice dynamically based on user limit (5, 10, or null)
-                let itemsToShow = typeof getSortedAndSlicedItems === 'function' ?
-                                  getSortedAndSlicedItems(group.items, sortMode, limit) :
-                                  group.items;
-
-                const displayCountStr = itemsToShow.length === totalInGroup ? totalInGroup : `${itemsToShow.length} / ${totalInGroup}`;
+                let itemsToShow = typeof getSortedAndSlicedItems === 'function' ? getSortedAndSlicedItems(group.items, sortMode, limit) : group.items;
+                const displayCountStr = itemsToShow.length === group.items.length ? group.items.length : `${itemsToShow.length} / ${group.items.length}`;
 
                 let colHtml = `
                     <div class="category-col" style="border-top: 4px solid ${group.color}">
                         <div class="category-title" style="border-color: ${group.color}">
                             <span>${group.icon} ${group.title}</span>
-                            <span class="text-sm font-normal text-gray-500 bg-gray-100 px-2 rounded-full" dir="ltr" style="display: inline-block;">${displayCountStr}</span>
+                            <span class="text-sm font-normal text-gray-500 bg-gray-100 px-2 rounded-full" dir="ltr">${displayCountStr}</span>
                         </div>
                         <div class="category-items">
                 `;
@@ -774,21 +889,376 @@
 
         function toggleDoc(detailsId) {
             const details = document.getElementById(detailsId);
-            if(details) {
-                details.classList.toggle('open');
-            }
+            if(details) details.classList.toggle('open');
         }
 
         function toggleAllDocs(open) {
             document.querySelectorAll('.doc-full-details').forEach(el => {
-                if(open) {
-                    el.classList.add('open');
-                } else {
-                    el.classList.remove('open');
-                }
+                if(open) el.classList.add('open'); else el.classList.remove('open');
             });
         }
 
+        function renderEcosystemList(elementId, dataArray, borderColor) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            container.innerHTML = '';
+            const sortedArray = [...dataArray].sort((a, b) => b.relevance - a.relevance);
+            sortedArray.forEach(item => {
+                container.innerHTML += `
+                    <div class="eco-item" style="border-right: 4px solid ${borderColor};">
+                        <strong class="text-gray-900 text-base block leading-tight mb-1">${item.name}</strong>
+                        <span class="text-sm text-gray-600 font-semibold">${item.desc}</span>
+                    </div>`;
+            });
+        }
+
+        function renderEcosystem() {
+            renderEcosystemList('eco-ministries', window.appConfiguration.ecosystem.ministries, '#3b82f6');
+            renderEcosystemList('eco-committees', window.appConfiguration.ecosystem.committees, '#ef4444');
+            renderEcosystemList('eco-orgs', window.appConfiguration.ecosystem.civilOrgs, '#10b981');
+        }
+
+        // ==========================================
+        // שילוב לוגיקת טבלת ועדות מורחבת (מתוך vaadot.html)
+        // ==========================================
+        async function lazyLoadVaadotTable() {
+            if (vaadotTableData.length > 0 || !window.vaadotComputedUrl) return;
+
+            try {
+                const response = await fetch(window.vaadotComputedUrl);
+                const data = await response.json();
+
+                document.getElementById('vaadot-table-title').innerText = `דיוני ועדות מרוכזים: ${data.topic_name}`;
+                document.getElementById('vaadot-table-sync-time').innerText = `סונכרן מול Supabase לאחרונה ב- ${data.update_timestamp}`;
+
+                vaadotTableData = data.meetings;
+                executeVaadotSort('Score', 'desc');
+                renderVaadotTable();
+            } catch (e) {
+                console.error("Error lazy loading vaadot data:", e);
+                document.getElementById('vaadot-table-sync-time').innerText = "שגיאה בטעינת קובץ הישיבות המשלים מהשרת.";
+            }
+        }
+
+        function renderVaadotTable() {
+            const body = document.getElementById('vaadotTableBody');
+            body.innerHTML = vaadotTableData.map(m => `
+                <tr>
+                    <td><span class="score-cell" style="background:${getScoreColor(m.Score)}">${m.Score}</span></td>
+                    <td class="font-semibold">${m.CommitteeName}</td>
+                    <td class="subject-cell" onmousemove="showVaadotPopup(event, this)" onmouseout="hideVaadotPopup()" data-fulltext="${escapeHtml(m.ItemSubject)}">
+                        ${m.ItemSubject.length > 140 ? m.ItemSubject.substring(0, 140) + '...' : m.ItemSubject}
+                    </td>
+                    <td class="font-mono font-bold text-center">${m.MeetingsCount}</td>
+                    <td class="font-mono">${m.FromDate}</td>
+                    <td class="font-mono">${m.ToDate || m.FromDate}</td>
+                </tr>
+            `).join('');
+        }
+
+        function getScoreColor(score) {
+            if (score > 80) return '#dcfce7';
+            if (score > 50) return '#fef9c3';
+            return '#fee2e2';
+        }
+
+        function handleVaadotSort(columnIndex) {
+            const key = vaadotKeysMap[columnIndex];
+            if (currentVaadotSortKey === key) {
+                currentVaadotSortDirection = currentVaadotSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentVaadotSortKey = key;
+                currentVaadotSortDirection = (key === 'Score' || key === 'MeetingsCount' || key.includes('Date')) ? 'desc' : 'asc';
+            }
+            executeVaadotSort(key, currentVaadotSortDirection);
+            renderVaadotTable();
+            updateVaadotArrows(columnIndex);
+        }
+
+        function executeVaadotSort(key, direction) {
+            vaadotTableData.sort((a, b) => {
+                let valA = a[key]; let valB = b[key];
+                if (key.includes('Date')) {
+                    valA = new Date(valA || '1970-01-01'); valB = new Date(valB || '1970-01-01');
+                }
+                if (valA < valB) return direction === 'asc' ? -1 : 1;
+                if (valA > valB) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function updateVaadotArrows(activeIndex) {
+            for (let i = 0; i < vaadotKeysMap.length; i++) {
+                const indicator = document.getElementById(`dir-${i}`);
+                if (i === activeIndex) {
+                    indicator.innerText = currentVaadotSortDirection === 'asc' ? '▲' : '▼';
+                    indicator.style.color = '#2563eb';
+                } else {
+                    indicator.innerText = '';
+                }
+            }
+        }
+
+        function showVaadotPopup(e, element) {
+            const tooltip = document.getElementById('chartTooltip');
+            tooltip.innerHTML = `<strong>נושא הדיון המלא מהפרוטוקול:</strong><br>${element.getAttribute('data-fulltext')}`;
+            tooltip.style.opacity = '1';
+            tooltip.style.left = (e.clientX + 20) + 'px';
+            tooltip.style.top = (e.clientY + window.scrollY + 20) + 'px';
+        }
+
+        function hideVaadotPopup() {
+            document.getElementById('chartTooltip').style.opacity = '0';
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // ==========================================
+        // שילוב לוגיקת ציר הזמן ומפת הקשרים (מתוך timeline.html)
+        // ==========================================
+        function initTimelineLayout(items) {
+            allTimelineItems = items.map(item => {
+                return { ...item, clusterIds: [] };
+            });
+
+            inOutMap = {};
+            allTimelineItems.forEach(item => inOutMap[item.idCode] = new Set());
+
+            allTimelineItems.forEach(item => {
+                const rels = item.relatedDocs || [];
+                rels.forEach(rel => {
+                    const tId = typeof rel === 'object' ? rel.idCode : rel;
+                    const label = typeof rel === 'object' ? rel.label : '';
+                    if (inOutMap[tId]) {
+                        inOutMap[item.idCode].add(tId);
+                        inOutMap[tId].add(item.idCode);
+                        edgesInfo.push({ source: item.idCode, target: tId, label: label });
+                    }
+                });
+            });
+
+            allTimelineItems.forEach(item => {
+                inOutMap[item.idCode].delete(item.idCode);
+                item.clusterIds = Array.from(inOutMap[item.idCode]);
+            });
+
+            allTimelineItems.sort((a, b) => b.sortValue - a.sortValue);
+            renderTimeline(allTimelineItems);
+        }
+
+        function renderTimeline(itemsToRender) {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+
+            const groupsMap = {};
+            itemsToRender.forEach(item => {
+                const m = item.month ? String(item.month).padStart(2, '0') : '01';
+                const y = item.year || '1970';
+                const groupKey = `${m}/${y}`;
+
+                if(!groupsMap[groupKey]) {
+                    groupsMap[groupKey] = { dateStr: groupKey, sortValue: item.sortValue, items: [] };
+                }
+                groupsMap[groupKey].items.push(item);
+            });
+
+            const groups = Object.values(groupsMap).sort((a,b) => b.sortValue - a.sortValue);
+
+            groups.forEach(group => {
+                let cardsHtml = '';
+                group.items.forEach(item => {
+                    const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
+                    const label = typeof getCompactLabel === 'function' ? getCompactLabel(item) : entity.label;
+                    const dateStr = typeof formatParsedDate === 'function' ? formatParsedDate(item.parsedDate) : item.date;
+
+                    let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
+                    if (item.type !== 'passedLaw') {
+                        if (item.source && item.source.trim() !== '') {
+                            displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
+                        } else if (item.author && item.author.trim() !== '') {
+                            displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.author}</strong>: ${displayTitle}`;
+                        }
+                    }
+
+                    const count = item.clusterIds ? item.clusterIds.length : 0;
+                    const relationClass = count > 0 ? 'has-relations' : '';
+                    const relationIconHtml = count > 0 ? `<span class="relation-icon-badge" onclick="event.stopPropagation(); openNetworkView('${item.idCode}')" title="לחץ לפתיחת מפת קשרים המציגה את רשת המסמכים">🔀 ${count}</span>` : '';
+                    const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(item.link) : '';
+
+                    cardsHtml += `
+                        <div class="timeline-card ${relationClass}" id="card-${item.idCode}" style="border-top-color: ${entity.color}; border-top-width: 4px;" onmouseenter="showDocTooltip(event, '${item.idCode}')" onmouseleave="hideDocTooltip()">
+                            <div class="card-header">
+                                <div style="display:flex; align-items:center;">
+                                    <span class="card-type-badge" style="background-color: ${entity.color}">${label}</span>
+                                    ${relationIconHtml}
+                                </div>
+                                <div style="display:flex; align-items:center; gap: 4px;">
+                                    <span class="card-date">${dateStr}</span>
+                                    ${docLinkHtml}
+                                </div>
+                            </div>
+                            <div class="card-title">${displayTitle}</div>
+                        </div>
+                    `;
+                });
+
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="month-section">
+                        <div class="month-divider">
+                            <span>${group.dateStr}</span>
+                            <div class="month-line"></div>
+                            <span>${group.dateStr}</span>
+                        </div>
+                        <div class="cards-grid">${cardsHtml}</div>
+                    </div>
+                `);
+            });
+        }
+
+        function openNetworkView(rootId) {
+            hideDocTooltip();
+            const rootItem = allTimelineItems.find(i => i.idCode === rootId);
+            if (!rootItem || !rootItem.clusterIds || rootItem.clusterIds.length === 0) return;
+
+            savedScrollPosition = window.scrollY;
+            currentRootId = rootId;
+
+            document.getElementById('timeline-view').style.display = 'none';
+            const cyContainer = document.getElementById('cy-container');
+            cyContainer.style.display = 'block';
+
+            if(typeof cytoscape !== 'undefined' && typeof cytoscapeElk !== 'undefined') {
+                cytoscape.use(cytoscapeElk);
+            }
+
+            initCytoscapeForCluster(rootId, rootItem.clusterIds);
+            cyContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function closeNetworkView() {
+            if(cy) { cy.destroy(); cy = null; }
+            hideDocTooltip();
+            currentRootId = null;
+
+            document.getElementById('cy-container').style.display = 'none';
+            document.getElementById('timeline-view').style.display = 'block';
+            window.scrollTo({ top: savedScrollPosition, behavior: 'instant' });
+        }
+
+        function resetNetworkLayout() {
+            if(!currentRootId) return;
+            localStorage.removeItem('gilat_cy_pos_' + currentRootId);
+            const rootItem = allTimelineItems.find(i => i.idCode === currentRootId);
+            if(cy) { cy.destroy(); cy = null; }
+            initCytoscapeForCluster(currentRootId, rootItem.clusterIds);
+        }
+
+        function initCytoscapeForCluster(rootId, clusterIds) {
+            const elements = [];
+            const nodesSet = new Set([rootId, ...clusterIds]);
+            const savedPositionsStr = localStorage.getItem('gilat_cy_pos_' + rootId);
+            let savedPositions = null; let usePresetLayout = false;
+
+            if (savedPositionsStr) {
+                try { savedPositions = JSON.parse(savedPositionsStr); usePresetLayout = true; document.getElementById('resetLayoutBtn').style.display = 'inline-block'; } catch (e) {}
+            } else {
+                document.getElementById('resetLayoutBtn').style.display = 'none';
+            }
+
+            nodesSet.forEach(id => {
+                const item = allTimelineItems.find(i => i.idCode === id);
+                if(!item) return;
+
+                const entity = (typeof entityMap !== 'undefined' && entityMap[item.type]) ? entityMap[item.type] : { label: 'מסמך', color: '#64748b' };
+                let label = typeof getCompactLabel === 'function' ? getCompactLabel(item) : entity.label;
+                const dateStr = `${item.month.toString().padStart(2,'0')}/${item.year}`;
+
+                let displayTitle = `<span style="font-weight: 400;">${item.title}</span>`;
+                if (item.type !== 'committee') {
+                    if (item.source && item.source.trim() !== '') displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.source}</strong>: ${displayTitle}`;
+                    else if (item.author && item.author.trim() !== '') displayTitle = `<strong style="font-weight: 700; color: #0f172a;">${item.author}</strong>: ${displayTitle}`;
+                }
+
+                const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(item.link) : '';
+                let nodeObj = {
+                    group: 'nodes',
+                    data: { id: item.idCode, typeLabel: label, dateStr: dateStr, displayTitle: displayTitle, docLinkHtml: docLinkHtml, color: entity.color, isRoot: (id === rootId) }
+                };
+                if (savedPositions && savedPositions[item.idCode]) nodeObj.position = savedPositions[item.idCode];
+                elements.push(nodeObj);
+            });
+
+            const processedEdges = new Set();
+            edgesInfo.forEach(edge => {
+                if (nodesSet.has(edge.source) && nodesSet.has(edge.target)) {
+                    const sItem = allTimelineItems.find(i => i.idCode === edge.source);
+                    const tItem = allTimelineItems.find(i => i.idCode === edge.target);
+                    if(!sItem || !tItem) return;
+
+                    let realSource = sItem.sortValue > tItem.sortValue ? sItem.idCode : tItem.idCode;
+                    let realTarget = sItem.sortValue > tItem.sortValue ? tItem.idCode : sItem.idCode;
+                    const edgeId = `${realSource}-${realTarget}`;
+
+                    if(!processedEdges.has(edgeId)) {
+                        processedEdges.add(edgeId);
+                        elements.push({ group: 'edges', data: { id: edgeId, source: realSource, target: realTarget, label: edge.label || '' } });
+                    }
+                }
+            });
+
+            const layoutConfig = usePresetLayout ? { name: 'preset' } : {
+                name: 'elk', elk: { 'algorithm': 'layered', 'elk.direction': 'DOWN', 'elk.spacing.nodeNode': 80, 'elk.layered.spacing.nodeNodeBetweenLayers': 180, 'elk.edgeRouting': 'SPLINES' }
+            };
+
+            cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                    { selector: 'node', style: { 'width': 220, 'height': 100, 'background-opacity': 0, 'shape': 'rectangle' } },
+                    { selector: 'edge', style: { 'width': 2.5, 'line-color': '#94a3b8', 'source-arrow-color': '#3b82f6', 'source-arrow-shape': 'triangle', 'curve-style': 'bezier', 'text-margin-y': -14, 'label': 'data(label)', 'font-family': 'Assistant, sans-serif', 'font-size': '11px', 'font-weight': 'bold', 'text-background-color': '#eff6ff', 'text-background-opacity': 1, 'text-background-padding': '4px', 'text-background-shape': 'round-rectangle', 'text-border-color': '#bfdbfe', 'text-border-width': 1, 'color': '#1e3a8a' } }
+                ],
+                layout: layoutConfig,
+                wheelSensitivity: 0.2
+            });
+
+            cy.nodeHtmlLabel([{
+                query: 'node', halign: 'center', valign: 'center', halignBox: 'center', valignBox: 'center',
+                tpl: function(data) {
+                    return `
+                        <div class="network-card ${data.isRoot ? 'focused-root' : ''}" style="border-top-color: ${data.color}; border-top-width: 4px;">
+                            <div class="card-header">
+                                <span class="card-type-badge" style="background-color: ${data.color}">${data.typeLabel}</span>
+                                <div style="display:flex; align-items:center; gap: 4px;">
+                                    <span class="card-date">${data.dateStr}</span>
+                                    ${data.docLinkHtml || ''}
+                                </div>
+                            </div>
+                            <div class="card-title">${data.displayTitle}</div>
+                        </div>`;
+                }
+            }]);
+
+            cy.on('dragfree', 'node', function() {
+                const positions = {};
+                cy.nodes().forEach(n => { positions[n.id()] = n.position(); });
+                localStorage.setItem('gilat_cy_pos_' + rootId, JSON.stringify(positions));
+                document.getElementById('resetLayoutBtn').style.display = 'inline-block';
+            });
+
+            cy.on('mouseover', 'node', function(evt){
+                const containerRect = document.getElementById('cy-container').getBoundingClientRect();
+                const renderedPos = evt.target.renderedPosition();
+                showDocTooltip({ clientX: containerRect.left + renderedPos.x, clientY: containerRect.top + renderedPos.y }, evt.target.data('id'));
+            });
+            cy.on('mouseout', 'node', hideDocTooltip);
+            if (!usePresetLayout) cy.on('layoutstop', () => cy.fit(cy.elements(), 50)); else setTimeout(() => { if(cy) cy.fit(cy.elements(), 50); }, 50);
+        }
+
+        // ==========================================
+        // מנגנון הקראת אודיו (Text to Speech קוד מקור)
+        // ==========================================
         function toggleTTS() {
             const btn = document.getElementById('ttsBtn');
             const textEl = document.getElementById('tts-text');
@@ -813,11 +1283,14 @@
             }
         }
 
+        // ==========================================
+        // גרף מגמות Google Trends (קנבס דינמי)
+        // ==========================================
         function renderTrendsChart() {
             const canvas = document.getElementById('trendsChart');
+            if (!canvas || !window.appConfiguration || !window.appConfiguration.trendsData) return;
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
-            if(!container) return;
             const dpr = window.devicePixelRatio || 1;
             const rect = container.getBoundingClientRect();
             if(rect.width === 0) return;
@@ -828,8 +1301,6 @@
             const data = window.appConfiguration.trendsData;
 
             ctx.clearRect(0, 0, w, h);
-            if (!data || data.length === 0) return;
-
             const maxVal = 100; const xStep = w / (data.length - 1);
 
             ctx.beginPath(); ctx.moveTo(0, h);
@@ -859,8 +1330,88 @@
         }
 
         window.addEventListener('resize', () => {
-            if(document.getElementById('dashboard-content').style.display === 'block') {
+            const commsContent = document.getElementById('content-communication');
+            if(commsContent && commsContent.classList.contains('active-content')) {
                 renderTrendsChart();
+            }
+        });
+
+        // ==========================================
+        // פונקציות המודל (Modal) של מסמכי הרפרנס בתקציר
+        // ==========================================
+        function openDocModal(idCode) {
+            const doc = window.appConfiguration.items.find(d => d.idCode === idCode);
+            if (!doc) return;
+
+            const modalOverlay = document.getElementById('docModalOverlay');
+            const modalBox = document.getElementById('docModalBox');
+            const modalInner = document.getElementById('docModalInner');
+
+            const entity = (typeof entityMap !== 'undefined' && entityMap[doc.type]) ? entityMap[doc.type] : { label: 'מסמך', color: '#64748b' };
+
+            // צבע הפס העליון של החלון יתאים לסוג המסמך
+            modalBox.style.borderTopColor = entity.color;
+
+            let dateBadgeHtml = '';
+            if (doc.parsedDate && doc.parsedDate.hasDate) {
+                const formattedMonth = String(doc.month).padStart(2, '0');
+                const day = doc.day ? String(doc.day).padStart(2, '0') + '/' : '';
+                dateBadgeHtml = `<span style="font-size: 0.9rem; color: #475569; background-color: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-family: monospace; border: 1px solid #cbd5e1;">${day}${formattedMonth}/${doc.year}</span>`;
+            }
+
+            const typeBadgeHtml = `<span style="background-color: ${entity.color}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">${entity.label}</span>`;
+
+            // שימוש בפונקציה הקיימת ליצירת אייקון הקישור (כמו בציר הזמן)
+            const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(doc.link) : '';
+
+            let sourceHtml = '';
+            if (doc.type !== 'committee') {
+                if (doc.source && doc.source.trim() !== '') {
+                    sourceHtml = `<div style="font-size:0.95rem; color:#475569; margin-bottom: 12px;"><strong>מקור:</strong> ${doc.source}</div>`;
+                } else if (doc.author && doc.author.trim() !== '') {
+                    sourceHtml = `<div style="font-size:0.95rem; color:#475569; margin-bottom: 12px;"><strong>מחבר:</strong> ${doc.author}</div>`;
+                }
+            }
+
+            modalInner.innerHTML = `
+                <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 16px;">
+                    ${typeBadgeHtml}
+                    ${dateBadgeHtml}
+                    ${docLinkHtml}
+                </div>
+                <h3 style="font-weight: 800; color: #0f172a; font-size: 1.3rem; line-height: 1.3; margin-bottom: 8px;">${doc.title}</h3>
+                ${sourceHtml}
+                <div style="font-size: 1.05rem; line-height: 1.6; color: #334155; background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 250px; overflow-y: auto;">
+                    ${doc.summary}
+                </div>
+            `;
+
+            modalOverlay.style.display = 'flex';
+        }
+
+        function closeDocModal(event) {
+            // אם קראנו לפונקציה ישרות (מה-X או ממקש Esc), פשוט נסגור
+            if (!event) {
+                document.getElementById('docModalOverlay').style.display = 'none';
+                return;
+            }
+
+            // אם המשתמש לחץ על קישור (תגית <a>) או אלמנט בתוך קישור, לא נסגור כדי שהדפדפן יפתח את הטאב
+            if (event.target.closest('a')) {
+                return;
+            }
+
+            // בכל לחיצה אחרת (על הטקסט, על הרקע הלבן, או על הרקע הכהה) – נסגור את החלון
+            document.getElementById('docModalOverlay').style.display = 'none';
+        }
+
+        // מאזין למקלדת לסגירת המודל בלחיצה על Esc
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const overlay = document.getElementById('docModalOverlay');
+                if (overlay && overlay.style.display === 'flex') {
+                    closeDocModal();
+                }
             }
         });
     </script>
