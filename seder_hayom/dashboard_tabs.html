@@ -205,6 +205,31 @@
         #error-message { display: none; background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; text-align: center; }
         #loading-message { display: flex; justify-content: center; align-items: center; height: 50vh; font-size: 1.5rem; color: #64748b; }
         #dashboard-content { display: none; }
+        /* כפתורי הרפרנס הקטנים בתוך הטקסט */
+        .ref-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            height: 1.4em; min-width: 1.4em; padding: 0 5px;
+            border-radius: 4px; color: white; font-size: 0.85rem; font-weight: bold; font-family: monospace;
+            border: none; cursor: pointer; margin: 0 3px; vertical-align: baseline;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15); transition: transform 0.1s, filter 0.1s;
+        }
+        .ref-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+        /* עיצוב חלון הפופאפ (Modal) החדש למסמכים */
+        .doc-modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
+            z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+        }
+        .doc-modal-box {
+            background: white; width: 90%; max-width: 550px; border-radius: 12px; padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; border-top: 6px solid #cbd5e1;
+        }
+        .doc-modal-close {
+            position: absolute; top: 16px; left: 16px; background: #f1f5f9; border: none;
+            width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; color: #64748b;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .doc-modal-close:hover { background: #e2e8f0; color: #0f172a; }
     </style>
 </head>
 <body>
@@ -431,6 +456,12 @@
 
     <!-- טולטיפים משותפים צפים -->
     <div id="chartTooltip"></div>
+    <div id="docModalOverlay" class="doc-modal-overlay" onclick="closeDocModal(event)">
+        <div id="docModalBox" class="doc-modal-box" onclick="event.stopPropagation()">
+            <button onclick="closeDocModal()" class="doc-modal-close">✖</button>
+            <div id="docModalInner"></div>
+        </div>
+    </div>
 
     <script>
         let isSpeaking = false;
@@ -480,13 +511,15 @@
                 window.appConfiguration = data.appConfiguration;
 
                 // עיבוד תאריכים מוקדם עבור כל הפריטים
-                window.appConfiguration.items.forEach(item => {
+                // עיבוד תאריכים מוקדם עבור כל הפריטים והוספת מספר סידורי
+                window.appConfiguration.items.forEach((item, index) => {
                     const parsed = parseFlexibleDate(item.date);
                     item.parsedDate = parsed;
                     item.year = parsed.year;
                     item.month = parsed.month;
                     item.day = parsed.day;
                     item.sortValue = parsed.sortValue;
+                    item.serialNumber = index + 1; // יצירת מספר רפרנס עוקב
                 });
 
                 // עדכון תוכן מטא-דאטה עליון
@@ -494,22 +527,34 @@
                 document.getElementById('meta-update-label').innerText = `גרסה: ${data.meta.version || '4.0.0'} | עודכן: ${data.meta.lastUpdate}`;
                 document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
 
-                // עיבוד והזרקת תקציר מנהלים עם תיוגי אירוח (Hover tooltips)
+                // עיבוד והזרקת תקציר מנהלים עם תיוגי אירוח (Hover tooltips)// עיבוד והזרקת תקציר מנהלים עם כפתורי רפרנס בסוף משפט
                 if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
                     const sentences = data.execSummary.text.split('. ');
                     const processedText = sentences.map((sentence, index) => {
                         const sIndex = index + 1;
                         const refs = data.execSummary.textRefs.filter(r => r.sentenceIndex === sIndex);
-                        let textToWrap = sentence;
-                        if (index < sentences.length - 1 || !textToWrap.endsWith('.')) {
-                            textToWrap += '. ';
+
+                        let textToWrap = sentence.trim();
+                        // מסירים נקודה זמנית כדי למקם את הכפתורים לפני הרווח הבא
+                        if (textToWrap.endsWith('.')) {
+                            textToWrap = textToWrap.slice(0, -1);
                         }
+
                         if (refs.length > 0) {
-                            const idCodes = refs.map(r => r.refId).join(',');
-                            return `<span style="cursor: help; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color=''" onmousemove="showDocTooltip(event, '${idCodes}')" onmouseleave="hideDocTooltip()">${textToWrap}</span>`;
+                            let buttonsHtml = '';
+                            refs.forEach(r => {
+                                const doc = data.appConfiguration.items.find(d => d.idCode === r.refId);
+                                if (doc) {
+                                    // מציאת צבע תואם למסמך
+                                    const entity = (typeof entityMap !== 'undefined' && entityMap[doc.type]) ? entityMap[doc.type] : { color: '#64748b' };
+                                    buttonsHtml += `<button class="ref-btn" style="background-color: ${entity.color};" onclick="openDocModal('${doc.idCode}')" title="לפרטי המסמך">${doc.serialNumber}</button>`;
+                                }
+                            });
+                            // החזרת המשפט עם הכפתורים צמודים אליו, והוספת הנקודה בסוף
+                            return `<span>${textToWrap}${buttonsHtml}.</span> `;
                         }
-                        return textToWrap;
-                    }).join('');
+                        return textToWrap ? `${textToWrap}. ` : '';
+                    }).join('').trim();
                     document.getElementById('d-exec-text').innerHTML = processedText;
                 } else {
                     document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
@@ -1259,6 +1304,66 @@
                 renderTrendsChart();
             }
         });
+
+        // ==========================================
+        // פונקציות המודל (Modal) של מסמכי הרפרנס בתקציר
+        // ==========================================
+        function openDocModal(idCode) {
+            const doc = window.appConfiguration.items.find(d => d.idCode === idCode);
+            if (!doc) return;
+
+            const modalOverlay = document.getElementById('docModalOverlay');
+            const modalBox = document.getElementById('docModalBox');
+            const modalInner = document.getElementById('docModalInner');
+
+            const entity = (typeof entityMap !== 'undefined' && entityMap[doc.type]) ? entityMap[doc.type] : { label: 'מסמך', color: '#64748b' };
+
+            // צבע הפס העליון של החלון יתאים לסוג המסמך
+            modalBox.style.borderTopColor = entity.color;
+
+            let dateBadgeHtml = '';
+            if (doc.parsedDate && doc.parsedDate.hasDate) {
+                const formattedMonth = String(doc.month).padStart(2, '0');
+                const day = doc.day ? String(doc.day).padStart(2, '0') + '/' : '';
+                dateBadgeHtml = `<span style="font-size: 0.9rem; color: #475569; background-color: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-family: monospace; border: 1px solid #cbd5e1;">${day}${formattedMonth}/${doc.year}</span>`;
+            }
+
+            const typeBadgeHtml = `<span style="background-color: ${entity.color}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">${entity.label}</span>`;
+
+            // שימוש בפונקציה הקיימת ליצירת אייקון הקישור (כמו בציר הזמן)
+            const docLinkHtml = typeof getDocLinkBadgeHtml === 'function' ? getDocLinkBadgeHtml(doc.link) : '';
+
+            let sourceHtml = '';
+            if (doc.type !== 'committee') {
+                if (doc.source && doc.source.trim() !== '') {
+                    sourceHtml = `<div style="font-size:0.95rem; color:#475569; margin-bottom: 12px;"><strong>מקור:</strong> ${doc.source}</div>`;
+                } else if (doc.author && doc.author.trim() !== '') {
+                    sourceHtml = `<div style="font-size:0.95rem; color:#475569; margin-bottom: 12px;"><strong>מחבר:</strong> ${doc.author}</div>`;
+                }
+            }
+
+            modalInner.innerHTML = `
+                <div style="display:flex; align-items:center; gap: 8px; margin-bottom: 16px;">
+                    ${typeBadgeHtml}
+                    ${dateBadgeHtml}
+                    ${docLinkHtml}
+                </div>
+                <h3 style="font-weight: 800; color: #0f172a; font-size: 1.3rem; line-height: 1.3; margin-bottom: 8px;">${doc.title}</h3>
+                ${sourceHtml}
+                <div style="font-size: 1.05rem; line-height: 1.6; color: #334155; background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 250px; overflow-y: auto;">
+                    ${doc.summary}
+                </div>
+            `;
+
+            modalOverlay.style.display = 'flex';
+        }
+
+        function closeDocModal(event) {
+            // אם event לא הועבר (קריאה מה-✖) או שלחצו על הרקע
+            if (!event || event.target.id === 'docModalOverlay') {
+                document.getElementById('docModalOverlay').style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
