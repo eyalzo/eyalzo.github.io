@@ -634,47 +634,45 @@
 
             // 1. יצירת מערך סופי המשלב טאבים סטטיים וחיצוניים לפי מיקום
             let finalTabs = [...tabDefinitions];
-            let unpositionedFrames = []; // טאבים חיצוניים ללא מיקום (יופיעו בסוף)
+            let unpositionedFrames = [];
 
             if (externalFrames && externalFrames.length > 0) {
                 let positionedFrames = [];
 
                 externalFrames.forEach((frame, idx) => {
                     const frameTabId = `extframe-${idx}`;
-                    // אובייקט הטאב החיצוני עם אייקון ייעודי 🌐
-                    const tabObj = {
-                        id: frameTabId,
-                        label: `🌐 ${frame.title}`,
-                        isExternal: true
-                    };
+                    const tabObj = { id: frameTabId, label: `🌐 ${frame.title}`, isExternal: true };
 
                     if (typeof frame.tab === 'number') {
-                        // מיקום 1 שווה לאינדקס 0 במערך
                         positionedFrames.push({ ...tabObj, targetIndex: frame.tab - 1 });
                     } else {
-                        // אם לא הוגדר מאפיין tab ב-JSON
                         unpositionedFrames.push(tabObj);
                     }
                 });
 
-                // מיון והכנסת הטאבים בעלי המיקום המוגדר למערך הסופי
                 positionedFrames.sort((a, b) => a.targetIndex - b.targetIndex);
                 positionedFrames.forEach(pf => {
-                    // מוודא שהמיקום לא חורג מגבולות המערך הנוכחי
                     let insertAt = Math.max(0, Math.min(pf.targetIndex, finalTabs.length));
-                    finalTabs.splice(insertAt, 0, pf); // 'דוחף' את שאר הטאבים קדימה
+                    finalTabs.splice(insertAt, 0, pf);
                 });
 
-                // הוספת הטאבים החיצוניים חסרי המיקום בסוף הרשימה (ברירת מחדל)
                 finalTabs.push(...unpositionedFrames);
             }
 
-            // 2. הזרקת כפתורי הטאבים לפי הסדר הסופי שחושב
+            // בדיקה אם קיימים בלוקים של קישורים חיצוניים ב-JSON, ואם כן - הוספת טאב ייעודי אחרון
+            const linkBlocks = window.appConfiguration?.externalLinkBlocks;
+            const hasLinkBlocks = linkBlocks && linkBlocks.length > 0;
+
+            if (hasLinkBlocks) {
+                finalTabs.push({ id: 'external-links', label: '🔗 קישורים חיצוניים' });
+            }
+
+            // 2. הזרקת כפתורי הטאבים לפי הסדר הסופי
             finalTabs.forEach(tab => {
                 navContainer.innerHTML += `<button class="tab-btn" id="btn-tab-${tab.id}" onclick="switchTab('${tab.id}')">${tab.label}</button>`;
             });
 
-            // 3. הזרקת הקונטיינרים עבור ה-iframes (סדר ה-DOM הפנימי לא משנה כי הם מוסתרים)
+            // 3. הזרקת הקונטיינרים עבור ה-iframes והקישורים
             const framesContainer = document.getElementById('dynamicFramesContainers');
             framesContainer.innerHTML = '';
 
@@ -695,7 +693,20 @@
                 });
             }
 
-            // שמירת נתיב הועדות המשלים עבור טעינה עצלנית בהמשך בלחיצה על הטאב
+            // יצירת קונטיינר לטאב הקישורים החיצוניים (אם נדרש) וקריאה לפונקציית הרינדור
+            if (hasLinkBlocks) {
+                framesContainer.innerHTML += `
+                    <div class="tab-content" id="content-external-links">
+                        <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+                            <h3 class="text-2xl mb-4 border-b pb-3">מאגרי מידע וקישורים חיצוניים</h3>
+                            <div id="external-links-wrapper"></div>
+                        </div>
+                    </div>
+                `;
+                renderExternalLinks();
+            }
+
+            // שמירת נתיב הועדות המשלים עבור טעינה עצלנית
             if (fileUrl.includes('data_')) {
                 window.vaadotComputedUrl = fileUrl.replace('data_', 'vaadot_');
             }
@@ -1335,6 +1346,43 @@
                 renderTrendsChart();
             }
         });
+
+        // ==========================================
+        // רינדור קישורים חיצוניים בתוך טאב ייעודי
+        // ==========================================
+        function renderExternalLinks() {
+            const linkBlocks = window.appConfiguration?.externalLinkBlocks;
+            if (!linkBlocks || linkBlocks.length === 0) return;
+
+            const wrapper = document.getElementById('external-links-wrapper');
+            if (!wrapper) return;
+
+            let allBlocksHtml = '';
+
+            linkBlocks.forEach(block => {
+                const flexDirection = block.layout === 'vertical' ? 'flex-col' : 'flex-row flex-wrap';
+
+                const linksHtml = block.links.map(link => `
+                    <a href="${link.url}" target="_blank" rel="noopener noreferrer"
+                       class="bg-white border border-slate-300 rounded-lg p-4 shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-3"
+                       style="flex: 1; min-width: 200px; text-decoration: none;">
+                        <span class="text-2xl">${link.icon || '🔗'}</span>
+                        <span class="font-bold text-slate-800">${link.title}</span>
+                    </a>
+                `).join('');
+
+                allBlocksHtml += `
+                    <div class="mb-6 bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100">
+                        ${block.title ? `<h3 class="text-xl mb-4 font-bold text-blue-900 border-b border-blue-200 pb-2">${block.title}</h3>` : ''}
+                        <div class="flex ${flexDirection} gap-4">
+                            ${linksHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            wrapper.innerHTML = allBlocksHtml;
+        }
 
         // ==========================================
         // פונקציות המודל (Modal) של מסמכי הרפרנס בתקציר
