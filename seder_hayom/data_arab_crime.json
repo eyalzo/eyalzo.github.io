@@ -80,6 +80,47 @@
     }
   },
   "appConfiguration": {
+    "externalLinkBlocks": [
+      {
+        "row": 3,
+        "title": "תוצרי מידע ומדיה - ביטחון פנים",
+        "layout": "horizontal",
+        "links": [
+          {
+            "title": "דף נחיתה - ביטחון פנים",
+            "url": "https://rami890.github.io/landing_page_crime_exp/",
+            "icon": "🛡️"
+          },
+          {
+            "title": "סרטון נתוני פשיעה",
+            "url": "https://www.facebook.com/reel/869215925591108",
+            "icon": "📱"
+          },
+          {
+            "title": "הסכת ממ״מ - נתוני פשיעה",
+            "url": "https://www.youtube.com/watch?v=42RIH8sHv14",
+            "icon": "🎙️"
+          }
+        ]
+      },
+      {
+        "row": 3,
+        "title": "מפות אינטראקטיביות",
+        "layout": "vertical",
+        "links": [
+          {
+            "title": "מספר תיקי משטרה שנפתחו בשנים 2020 - סוף רבעון שלישי 2025, לפי תחנת משטרה וביחס לאוכלוסייה",
+            "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=632242d553354fca9c6e302e7e4b9ccf",
+            "icon": "🗺️"
+          },
+          {
+            "title": "מפת מצב כוח אדם – משטרה כחולה בתחנות ובמרחבים האופרטיביים",
+            "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=6ad58e3816d848d99e9fc20ba7154452",
+            "icon": "📍"
+          }
+        ]
+      }
+    ],
     "externalFrames": [
       {
         "tab": 2,
