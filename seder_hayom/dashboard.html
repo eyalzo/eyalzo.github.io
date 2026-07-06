@@ -296,7 +296,7 @@
 
         <div class="tab-content" id="content-communication">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
+                <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-start">
                     <h3 class="text-xl mb-4 border-b pb-3">📡 מדדי שיח ציבורי ותקשורתי</h3>
                     <div class="mb-5">
                         <div class="flex justify-between text-base mb-2">
@@ -323,7 +323,7 @@
                 </div>
 
                 <div class="bg-white p-6 rounded-xl shadow-md border flex flex-col justify-center">
-                    <h3 class="text-xl mb-4 border-b pb-3">📰 הדהוד בתקשורת</h3>
+                    <h3 class="text-xl mb-4 border-b pb-3">📰 בתקשורת</h3>
                     <div class="grid grid-cols-1 gap-3 h-full" id="media-echo-container"></div>
                 </div>
             </div>
@@ -486,7 +486,7 @@
             { id: 'documents', label: '📄 מסמכים' },
             { id: 'ecosystem', label: '🏛️ גורמים' },
             { id: 'communication', label: '📢 תקשורת' },
-            { id: 'vaadot', label: '🏛️ ועדות (מורחב)' },
+            { id: 'vaadot', label: '💼️ ועדות (מורחב)' },
             { id: 'timeline', label: '⏱️ ציר הזמן' }
         ];
 
@@ -598,13 +598,17 @@
                 document.getElementById('d-social-bar').style.width = data.metrics.social.score + '%';
                 document.getElementById('d-social-text').innerHTML = data.metrics.social.text;
 
-                // הדהוד בתקשורת
+                // הדהוד בתקשורת (מעודכן עם תאריך וכתובית)
                 const echoContainer = document.getElementById('media-echo-container');
                 if (data.mediaEcho && data.mediaEcho.length > 0) {
                     echoContainer.innerHTML = data.mediaEcho.map(item => `
                         <a href="${item.url}" target="_blank" class="p-3 border rounded-lg hover:bg-gray-50 transition block" style="text-decoration:none;">
+                            <div class="flex justify-between items-center text-xs text-gray-500 mb-1 font-mono">
+                                <span>${item.icon ? item.icon + ' ' : ''}${item.source}</span>
+                                <span>${item.date}</span>
+                            </div>
                             <strong class="text-blue-900 block mb-1 text-base">${item.title}</strong>
-                            <span class="text-sm text-gray-600 block">${item.source} | ${item.subtitle}</span>
+                            ${item.subtitle ? `<span class="text-sm text-gray-600 block italic">${item.subtitle}</span>` : ''}
                         </a>
                     `).join('');
                 } else {
@@ -863,7 +867,7 @@
             const categoryGroups = [
                 // שורה 1
                 { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },       // מיקום 1
-                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] }, // מיקום 2 (היה 4)
+                { key: 'committee', icon: '💼️', title: 'דיוני ועדות', color: '#ef4444', items: [] }, // מיקום 2 (היה 4)
                 { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },   // מיקום 3 (היה 2)
 
                 // שורה 2
