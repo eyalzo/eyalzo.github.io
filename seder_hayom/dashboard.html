@@ -294,6 +294,39 @@
 
         </div>
 
+        <div class="tab-content" id="content-mmm">
+            <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b gap-4">
+                    <div class="flex items-center gap-4 w-full md:w-auto flex-wrap">
+
+                        <div class="relative flex items-center" style="min-width: 170px;">
+                            <span style="position: absolute; right: 10px; color: #64748b; pointer-events: none; z-index: 10; font-size: 0.95rem;">🎛️</span>
+                            <select id="sortFilterDropdownMmm" class="search-input" style="width: 100%; padding: 0.4rem 2rem 0.4rem 1rem; font-weight: bold; color: #334155; cursor: pointer;" onchange="renderMmmCards()">
+                                <option value="relevant-15" selected>15 הכי רלוונטיים</option>
+                                <option value="latest-15">15 אחרונים</option>
+                                <option value="all">הכל</option>
+                            </select>
+                        </div>
+
+                        <div class="search-container" style="max-width: 300px; width: 100%; position: relative; display: flex; align-items: center;">
+                            <span style="position: absolute; right: 10px; color: #64748b; z-index: 10; font-size: 0.95rem;">🔎</span>
+                            <input type="text" id="searchInputMmm" class="search-input" style="padding-right: 2.2rem; width: 100%;" placeholder="חיפוש בתוצרי ממ״מ...">
+                            <button id="clearSearchBtnMmm" class="search-clear-btn" aria-label="נקה חיפוש">✖</button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 w-full md:w-auto justify-end">
+                        <button class="btn-back" style="font-size: 0.95rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;" onclick="toggleAllMmmDocs(true)">📂 פתיחת הכל</button>
+                        <button class="btn-back" style="font-size: 0.95rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;" onclick="toggleAllMmmDocs(false)">📁 סגירת הכל</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="mmmStream"></div>
+            </div>
+        </div>
+
+
         <!-- ========================================== -->
         <!-- טאב 2: זירת מסמכים וחקיקה פרלמנטרית -->
         <!-- ========================================== -->
@@ -359,28 +392,7 @@
         <!-- ========================================== -->
         <!-- טאב 4: ריכוז דיוני ועדות (טבלה חכמה) -->
         <!-- ========================================== -->
-        <div class="tab-content" id="content-vaadot">
-            <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
-                <h3 class="text-2xl mb-2" id="vaadot-table-title">ריכוז ישיבות ועדות מורחב</h3>
-                <p class="text-gray-500 text-sm mb-4" id="vaadot-table-sync-time">טוען נתוני Supabase מרוכזים...</p>
 
-                <div class="table-container">
-                    <table id="meetingsTable">
-                        <thead>
-                            <tr>
-                                <th onclick="handleVaadotSort(0)">עוצמה <span class="sort-direction" id="dir-0">▼</span></th>
-                                <th onclick="handleVaadotSort(1)">ועדה <span class="sort-direction" id="dir-1"></span></th>
-                                <th onclick="handleVaadotSort(2)">נושא הדיון <span class="sort-direction" id="dir-2"></span></th>
-                                <th onclick="handleVaadotSort(3)">מספר ישיבות <span class="sort-direction" id="dir-3"></span></th>
-                                <th onclick="handleVaadotSort(4)">מתאריך <span class="sort-direction" id="dir-4"></span></th>
-                                <th onclick="handleVaadotSort(5)">עד תאריך <span class="sort-direction" id="dir-5"></span></th>
-                            </tr>
-                        </thead>
-                        <tbody id="vaadotTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
 
         <!-- ========================================== -->
         <!-- טאב 5: ציר זמן ורשת קשרים אינטראקטיבית -->
@@ -446,7 +458,7 @@
         const tabDefinitions = [
             { id: 'overview', label: '📋 תקציר' },
             { id: 'ecosystem', label: '🏛️ גורמים' },
-            { id: 'mmm', label: '📄️ תוצרי ממ״מ' },
+            { id: 'mmm', label: '📖 תוצרי ממ״מ' },
             { id: 'documents', label: '📄 מסמכים' }
         ];
 
@@ -553,6 +565,7 @@
                 setupSearch();
                 renderEcosystem();
                 renderCards();
+                renderMmmCards();
                 initTimelineLayout(data.appConfiguration.items);
 
                 // בנייה ורינדור של מערך הטאבים הדינמי (כולל הזרקת ה-externalFrames מתוך ה-JSON)
@@ -655,11 +668,7 @@
             if (activeContent) activeContent.classList.add('active-content');
 
             // 3. טיפול ייעודי ברכיבים תלויי רוחב/רשת (Lazy Render / Lazy Load)
-            if (tabId === 'vaadot') {
-                // טעינה עצלנית של קובץ הועדות המשלים מ-Supabase רק בעת מעבר לטאב
-                lazyLoadVaadotTable();
-            }
-            else if (tabId.startsWith('extframe-')) {
+            if (tabId.startsWith('extframe-')) {
                 // פתרון באג גודל 0px וחיסכון במשאבים - הזרקת src לאייפריים רק כשהוא הופך לגלוי!
                 const iframe = activeContent.querySelector('.frame-lazy-load');
                 if (iframe && !iframe.src) {
@@ -674,17 +683,14 @@
         function setupSearch() {
             const searchInput = document.getElementById('searchInput');
             const clearBtn = document.getElementById('clearSearchBtn');
+            searchInput.addEventListener('input', (e) => { clearBtn.style.display = e.target.value.length > 0 ? 'block' : 'none'; renderCards(); });
+            clearBtn.addEventListener('click', () => { searchInput.value = ''; clearBtn.style.display = 'none'; renderCards(); });
 
-            searchInput.addEventListener('input', (e) => {
-                clearBtn.style.display = e.target.value.length > 0 ? 'block' : 'none';
-                renderCards();
-            });
-
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                clearBtn.style.display = 'none';
-                renderCards();
-            });
+            // הוספת חיפוש עבור טאב הממ"מ
+            const searchInputMmm = document.getElementById('searchInputMmm');
+            const clearBtnMmm = document.getElementById('clearSearchBtnMmm');
+            searchInputMmm.addEventListener('input', (e) => { clearBtnMmm.style.display = e.target.value.length > 0 ? 'block' : 'none'; renderMmmCards(); });
+            clearBtnMmm.addEventListener('click', () => { searchInputMmm.value = ''; clearBtnMmm.style.display = 'none'; renderMmmCards(); });
         }
 
         function filterItemsBySearchAndType(items, filterType, searchTerm) {
@@ -765,6 +771,46 @@
             `;
         }
 
+        // ==========================================
+        // פונקציות לוגיקה עבור טאב הממ"מ
+        // ==========================================
+        function renderMmmCards() {
+            const container = document.getElementById('mmmStream');
+            container.innerHTML = '';
+
+            const searchTerm = document.getElementById('searchInputMmm').value.toLowerCase().trim();
+            let mmmItems = window.appConfiguration.items.filter(i => i.type === 'mmm');
+            let filteredItems = filterItemsBySearchAndType(mmmItems, 'all', searchTerm);
+
+            const dropdown = document.getElementById('sortFilterDropdownMmm');
+            let dropdownVal = dropdown ? dropdown.value : 'relevant-15';
+            let sortMode = dropdownVal === 'all' ? 'all' : dropdownVal.split('-')[0];
+            let limit = dropdownVal === 'all' ? null : parseInt(dropdownVal.split('-')[1], 10);
+
+            // הפעלת מיון וחיתוך סטנדרטיים לחלוטין, ללא הפרדת השורה הראשונה
+            let itemsToShow = typeof getSortedAndSlicedItems === 'function' ? getSortedAndSlicedItems(filteredItems, sortMode, limit) : filteredItems;
+
+            if (itemsToShow.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b; font-size: 1.1rem;">לא נמצאו תוצרי ממ״מ.</div>`;
+                return;
+            }
+
+            itemsToShow.forEach((item, index) => {
+                let cardHtml = buildCardHtml(item, index, '#8b5cf6');
+
+                // הבטחה שהכרטיסיות נמתחות לגובה אחיד בתוך הגריד למראה נקי
+                cardHtml = cardHtml.replace('class="doc-item-wrapper"', 'class="doc-item-wrapper" style="height: 100%; display: flex; flex-direction: column;"');
+
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function toggleAllMmmDocs(open) {
+            document.querySelectorAll('#mmmStream .doc-full-details').forEach(el => {
+                if(open) el.classList.add('open'); else el.classList.remove('open');
+            });
+        }
+
         function renderCards() {
             const container = document.getElementById('documentsStream');
             container.innerHTML = '';
@@ -780,12 +826,11 @@
             // סדר הקטגוריות המעודכן בגריד (3 עמודות בשורה)
             const categoryGroups = [
                 // שורה 1
-                { key: 'mmm', icon: '📊', title: 'מסמכי ממ״מ', color: '#8b5cf6', items: [] },       // מיקום 1
-                { key: 'committee', icon: '💼️', title: 'דיוני ועדות', color: '#ef4444', items: [] }, // מיקום 2 (היה 4)
-                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },   // מיקום 3 (היה 2)
+                { key: 'committee', icon: '🏛️', title: 'דיוני ועדות', color: '#ef4444', items: [] },
+                { key: 'activeLaw', icon: '📝', title: 'הצעות חוק', color: '#3b82f6', items: [] },
+                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] },
 
                 // שורה 2
-                { key: 'passedLaw', icon: '✅', title: 'חוקים שעברו', color: '#10b981', items: [] }, // מיקום 4 (עבר לשורה 2)
                 { key: 'comptroller', icon: '🔍', title: 'מבקר המדינה', color: '#f59e0b', items: [] },
                 { key: 'govDecision', icon: '📜', title: 'החלטות ממשלה', color: '#14b8a6', items: [] }
             ];
@@ -832,7 +877,7 @@
         }
 
         function toggleAllDocs(open) {
-            document.querySelectorAll('.doc-full-details').forEach(el => {
+            document.querySelectorAll('#documentsStream .doc-full-details').forEach(el => {
                 if(open) el.classList.add('open'); else el.classList.remove('open');
             });
         }
