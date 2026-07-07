@@ -80,6 +80,32 @@
     }
   },
   "appConfiguration": {
+    "mmmSection": {
+      "resources": [
+        {
+          "type": "frame",
+          "title": "מספר תיקי משטרה - מפה אינטראקטיבית",
+          "description": "מפה אינטראקטיבית המציגה נתונים לפי תחנת משטרה וביחס לאוכלוסייה בין השנים 2020-2025.",
+          "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=632242d553354fca9c6e302e7e4b9ccf",
+          "icon": "🗺️",
+          "frameHeight": "600px"
+        },
+        {
+          "type": "button",
+          "title": "דף נחיתה - ביטחון פנים",
+          "description": "פורטל המרכז את כלל התוצרים והחומרים בנושא משטרה וביטחון פנים.",
+          "url": "https://rami890.github.io/landing_page_crime_exp/",
+          "icon": "🛡️"
+        },
+        {
+          "type": "link",
+          "title": "הסכת ממ״מ - נתוני פשיעה",
+          "description": "האזינו לפודקאסט מקיף על פשיעה במגזר עם חוקרי המרכז.",
+          "url": "https://www.youtube.com/watch?v=42RIH8sHv14",
+          "icon": "🎙️"
+        }
+      ]
+    },
     "externalFrames": [
       {
         "tab": 2,
