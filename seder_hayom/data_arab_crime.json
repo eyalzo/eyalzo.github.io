@@ -81,31 +81,47 @@
   },
   "appConfiguration": {
     "mmmSection": {
-      "resources": [
-        {
-          "type": "frame",
-          "title": "מספר תיקי משטרה - מפה אינטראקטיבית",
-          "description": "מפה אינטראקטיבית המציגה נתונים לפי תחנת משטרה וביחס לאוכלוסייה בין השנים 2020-2025.",
-          "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=632242d553354fca9c6e302e7e4b9ccf",
-          "icon": "🗺️",
-          "frameHeight": "600px"
-        },
-        {
-          "type": "button",
-          "title": "דף נחיתה - ביטחון פנים",
-          "description": "פורטל המרכז את כלל התוצרים והחומרים בנושא משטרה וביטחון פנים.",
-          "url": "https://rami890.github.io/landing_page_crime_exp/",
-          "icon": "🛡️"
-        },
-        {
-          "type": "link",
-          "title": "הסכת ממ״מ - נתוני פשיעה",
-          "description": "האזינו לפודקאסט מקיף על פשיעה במגזר עם חוקרי המרכז.",
-          "url": "https://www.youtube.com/watch?v=42RIH8sHv14",
-          "icon": "🎙️"
-        }
-      ]
-    },
+    "resources": [
+      {
+        "type": "button",
+        "title": "דף נחיתה - ביטחון פנים",
+        "description": "פורטל המרכז את כלל התוצרים והחומרים בנושא משטרה וביטחון פנים.",
+        "url": "https://rami890.github.io/landing_page_crime_exp/",
+        "icon": "🛡️"
+      },
+      {
+        "type": "link",
+        "title": "הסכת ממ״מ - נתוני פשיעה",
+        "description": "האזינו לפודקאסט מקיף על פשיעה במגזר עם חוקרי המרכז.",
+        "url": "https://www.youtube.com/watch?v=42RIH8sHv14",
+        "icon": "🎙️",
+        "frameHeight": "400px"
+      },
+      {
+        "type": "frame",
+        "title": "מספר תיקי משטרה - מפה אינטראקטיבית",
+        "description": "מספר תיקי משטרה שנפתחו בשנים 2020 - סוף רבעון שלישי 2025, לפי תחנת משטרה וביחס לאוכלוסייה.",
+        "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=632242d553354fca9c6e302e7e4b9ccf",
+        "icon": "🗺️",
+        "frameHeight": "600px"
+      },
+      {
+        "type": "frame",
+        "title": "מפת מצב כוח אדם – משטרה כחולה",
+        "description": "מפה המציגה את מצב כוח האדם בתחנות ובמרחבים האופרטיביים.",
+        "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=6ad58e3816d848d99e9fc20ba7154452",
+        "icon": "📍",
+        "frameHeight": "600px"
+      },
+      {
+        "type": "button",
+        "title": "סרטון נתוני פשיעה",
+        "description": "סרטון קצר המציג את עיקרי הנתונים שנאספו (פייסבוק Reel).",
+        "url": "https://www.facebook.com/reel/869215925591108",
+        "icon": "📱"
+      }
+    ]
+  },
     "externalFrames": [
       {
         "tab": 2,

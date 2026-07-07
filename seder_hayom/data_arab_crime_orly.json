@@ -120,6 +120,48 @@
     }
   },
   "appConfiguration": {
+    "mmmSection": {
+      "resources": [
+        {
+          "type": "button",
+          "title": "דף נחיתה - ביטחון פנים",
+          "description": "פורטל המרכז את כלל התוצרים והחומרים בנושא משטרה וביטחון פנים.",
+          "url": "https://rami890.github.io/landing_page_crime_exp/",
+          "icon": "🛡️"
+        },
+        {
+          "type": "link",
+          "title": "הסכת ממ״מ - נתוני פשיעה",
+          "description": "האזינו לפודקאסט מקיף על פשיעה במגזר עם חוקרי המרכז.",
+          "url": "https://www.youtube.com/watch?v=42RIH8sHv14",
+          "icon": "🎙️",
+          "frameHeight": "400px"
+        },
+        {
+          "type": "frame",
+          "title": "מספר תיקי משטרה - מפה אינטראקטיבית",
+          "description": "מספר תיקי משטרה שנפתחו בשנים 2020 - סוף רבעון שלישי 2025, לפי תחנת משטרה וביחס לאוכלוסייה.",
+          "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=632242d553354fca9c6e302e7e4b9ccf",
+          "icon": "🗺️",
+          "frameHeight": "600px"
+        },
+        {
+          "type": "frame",
+          "title": "מפת מצב כוח אדם – משטרה כחולה",
+          "description": "מפה המציגה את מצב כוח האדם בתחנות ובמרחבים האופרטיביים.",
+          "url": "https://mmmknesset.maps.arcgis.com/apps/instant/basic/index.html?appid=6ad58e3816d848d99e9fc20ba7154452",
+          "icon": "📍",
+          "frameHeight": "600px"
+        },
+        {
+          "type": "button",
+          "title": "סרטון נתוני פשיעה",
+          "description": "סרטון קצר המציג את עיקרי הנתונים שנאספו (פייסבוק Reel).",
+          "url": "https://www.facebook.com/reel/869215925591108",
+          "icon": "📱"
+        }
+      ]
+    },
     "externalLinkBlocks": [
       {
         "row": 3,
@@ -222,624 +264,624 @@
       ]
     },
     "items": [
-  {
-    "date": "01/05/2026",
-    "relevance": 10,
-    "type": "comptroller",
-    "source": "דוח מבקר המדינה (2026)",
-    "idCode": "דוח מעקב נגב 2026",
-    "link": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2026/Governability-in-the-Negev/2026-Negev.pdf",
-    "title": "היבטי משילות בנגב - ביקורת מעקב מורחבת",
-    "summary": "דוח מעקב מקיף הבוחן את התקדמות הטיפול בפשיעה, חוסר המשילות וההיבטים האזרחיים בנגב, בהמשך לדוח המבקר הקודם משנת 2021.",
-    "impact": "הצפת פערים ביישום החלטות ממשלה לחיזוק המשילות בנגב, והגברת הפיקוח הפרלמנטרי בוועדות הכנסת על מבצעי אכיפה במחוז דרום.",
-    "keywords": [
-      "משילות",
-      "נגב",
-      "ביקורת_מעקב"
-    ],
-    "relatedDocs": [
       {
-        "idCode": "mmm_8539",
-        "label": "דוח נתוני שיטור בנגב",
-        "weight": 9
+        "date": "01/05/2026",
+        "relevance": 10,
+        "type": "comptroller",
+        "source": "דוח מבקר המדינה (2026)",
+        "idCode": "דוח מעקב נגב 2026",
+        "link": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2026/Governability-in-the-Negev/2026-Negev.pdf",
+        "title": "היבטי משילות בנגב - ביקורת מעקב מורחבת",
+        "summary": "דוח מעקב מקיף הבוחן את התקדמות הטיפול בפשיעה, חוסר המשילות וההיבטים האזרחיים בנגב, בהמשך לדוח המבקר הקודם משנת 2021.",
+        "impact": "הצפת פערים ביישום החלטות ממשלה לחיזוק המשילות בנגב, והגברת הפיקוח הפרלמנטרי בוועדות הכנסת על מבצעי אכיפה במחוז דרום.",
+        "keywords": [
+          "משילות",
+          "נגב",
+          "ביקורת_מעקב"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8539",
+            "label": "דוח נתוני שיטור בנגב",
+            "weight": 9
+          },
+          {
+            "idCode": "committee_2243180",
+            "label": "דיון: אובדן משילות בנגב",
+            "weight": 10
+          },
+          {
+            "idCode": "דוח 72א",
+            "label": "הדוח הקודם בנושא המשילות בנגב",
+            "weight": 9
+          }
+        ]
       },
       {
-        "idCode": "committee_2243180",
-        "label": "דיון: אובדן משילות בנגב",
-        "weight": 10
+        "date": "04/02/2026",
+        "relevance": 10,
+        "type": "comptroller",
+        "source": "דוח מבקר המדינה 76א (2026)",
+        "idCode": "דוח 76א",
+        "link": "https://www.mevaker.gov.il/he/Reports/Pages/810.aspx",
+        "title": "זליגת כספי מדינה ותקציבי פיתוח לארגוני פשיעה ברשויות המקומיות הערביות",
+        "summary": "דוח מיוחד ועדכני שפורסם בזמן אמת, הסוקר את האופן שבו ארגוני פשיעה השתלטו על מכרזי פינוי אשפה, גינון ותשתיות.",
+        "keywords": [
+          "מכרזים",
+          "תקציבי_פיתוח",
+          "פשיעה_כלכלית"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "החלטה 455",
+            "label": "הקפאת התקציבים",
+            "weight": 10
+          },
+          {
+            "idCode": "מ/1885",
+            "label": "הצעת חוק לעצירת מכרזים",
+            "weight": 9
+          },
+          {
+            "idCode": "committee_2231267",
+            "label": "דיון: איומים על ראשי רשויות",
+            "weight": 8
+          }
+        ]
       },
       {
+        "date": "12/05/2025",
+        "relevance": 9,
+        "type": "comptroller",
+        "source": "דוח מבקר המדינה 75ב (2025)",
+        "idCode": "דוח 75ב",
+        "link": "https://www.mevaker.gov.il/he/Reports/Pages/792.aspx",
+        "title": "דוח מעקב: יישום תוכנית 'מסלול בטוח' והטיפול בפשיעה המאורגנת בחברה הערבית",
+        "summary": "ביקורת מעקב חריפה המצביעה על כך שלמרות התקציבים שחולקו, חלה ירידה בשיעורי הפענוח של אירועי הרצח.",
+        "keywords": [
+          "מסלול_בטוח",
+          "פענוח_רצח",
+          "ביקורת_מעקב"
+        ]
+      },
+      {
+        "date": "01/08/2024",
+        "relevance": 9,
+        "type": "comptroller",
+        "source": "דוח מבקר המדינה 74ג (2024)",
+        "idCode": "דוח 74ג",
+        "link": "https://www.mevaker.gov.il/he/Reports/Pages/774.aspx",
+        "title": "התמודדות משטרת ישראל והרשויות עם תופעת דמי החסות (פרוטקשן)",
+        "summary": "ביקורת חריפה על היעדר טיפול שורשי בפשיעה כלכלית.",
+        "keywords": [
+          "פרוטקשן",
+          "מכרזים",
+          "פשיעה_כלכלית"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "פ/6766/25",
+            "label": "הצעת חוק בנושא פרוטקשן",
+            "weight": 8
+          },
+          {
+            "idCode": "committee_2243180",
+            "label": "דיון: תופעת הפרוטקשן בצפון",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "19/05/2021",
+        "relevance": 10,
+        "type": "comptroller",
+        "source": "דוח מבקר המדינה 71ג (2021)",
+        "idCode": "דוח 71ג",
+        "link": "https://www.mevaker.gov.il/he/Reports/Pages/684.aspx",
+        "title": "התמודדות משטרת ישראל עם אמצעי לחימה לא חוקיים ואירועי ירי בחברה הערבית",
+        "summary": "הדוח המרכזי שחשף כשלים חמורים באיסוף נשק, חוסר תיאום בין המשטרה לשב\"כ ופענוח לקוי של מעשי רצח.",
+        "keywords": [
+          "אמל\"ח",
+          "ירי",
+          "משטרת_ישראל"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "committee_2219788",
+            "label": "דיון מעקב בוועדת ביקורת",
+            "weight": 10
+          },
+          {
+            "idCode": "committee_2238273",
+            "label": "דיון: אמל\"ח וירי",
+            "weight": 10
+          },
+          {
+            "idCode": "mmm_8438",
+            "label": "מסמך לקראת דיון מעקב",
+            "weight": 10
+          }
+        ]
+      },
+      {
+        "date": "19/10/2021",
+        "relevance": 9,
+        "type": "comptroller",
+        "source": "דוח מבקר המדינה 72א (2021)",
         "idCode": "דוח 72א",
-        "label": "הדוח הקודם בנושא המשילות בנגב",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "04/02/2026",
-    "relevance": 10,
-    "type": "comptroller",
-    "source": "דוח מבקר המדינה 76א (2026)",
-    "idCode": "דוח 76א",
-    "link": "https://www.mevaker.gov.il/he/Reports/Pages/810.aspx",
-    "title": "זליגת כספי מדינה ותקציבי פיתוח לארגוני פשיעה ברשויות המקומיות הערביות",
-    "summary": "דוח מיוחד ועדכני שפורסם בזמן אמת, הסוקר את האופן שבו ארגוני פשיעה השתלטו על מכרזי פינוי אשפה, גינון ותשתיות.",
-    "keywords": [
-      "מכרזים",
-      "תקציבי_פיתוח",
-      "פשיעה_כלכלית"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "החלטה 455",
-        "label": "הקפאת התקציבים",
-        "weight": 10
+        "link": "https://www.mevaker.gov.il/he/Reports/Pages/695.aspx",
+        "title": "היבטי משילות בנגב - פשיעה חקלאית, השתלטות על קרקעות והברחות",
+        "summary": "דוח מקיף המצביע על אובדן ביטחון אישי בנגב.",
+        "keywords": [
+          "משילות",
+          "נגב",
+          "בדואים"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8539",
+            "label": "דוח נתוני שיטור בנגב",
+            "weight": 8
+          }
+        ]
       },
       {
-        "idCode": "מ/1885",
-        "label": "הצעת חוק לעצירת מכרזים",
-        "weight": 9
+        "date": "02/05/2023",
+        "relevance": 9,
+        "type": "comptroller",
+        "source": "דוחות מיוחדים (מאי 2023)",
+        "idCode": "דוח צעירים 2023",
+        "link": "https://www.mevaker.gov.il/he/Reports/Pages/735.aspx",
+        "title": "הטיפול הממשלתי בחוסר מעש בקרב צעירים בחברה הערבית",
+        "summary": "הדוח מצביע על קשר ישיר בין שיעור הצעירים שאינם במסגרת תעסוקה או לימודים לבין אחוזי הפשיעה הגבוהים.",
+        "keywords": [
+          "צעירים",
+          "חוסר_מעש",
+          "רווחה"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "committee_2235704",
+            "label": "ישיבת מעקב בוועדת צעירים",
+            "weight": 9
+          },
+          {
+            "idCode": "mmm_8331",
+            "label": "נתוני פשיעת צעירים",
+            "weight": 8
+          }
+        ]
       },
       {
-        "idCode": "committee_2231267",
-        "label": "דיון: איומים על ראשי רשויות",
-        "weight": 8
-      }
-    ]
-  },
-  {
-    "date": "12/05/2025",
-    "relevance": 9,
-    "type": "comptroller",
-    "source": "דוח מבקר המדינה 75ב (2025)",
-    "idCode": "דוח 75ב",
-    "link": "https://www.mevaker.gov.il/he/Reports/Pages/792.aspx",
-    "title": "דוח מעקב: יישום תוכנית 'מסלול בטוח' והטיפול בפשיעה המאורגנת בחברה הערבית",
-    "summary": "ביקורת מעקב חריפה המצביעה על כך שלמרות התקציבים שחולקו, חלה ירידה בשיעורי הפענוח של אירועי הרצח.",
-    "keywords": [
-      "מסלול_בטוח",
-      "פענוח_רצח",
-      "ביקורת_מעקב"
-    ]
-  },
-  {
-    "date": "01/08/2024",
-    "relevance": 9,
-    "type": "comptroller",
-    "source": "דוח מבקר המדינה 74ג (2024)",
-    "idCode": "דוח 74ג",
-    "link": "https://www.mevaker.gov.il/he/Reports/Pages/774.aspx",
-    "title": "התמודדות משטרת ישראל והרשויות עם תופעת דמי החסות (פרוטקשן)",
-    "summary": "ביקורת חריפה על היעדר טיפול שורשי בפשיעה כלכלית.",
-    "keywords": [
-      "פרוטקשן",
-      "מכרזים",
-      "פשיעה_כלכלית"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "פ/6766/25",
-        "label": "הצעת חוק בנושא פרוטקשן",
-        "weight": 8
+        "date": "24/10/2021",
+        "relevance": 10,
+        "type": "govDecision",
+        "source": "ממשלת ישראל",
+        "idCode": "החלטה 549",
+        "link": "https://www.gov.il/he/pages/dec549_2021",
+        "title": "החלטת ממשלה 549: תכנית לטיפול בתופעות הפשיעה והאלימות בחברה הערבית 2022-2026",
+        "summary": "תוכנית חומש ממשלתית רחבת היקף שהתמקדה בתחומי השיטור והאכיפה.",
+        "keywords": [
+          "אכיפה",
+          "תוכנית_חומש",
+          "פשיעה"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "החלטה 852",
+            "label": "החלטת המסגרת הקודמת",
+            "weight": 9
+          }
+        ]
       },
       {
-        "idCode": "committee_2243180",
-        "label": "דיון: תופעת הפרוטקשן בצפון",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "19/05/2021",
-    "relevance": 10,
-    "type": "comptroller",
-    "source": "דוח מבקר המדינה 71ג (2021)",
-    "idCode": "דוח 71ג",
-    "link": "https://www.mevaker.gov.il/he/Reports/Pages/684.aspx",
-    "title": "התמודדות משטרת ישראל עם אמצעי לחימה לא חוקיים ואירועי ירי בחברה הערבית",
-    "summary": "הדוח המרכזי שחשף כשלים חמורים באיסוף נשק, חוסר תיאום בין המשטרה לשב\"כ ופענוח לקוי של מעשי רצח.",
-    "keywords": [
-      "אמל\"ח",
-      "ירי",
-      "משטרת_ישראל"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "committee_2219788",
-        "label": "דיון מעקב בוועדת ביקורת",
-        "weight": 10
-      },
-      {
-        "idCode": "committee_2238273",
-        "label": "דיון: אמל\"ח וירי",
-        "weight": 10
-      },
-      {
-        "idCode": "mmm_8438",
-        "label": "מסמך לקראת דיון מעקב",
-        "weight": 10
-      }
-    ]
-  },
-  {
-    "date": "19/10/2021",
-    "relevance": 9,
-    "type": "comptroller",
-    "source": "דוח מבקר המדינה 72א (2021)",
-    "idCode": "דוח 72א",
-    "link": "https://www.mevaker.gov.il/he/Reports/Pages/695.aspx",
-    "title": "היבטי משילות בנגב - פשיעה חקלאית, השתלטות על קרקעות והברחות",
-    "summary": "דוח מקיף המצביע על אובדן ביטחון אישי בנגב.",
-    "keywords": [
-      "משילות",
-      "נגב",
-      "בדואים"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "mmm_8539",
-        "label": "דוח נתוני שיטור בנגב",
-        "weight": 8
-      }
-    ]
-  },
-  {
-    "date": "02/05/2023",
-    "relevance": 9,
-    "type": "comptroller",
-    "source": "דוחות מיוחדים (מאי 2023)",
-    "idCode": "דוח צעירים 2023",
-    "link": "https://www.mevaker.gov.il/he/Reports/Pages/735.aspx",
-    "title": "הטיפול הממשלתי בחוסר מעש בקרב צעירים בחברה הערבית",
-    "summary": "הדוח מצביע על קשר ישיר בין שיעור הצעירים שאינם במסגרת תעסוקה או לימודים לבין אחוזי הפשיעה הגבוהים.",
-    "keywords": [
-      "צעירים",
-      "חוסר_מעש",
-      "רווחה"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "committee_2235704",
-        "label": "ישיבת מעקב בוועדת צעירים",
-        "weight": 9
-      },
-      {
-        "idCode": "mmm_8331",
-        "label": "נתוני פשיעת צעירים",
-        "weight": 8
-      }
-    ]
-  },
-  {
-    "date": "24/10/2021",
-    "relevance": 10,
-    "type": "govDecision",
-    "source": "ממשלת ישראל",
-    "idCode": "החלטה 549",
-    "link": "https://www.gov.il/he/pages/dec549_2021",
-    "title": "החלטת ממשלה 549: תכנית לטיפול בתופעות הפשיעה והאלימות בחברה הערבית 2022-2026",
-    "summary": "תוכנית חומש ממשלתית רחבת היקף שהתמקדה בתחומי השיטור והאכיפה.",
-    "keywords": [
-      "אכיפה",
-      "תוכנית_חומש",
-      "פשיעה"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "החלטה 852",
-        "label": "החלטת המסגרת הקודמת",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "21/10/2021",
-    "relevance": 10,
-    "type": "govDecision",
-    "source": "ממשלת ישראל",
-    "idCode": "החלטה 550",
-    "link": "https://www.gov.il/he/pages/dec550_2021",
-    "title": "החלטת ממשלה 550 (תקאדום): התוכנית הכלכלית לצמצום פערים בחברה הערבית עד לשנת 2026",
-    "summary": "תוכנית חומש כוללת (תקאדום) שנועדה לחזק את החברה הערבית ולשלב אותה בחברה ובכלכלה הישראלית.",
-    "keywords": [
-      "תקאדום",
-      "צמצום_פערים",
-      "כלכלה"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "החלטה 852",
-        "label": "החלטת המסגרת הקודמת",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "01/03/2021",
-    "relevance": 9,
-    "type": "govDecision",
-    "source": "ממשלת ישראל",
-    "idCode": "החלטה 852",
-    "link": "https://www.gov.il/he/pages/dec852_2021",
-    "title": "החלטת ממשלה 852: מדיניות ממשלתית לטיפול בתופעות הפשיעה והאלימות בחברה הערבית",
-    "summary": "החלטה מערכתית המערבת את כל משרדי הממשלה.",
-    "keywords": [
-      "ועדת_מנכ\"לים",
-      "נשק_בלתי_חוקי",
-      "מדיניות"
-    ]
-  },
-  {
-    "date": "01/07/2025",
-    "relevance": 8,
-    "type": "govDecision",
-    "source": "משרד האוצר",
-    "idCode": "החלטה 455",
-    "link": "",
-    "title": "הקפאת תקציבי פיתוח (תוכנית 550) לרשויות ערביות",
-    "summary": "שר האוצר הורה להקפיא העברת מאות מיליוני שקלים לרשויות הערביות בטענה שחלק מהכספים זולגים לארגוני הפשיעה דרך מכרזי תשתיות.",
-    "keywords": [
-      "תקציב",
-      "הקפאה",
-      "תוכנית_550"
-    ],
-    "relatedDocs": [
-      {
+        "date": "21/10/2021",
+        "relevance": 10,
+        "type": "govDecision",
+        "source": "ממשלת ישראל",
         "idCode": "החלטה 550",
-        "label": "התוכנית המוקפאת (תקאדום)",
-        "weight": 10
-      }
-    ]
-  },
-  {
-    "date": "16/12/2024",
-    "relevance": 10,
-    "type": "passedLaw",
-    "source": "רשומות ספר החוקים",
-    "idCode": "2225619",
-    "link": "https://main.knesset.gov.il/APPS/legislation/main/laws/2225619",
-    "title": "חוק הגנה על הציבור מפני ארגוני פשיעה, התשפ\"ה-2024",
-    "summary": "חוק שנועד להתמודד באופן שורשי עם התעצמות הפשיעה המאורגנת.",
-    "keywords": [
-      "ארגוני_פשיעה",
-      "פרוטקשן",
-      "חקיקה"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "פ/6158/25",
-        "label": "הצעת חוק: סמכויות מיוחדות",
-        "weight": 8
+        "link": "https://www.gov.il/he/pages/dec550_2021",
+        "title": "החלטת ממשלה 550 (תקאדום): התוכנית הכלכלית לצמצום פערים בחברה הערבית עד לשנת 2026",
+        "summary": "תוכנית חומש כוללת (תקאדום) שנועדה לחזק את החברה הערבית ולשלב אותה בחברה ובכלכלה הישראלית.",
+        "keywords": [
+          "תקאדום",
+          "צמצום_פערים",
+          "כלכלה"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "החלטה 852",
+            "label": "החלטת המסגרת הקודמת",
+            "weight": 9
+          }
+        ]
       },
       {
-        "idCode": "פ/5716/25",
-        "label": "הצעה: זיקה לארגון פשיעה",
-        "weight": 7
-      }
-    ]
-  },
-  {
-    "date": "08/06/2026",
-    "relevance": 10,
-    "type": "activeLaw",
-    "idCode": "פ/6766/25",
-    "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2243096",
-    "title": "הצעת חוק המאבק בנטילת דמי חסות (תיקוני חקיקה), התשפ\"ו-2026",
-    "summary": "הצעת חוק המבקשת להחמיר משמעותית את הענישה והכלים להתמודדות עם תופעת הפרוטקשן וגביית דמי החסות באיומים מצד ארגוני פשיעה.",
-    "keywords": [
-      "פרוטקשן",
-      "דמי_חסות",
-      "פשיעה_כלכלית"
-    ],
-    "relatedDocs": [
-      {
-        "idCode": "committee_2243180",
-        "label": "דיון: פרוטקשן בצפון",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "10/07/2024",
-    "relevance": 9,
-    "type": "committee",
-    "link": "https://main.knesset.gov.il/apps/committees/2227/sessions/2219788",
-    "author": "הוועדה לענייני ביקורת המדינה",
-    "idCode": "committee_2219788",
-    "title": "התמודדות משטרת ישראל עם הפשיעה בחברה הערבית - דוח ביקורת שנתי 71 ג׳ - ישיבת מעקב",
-    "summary": "ישיבת מעקב מקיפה בנוגע להתקדמות בתיקון הליקויים שעלו בדוח מבקר המדינה 71ג'.",
-    "relatedDocs": [
-      {
-        "idCode": "mmm_8438",
-        "label": "מסמך לקראת דיון מעקב",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "30/12/2025",
-    "relevance": 10,
-    "type": "committee",
-    "link": "https://main.knesset.gov.il/apps/committees/2227/sessions/2238273",
-    "idCode": "committee_2238273",
-    "title": "התמודדות משטרת ישראל עם החזקת אמצעי לחימה לא חוקיים ואירועי ירי ביישובי החברה הערבית (דוח מבקר המדינה)",
-    "relatedDocs": [
-      {
-        "idCode": "mmm_8438",
-        "label": "מסמך הכנה לדיון (ממ\"מ)",
-        "weight": 10
+        "date": "01/03/2021",
+        "relevance": 9,
+        "type": "govDecision",
+        "source": "ממשלת ישראל",
+        "idCode": "החלטה 852",
+        "link": "https://www.gov.il/he/pages/dec852_2021",
+        "title": "החלטת ממשלה 852: מדיניות ממשלתית לטיפול בתופעות הפשיעה והאלימות בחברה הערבית",
+        "summary": "החלטה מערכתית המערבת את כל משרדי הממשלה.",
+        "keywords": [
+          "ועדת_מנכ\"לים",
+          "נשק_בלתי_חוקי",
+          "מדיניות"
+        ]
       },
       {
-        "idCode": "mmm_8437",
-        "label": "נתוני רקע (כוח אדם במשטרה)",
-        "weight": 8
-      },
-      {
-        "idCode": "מ/1956",
-        "label": "חקיקה מרחיבת סמכויות חיפוש",
-        "weight": 7
-      },
-      {
-        "idCode": "mmm_8570",
-        "label": "נתוני רקע: אמל\"ח במחוז דרום",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "30/12/2025",
-    "relevance": 10,
-    "type": "committee",
-    "link": "https://main.knesset.gov.il/apps/committees/2234/sessions/2235704",
-    "idCode": "committee_2235704",
-    "title": "פעילות הממשלה למיגור האלימות בקרב צעירים בחברה הערבית",
-    "relatedDocs": [
-      {
-        "idCode": "mmm_8331",
-        "label": "דוח נתונים שהוזמן לועדה",
-        "weight": 10
-      },
-      {
-        "idCode": "החלטה 550",
-        "label": "תוכנית התקצוב הנידונה",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "01/07/2025",
-    "relevance": 10,
-    "type": "committee",
-    "link": "https://main.knesset.gov.il/apps/committees/2229/sessions/2231267",
-    "idCode": "committee_2231267",
-    "title": "האלימות והאיומים כלפי ראשי רשויות בחברה הערבית",
-    "relatedDocs": [
-      {
-        "idCode": "מ/1885",
-        "label": "חקיקה: הגבלת מכרזים",
-        "weight": 8
-      },
-      {
+        "date": "01/07/2025",
+        "relevance": 8,
+        "type": "govDecision",
+        "source": "משרד האוצר",
         "idCode": "החלטה 455",
-        "label": "הקפאת התקציבים",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "15/05/2023",
-    "relevance": 10,
-    "type": "committee",
-    "link": "https://main.knesset.gov.il/apps/committees/2229/sessions/2204724",
-    "idCode": "committee_2204724",
-    "title": "דיון מהיר בנושא: האלימות הגואה בחברה הערבית",
-    "relatedDocs": [
+        "link": "",
+        "title": "הקפאת תקציבי פיתוח (תוכנית 550) לרשויות ערביות",
+        "summary": "שר האוצר הורה להקפיא העברת מאות מיליוני שקלים לרשויות הערביות בטענה שחלק מהכספים זולגים לארגוני הפשיעה דרך מכרזי תשתיות.",
+        "keywords": [
+          "תקציב",
+          "הקפאה",
+          "תוכנית_550"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "החלטה 550",
+            "label": "התוכנית המוקפאת (תקאדום)",
+            "weight": 10
+          }
+        ]
+      },
       {
-        "idCode": "mmm_8291",
-        "label": "נתוני רצח רלוונטיים",
-        "weight": 9
-      }
-    ]
-  },
-  {
-    "date": "25/05/2026",
-    "relevance": 10,
-    "type": "committee",
-    "link": "https://main.knesset.gov.il/apps/committees/2232/sessions/2243180",
-    "idCode": "committee_2243180",
-    "title": "1. ההתמודדות מול תופעת הפרוטקשן (דמי חסות) בצפון. 2. אובדן המשילות בנגב והשלכותיו החמורות"
-  },
-  {
-    "date": "18/05/2026",
-    "relevance": 10,
-    "type": "activeLaw",
-    "idCode": "פ/6158/25",
-    "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2233987",
-    "title": "הצעת חוק סמכויות מיוחדות למאבק בארגוני פשיעה (הוראות שעה), התשפ\"ו–2026"
-  },
-  {
-    "date": "27/05/2026",
-    "relevance": 10,
-    "type": "activeLaw",
-    "idCode": "מ/1885",
-    "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2234108",
-    "title": "הצעת חוק עסקאות גופים ציבוריים (תיקון מס' 12) (איסור התקשרות עם ספק בשל מעורבות בפשיעה חמורה), התשפ\"ה-2025",
-    "relatedDocs": [
-      {
+        "date": "16/12/2024",
+        "relevance": 10,
+        "type": "passedLaw",
+        "source": "רשומות ספר החוקים",
         "idCode": "2225619",
-        "label": "חוק הגנה מארגוני פשיעה",
-        "weight": 8
-      }
-    ]
-  },
-  {
-    "date": "01/06/2026",
-    "relevance": 9,
-    "type": "activeLaw",
-    "idCode": "מ/1956",
-    "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/1057200",
-    "title": "הצעת חוק לתיקון פקודת סדר הדין הפלילי (מעצר וחיפוש) (מס' 19) (חיפוש שלא לפי צו חיפוש), התשפ\"ו-2026",
-    "relatedDocs": [
-      {
-        "idCode": "mmm_8436",
-        "label": "דוח יישום: חיפוש ללא צו",
-        "weight": 10
-      }
-    ]
-  },
-  {
-    "date": "31/03/2025",
-    "relevance": 9,
-    "type": "activeLaw",
-    "idCode": "פ/5716/25",
-    "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2229997",
-    "title": "הצעת חוק מאבק בארגוני פשיעה (תיקון - הרחבת הנסיבה המחמירה לזיקה לארגון פשיעה), התשפ\"ה-2025"
-  },
-  {
-    "date": "09/06/2026",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8570&businessType=1",
-    "idCode": "mmm_8570",
-    "title": "נתונים על עבירות אמל\"ח במחוז הדרום",
-    "relatedDocs": [
-      {
-        "idCode": "mmm_8539",
-        "label": "דוח נתוני שיטור (מחוז דרום)",
-        "weight": 8
-      }
-    ]
-  },
-  {
-    "date": "28/04/2026",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8539&businessType=1",
-    "idCode": "mmm_8539",
-    "title": "נתונים על שיטור ופשיעה במחוז דרום, בדגש של האוכלוסייה הבדואית"
-  },
-  {
-    "date": "29/12/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8438&businessType=1",
-    "idCode": "mmm_8438",
-    "title": "אירועי רצח בחברה הערבית – נתונים על המענה האכיפתי"
-  },
-  {
-    "date": "29/12/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8437&businessType=1",
-    "idCode": "mmm_8437",
-    "title": "מגמות בכח אדם משטרתי בתחנות בחברה הערבית 2019-2025"
-  },
-  {
-    "date": "29/12/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8436&businessType=1",
-    "idCode": "mmm_8436",
-    "title": "חיפוש ללא צו - נתוני הדיווחים לכנסת על יישום תיקון מס' 15 לפקודת סדר הדין הפלילי (מעצר וחיפוש)"
-  },
-  {
-    "date": "29/12/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8435&businessType=1",
-    "idCode": "mmm_8435",
-    "title": "נתוני נרצחים ערבים בשנים 2024-2023 – פילוח לפי מאפיינים דמוגרפיים",
-    "relatedDocs": [
-      {
-        "idCode": "mmm_8291",
-        "label": "ניתוח אירועי רצח",
-        "weight": 8
+        "link": "https://main.knesset.gov.il/APPS/legislation/main/laws/2225619",
+        "title": "חוק הגנה על הציבור מפני ארגוני פשיעה, התשפ\"ה-2024",
+        "summary": "חוק שנועד להתמודד באופן שורשי עם התעצמות הפשיעה המאורגנת.",
+        "keywords": [
+          "ארגוני_פשיעה",
+          "פרוטקשן",
+          "חקיקה"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "פ/6158/25",
+            "label": "הצעת חוק: סמכויות מיוחדות",
+            "weight": 8
+          },
+          {
+            "idCode": "פ/5716/25",
+            "label": "הצעה: זיקה לארגון פשיעה",
+            "weight": 7
+          }
+        ]
       },
       {
+        "date": "08/06/2026",
+        "relevance": 10,
+        "type": "activeLaw",
+        "idCode": "פ/6766/25",
+        "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2243096",
+        "title": "הצעת חוק המאבק בנטילת דמי חסות (תיקוני חקיקה), התשפ\"ו-2026",
+        "summary": "הצעת חוק המבקשת להחמיר משמעותית את הענישה והכלים להתמודדות עם תופעת הפרוטקשן וגביית דמי החסות באיומים מצד ארגוני פשיעה.",
+        "keywords": [
+          "פרוטקשן",
+          "דמי_חסות",
+          "פשיעה_כלכלית"
+        ],
+        "relatedDocs": [
+          {
+            "idCode": "committee_2243180",
+            "label": "דיון: פרוטקשן בצפון",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "10/07/2024",
+        "relevance": 9,
+        "type": "committee",
+        "link": "https://main.knesset.gov.il/apps/committees/2227/sessions/2219788",
+        "author": "הוועדה לענייני ביקורת המדינה",
+        "idCode": "committee_2219788",
+        "title": "התמודדות משטרת ישראל עם הפשיעה בחברה הערבית - דוח ביקורת שנתי 71 ג׳ - ישיבת מעקב",
+        "summary": "ישיבת מעקב מקיפה בנוגע להתקדמות בתיקון הליקויים שעלו בדוח מבקר המדינה 71ג'.",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8438",
+            "label": "מסמך לקראת דיון מעקב",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "30/12/2025",
+        "relevance": 10,
+        "type": "committee",
+        "link": "https://main.knesset.gov.il/apps/committees/2227/sessions/2238273",
+        "idCode": "committee_2238273",
+        "title": "התמודדות משטרת ישראל עם החזקת אמצעי לחימה לא חוקיים ואירועי ירי ביישובי החברה הערבית (דוח מבקר המדינה)",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8438",
+            "label": "מסמך הכנה לדיון (ממ\"מ)",
+            "weight": 10
+          },
+          {
+            "idCode": "mmm_8437",
+            "label": "נתוני רקע (כוח אדם במשטרה)",
+            "weight": 8
+          },
+          {
+            "idCode": "מ/1956",
+            "label": "חקיקה מרחיבת סמכויות חיפוש",
+            "weight": 7
+          },
+          {
+            "idCode": "mmm_8570",
+            "label": "נתוני רקע: אמל\"ח במחוז דרום",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "30/12/2025",
+        "relevance": 10,
+        "type": "committee",
+        "link": "https://main.knesset.gov.il/apps/committees/2234/sessions/2235704",
+        "idCode": "committee_2235704",
+        "title": "פעילות הממשלה למיגור האלימות בקרב צעירים בחברה הערבית",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8331",
+            "label": "דוח נתונים שהוזמן לועדה",
+            "weight": 10
+          },
+          {
+            "idCode": "החלטה 550",
+            "label": "תוכנית התקצוב הנידונה",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "01/07/2025",
+        "relevance": 10,
+        "type": "committee",
+        "link": "https://main.knesset.gov.il/apps/committees/2229/sessions/2231267",
+        "idCode": "committee_2231267",
+        "title": "האלימות והאיומים כלפי ראשי רשויות בחברה הערבית",
+        "relatedDocs": [
+          {
+            "idCode": "מ/1885",
+            "label": "חקיקה: הגבלת מכרזים",
+            "weight": 8
+          },
+          {
+            "idCode": "החלטה 455",
+            "label": "הקפאת התקציבים",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "15/05/2023",
+        "relevance": 10,
+        "type": "committee",
+        "link": "https://main.knesset.gov.il/apps/committees/2229/sessions/2204724",
+        "idCode": "committee_2204724",
+        "title": "דיון מהיר בנושא: האלימות הגואה בחברה הערבית",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8291",
+            "label": "נתוני רצח רלוונטיים",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "25/05/2026",
+        "relevance": 10,
+        "type": "committee",
+        "link": "https://main.knesset.gov.il/apps/committees/2232/sessions/2243180",
+        "idCode": "committee_2243180",
+        "title": "1. ההתמודדות מול תופעת הפרוטקשן (דמי חסות) בצפון. 2. אובדן המשילות בנגב והשלכותיו החמורות"
+      },
+      {
+        "date": "18/05/2026",
+        "relevance": 10,
+        "type": "activeLaw",
+        "idCode": "פ/6158/25",
+        "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2233987",
+        "title": "הצעת חוק סמכויות מיוחדות למאבק בארגוני פשיעה (הוראות שעה), התשפ\"ו–2026"
+      },
+      {
+        "date": "27/05/2026",
+        "relevance": 10,
+        "type": "activeLaw",
+        "idCode": "מ/1885",
+        "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2234108",
+        "title": "הצעת חוק עסקאות גופים ציבוריים (תיקון מס' 12) (איסור התקשרות עם ספק בשל מעורבות בפשיעה חמורה), התשפ\"ה-2025",
+        "relatedDocs": [
+          {
+            "idCode": "2225619",
+            "label": "חוק הגנה מארגוני פשיעה",
+            "weight": 8
+          }
+        ]
+      },
+      {
+        "date": "01/06/2026",
+        "relevance": 9,
+        "type": "activeLaw",
+        "idCode": "מ/1956",
+        "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/1057200",
+        "title": "הצעת חוק לתיקון פקודת סדר הדין הפלילי (מעצר וחיפוש) (מס' 19) (חיפוש שלא לפי צו חיפוש), התשפ\"ו-2026",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8436",
+            "label": "דוח יישום: חיפוש ללא צו",
+            "weight": 10
+          }
+        ]
+      },
+      {
+        "date": "31/03/2025",
+        "relevance": 9,
+        "type": "activeLaw",
+        "idCode": "פ/5716/25",
+        "link": "https://main.knesset.gov.il/APPS/legislation/main/bills/2229997",
+        "title": "הצעת חוק מאבק בארגוני פשיעה (תיקון - הרחבת הנסיבה המחמירה לזיקה לארגון פשיעה), התשפ\"ה-2025"
+      },
+      {
+        "date": "09/06/2026",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8570&businessType=1",
+        "idCode": "mmm_8570",
+        "title": "נתונים על עבירות אמל\"ח במחוז הדרום",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8539",
+            "label": "דוח נתוני שיטור (מחוז דרום)",
+            "weight": 8
+          }
+        ]
+      },
+      {
+        "date": "28/04/2026",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8539&businessType=1",
+        "idCode": "mmm_8539",
+        "title": "נתונים על שיטור ופשיעה במחוז דרום, בדגש של האוכלוסייה הבדואית"
+      },
+      {
+        "date": "29/12/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8438&businessType=1",
+        "idCode": "mmm_8438",
+        "title": "אירועי רצח בחברה הערבית – נתונים על המענה האכיפתי"
+      },
+      {
+        "date": "29/12/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8437&businessType=1",
+        "idCode": "mmm_8437",
+        "title": "מגמות בכח אדם משטרתי בתחנות בחברה הערבית 2019-2025"
+      },
+      {
+        "date": "29/12/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8436&businessType=1",
+        "idCode": "mmm_8436",
+        "title": "חיפוש ללא צו - נתוני הדיווחים לכנסת על יישום תיקון מס' 15 לפקודת סדר הדין הפלילי (מעצר וחיפוש)"
+      },
+      {
+        "date": "29/12/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8435&businessType=1",
+        "idCode": "mmm_8435",
+        "title": "נתוני נרצחים ערבים בשנים 2024-2023 – פילוח לפי מאפיינים דמוגרפיים",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_8291",
+            "label": "ניתוח אירועי רצח",
+            "weight": 8
+          },
+          {
+            "idCode": "mmm_7915",
+            "label": "נתוני קורבנות רצח היסטוריים",
+            "weight": 7
+          }
+        ]
+      },
+      {
+        "date": "10/03/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/activity/info/research/pages/incident.aspx?rid=8291",
+        "idCode": "mmm_8291",
+        "title": "ניתוח נתונים על אירועי רצח בישראל מתחילת שנת 2021 עד 10 במרץ 2025"
+      },
+      {
+        "date": "01/09/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8359&businessType=1",
+        "idCode": "mmm_8359",
+        "title": "מאושפזים ונפטרים בבתי חולים עקב אלימות פלילית באמצעות כלי נשק"
+      },
+      {
+        "date": "16/07/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8335&businessType=1",
+        "idCode": "mmm_8335",
+        "title": "במבט ראשון: מדידת פשיעה",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_crime_2024",
+            "label": "לקט נתוני פשיעה כלליים",
+            "weight": 8
+          }
+        ]
+      },
+      {
+        "date": "14/07/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8331&businessType=1",
+        "idCode": "mmm_8331",
+        "title": "פשיעה ועבריינות של צעירים ערבים - נתוני אכיפה"
+      },
+      {
+        "date": "22/04/2025",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8298&businessType=1",
+        "idCode": "mmm_8298",
+        "title": "פעילות בתי המשפט הקהילתיים – מיקוד בשירות לחברה הערבית"
+      },
+      {
+        "date": "21/03/2024",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7972&businessType=1",
+        "idCode": "mmm_7972",
+        "title": "פוליגמיה בחברה הבדואית טרם החלטת ממשלה 4211 וכעבור חמש שנים",
+        "relatedDocs": [
+          {
+            "idCode": "mmm_78d57d26",
+            "label": "דוח אכיפה (פוליגמיה)",
+            "weight": 9
+          }
+        ]
+      },
+      {
+        "date": "15/11/2023",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/activity/info/research/pages/incident.aspx?rid=7915",
         "idCode": "mmm_7915",
-        "label": "נתוני קורבנות רצח היסטוריים",
-        "weight": 7
-      }
-    ]
-  },
-  {
-    "date": "10/03/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/activity/info/research/pages/incident.aspx?rid=8291",
-    "idCode": "mmm_8291",
-    "title": "ניתוח נתונים על אירועי רצח בישראל מתחילת שנת 2021 עד 10 במרץ 2025"
-  },
-  {
-    "date": "01/09/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8359&businessType=1",
-    "idCode": "mmm_8359",
-    "title": "מאושפזים ונפטרים בבתי חולים עקב אלימות פלילית באמצעות כלי נשק"
-  },
-  {
-    "date": "16/07/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8335&businessType=1",
-    "idCode": "mmm_8335",
-    "title": "במבט ראשון: מדידת פשיעה",
-    "relatedDocs": [
+        "title": "נתונים על קורבנות רצח בשנים 2022−1980 לפי קבוצת אוכלוסייה"
+      },
       {
-        "idCode": "mmm_crime_2024",
-        "label": "לקט נתוני פשיעה כלליים",
-        "weight": 8
-      }
-    ]
-  },
-  {
-    "date": "14/07/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8331&businessType=1",
-    "idCode": "mmm_8331",
-    "title": "פשיעה ועבריינות של צעירים ערבים - נתוני אכיפה"
-  },
-  {
-    "date": "22/04/2025",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8298&businessType=1",
-    "idCode": "mmm_8298",
-    "title": "פעילות בתי המשפט הקהילתיים – מיקוד בשירות לחברה הערבית"
-  },
-  {
-    "date": "21/03/2024",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7972&businessType=1",
-    "idCode": "mmm_7972",
-    "title": "פוליגמיה בחברה הבדואית טרם החלטת ממשלה 4211 וכעבור חמש שנים",
-    "relatedDocs": [
-      {
+        "date": "16/01/2022",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/activity/info/research/pages/incident.aspx?docid=78d57d26-b230-ec11-8138-00155d0403e7",
         "idCode": "mmm_78d57d26",
-        "label": "דוח אכיפה (פוליגמיה)",
-        "weight": 9
+        "title": "ריבוי נישואין (פוליגמיה): אכיפה ודיווח"
+      },
+      {
+        "date": "20/06/2021",
+        "type": "mmm",
+        "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6922&businessType=1",
+        "idCode": "mmm_6922",
+        "title": "שיקום אסירים ערבים בכלא ולאחר השחרור"
+      },
+      {
+        "date": "15/01/2025",
+        "type": "mmm",
+        "idCode": "mmm_crime_2024",
+        "title": "לקט נתונים על הפשיעה המדווחת בישראל מתחילת שנת 2020 ועד סוף שנת 2024 - גרסה מתוקנת"
       }
-    ]
-  },
-  {
-    "date": "15/11/2023",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/activity/info/research/pages/incident.aspx?rid=7915",
-    "idCode": "mmm_7915",
-    "title": "נתונים על קורבנות רצח בשנים 2022−1980 לפי קבוצת אוכלוסייה"
-  },
-  {
-    "date": "16/01/2022",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/activity/info/research/pages/incident.aspx?docid=78d57d26-b230-ec11-8138-00155d0403e7",
-    "idCode": "mmm_78d57d26",
-    "title": "ריבוי נישואין (פוליגמיה): אכיפה ודיווח"
-  },
-  {
-    "date": "20/06/2021",
-    "type": "mmm",
-    "link": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6922&businessType=1",
-    "idCode": "mmm_6922",
-    "title": "שיקום אסירים ערבים בכלא ולאחר השחרור"
-  },
-  {
-    "date": "15/01/2025",
-    "type": "mmm",
-    "idCode": "mmm_crime_2024",
-    "title": "לקט נתונים על הפשיעה המדווחת בישראל מתחילת שנת 2020 ועד סוף שנת 2024 - גרסה מתוקנת"
-  }
-],
+    ],
     "trendsData": [
       {
         "year": 2022,
