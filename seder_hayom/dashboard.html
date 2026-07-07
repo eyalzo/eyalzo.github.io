@@ -256,6 +256,9 @@
                 <h1 class="text-2xl md:text-3xl font-extrabold text-white" id="d-title" style="margin: 0;">בטעינה...</h1>
 
                 <div class="flex items-center gap-3">
+                    <button class="btn-back" title="העדפות אישיות" onclick="openSettingsModal()" style="padding: 6px 10px; font-size: 1.2rem; flex-shrink: 0; background-color: #1e293b; color: #cbd5e1; border-color: #334155;">
+                        ⚙️
+                    </button>
                     <button class="btn-back" style="padding: 6px 14px; font-size: 1rem; flex-shrink: 0; background-color: #1e293b; color: #cbd5e1; border-color: #334155;">
                         מילון מונחים 📖
                     </button>
@@ -436,6 +439,23 @@
         </div>
     </div>
 
+    <div id="settingsModalOverlay" class="doc-modal-overlay" onclick="closeSettingsModal(event)">
+        <div id="settingsModalBox" class="doc-modal-box" style="max-width: 400px; border-top-color: #3b82f6;">
+            <button onclick="closeSettingsModal()" class="doc-modal-close">✖</button>
+            <div id="settingsModalInner">
+                <h3 style="font-weight: 800; color: #0f172a; font-size: 1.3rem; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">העדפות אישיות</h3>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: bold; color: #334155; margin-bottom: 8px;">מספר טורים להצגת "מבט על":</label>
+                    <select id="overviewColsSelect" class="search-input" style="width: 100%; cursor: pointer;" onchange="savePreferences()">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let isSpeaking = false;
         window.appConfiguration = null;
@@ -570,6 +590,9 @@
 
                 // בנייה ורינדור של מערך הטאבים הדינמי (כולל הזרקת ה-externalFrames מתוך ה-JSON)
                 buildTabsInterface(data.appConfiguration.externalFrames, fileUrl);
+
+                // הפעלת העדפות אישיות
+                loadPreferences();
 
                 // הסרת הודעת הטעינה והצגת הקוד הראשי
                 document.getElementById('loading-message').style.display = 'none';
@@ -1318,6 +1341,48 @@
             `;
 
             modalOverlay.style.display = 'flex';
+        }
+
+        // ==========================================
+        // מנגנון העדפות אישיות (Preferences / Cookies)
+        // ==========================================
+        function loadPreferences() {
+            // טעינה מה-localStorage (אחסון קבוע בדפדפן - שומר את הבחירה כמו קוקיז)
+            // ברירת מחדל הוגדרה ל-1 כפי שביקשת
+            const savedCols = localStorage.getItem('seder_hayom_overview_cols') || '1';
+
+            const selectEl = document.getElementById('overviewColsSelect');
+            if (selectEl) selectEl.value = savedCols;
+
+            applyOverviewCols(savedCols);
+        }
+
+        function savePreferences() {
+            const selectEl = document.getElementById('overviewColsSelect');
+            if (selectEl) {
+                const cols = selectEl.value;
+                localStorage.setItem('seder_hayom_overview_cols', cols);
+                applyOverviewCols(cols);
+            }
+        }
+
+        function applyOverviewCols(cols) {
+            const execText = document.getElementById('d-exec-text');
+            if (execText) {
+                // דורס את מחלקת ה-CSS הקיימת ומחיל את מספר הטורים שנבחר
+                execText.style.columnCount = cols;
+            }
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingsModalOverlay').style.display = 'flex';
+        }
+
+        function closeSettingsModal(event) {
+            // סגירה בלחיצה על X או מחוץ לתיבה
+            if (!event || event.target.id === 'settingsModalOverlay') {
+                document.getElementById('settingsModalOverlay').style.display = 'none';
+            }
         }
 
         function closeDocModal(event) {
