@@ -444,13 +444,19 @@
             <button onclick="closeSettingsModal()" class="doc-modal-close">✖</button>
             <div id="settingsModalInner">
                 <h3 style="font-weight: 800; color: #0f172a; font-size: 1.3rem; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">העדפות אישיות</h3>
-                <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-weight: bold; color: #334155; margin-bottom: 8px;">מספר טורים להצגת "מבט על":</label>
-                    <select id="overviewColsSelect" class="search-input" style="width: 100%; cursor: pointer;" onchange="savePreferences()">
+
+                <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                    <label style="font-weight: bold; color: #334155; margin: 0;">מספר טורים (מבט על):</label>
+                    <select id="overviewColsSelect" class="search-input" style="width: 70px; padding: 0.2rem 0.5rem; text-align: center; cursor: pointer;" onchange="savePreferences()">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                     </select>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <label style="font-weight: bold; color: #334155; margin: 0;">הצג טאב מסמכים על ציר הזמן:</label>
+                    <input type="checkbox" id="timelineToggleCb" onchange="savePreferences()" style="width: 22px; height: 22px; cursor: pointer; accent-color: #3b82f6;">
                 </div>
             </div>
         </div>
@@ -479,7 +485,8 @@
             { id: 'overview', label: '📋 תקציר' },
             { id: 'ecosystem', label: '🏛️ גורמים' },
             { id: 'mmm', label: '<img src="https://main.knesset.gov.il/_layouts/15/images/favicon.ico?rev=23" style="width:18px; height:18px; margin-left:0px; margin-right:0px; display:inline-block; vertical-align:middle; filter: grayscale(100%) brightness(0.4);">תוצרי ממ״מ' },
-            { id: 'documents', label: '📄 מסמכים' }
+            { id: 'documents', label: '📄 מסמכים' },
+            { id: 'timeline', label: '⏱️ ציר הזמן' }
         ];
 
         // פונקציית האתחול הראשית של דשבורד הטאבים המאוחד
@@ -1347,30 +1354,53 @@
         // מנגנון העדפות אישיות (Preferences / Cookies)
         // ==========================================
         function loadPreferences() {
-            // טעינה מה-localStorage (אחסון קבוע בדפדפן - שומר את הבחירה כמו קוקיז)
-            // ברירת מחדל הוגדרה ל-1 כפי שביקשת
+            // טעינת מספר הטורים (ברירת מחדל 1)
             const savedCols = localStorage.getItem('seder_hayom_overview_cols') || '1';
-
             const selectEl = document.getElementById('overviewColsSelect');
             if (selectEl) selectEl.value = savedCols;
-
             applyOverviewCols(savedCols);
+
+            // טעינת תצוגת ציר הזמן (ברירת מחדל: כבוי - false)
+            const savedTimeline = localStorage.getItem('seder_hayom_timeline') === 'true';
+            const timelineCb = document.getElementById('timelineToggleCb');
+            if (timelineCb) timelineCb.checked = savedTimeline;
+            applyTimelineVisibility(savedTimeline);
         }
 
         function savePreferences() {
+            // שמירת עמודות
             const selectEl = document.getElementById('overviewColsSelect');
             if (selectEl) {
                 const cols = selectEl.value;
                 localStorage.setItem('seder_hayom_overview_cols', cols);
                 applyOverviewCols(cols);
             }
+
+            // שמירת ציר זמן
+            const timelineCb = document.getElementById('timelineToggleCb');
+            if (timelineCb) {
+                const showTimeline = timelineCb.checked;
+                localStorage.setItem('seder_hayom_timeline', showTimeline);
+                applyTimelineVisibility(showTimeline);
+            }
         }
 
         function applyOverviewCols(cols) {
             const execText = document.getElementById('d-exec-text');
-            if (execText) {
-                // דורס את מחלקת ה-CSS הקיימת ומחיל את מספר הטורים שנבחר
-                execText.style.columnCount = cols;
+            if (execText) execText.style.columnCount = cols;
+        }
+
+        function applyTimelineVisibility(show) {
+            const tabBtn = document.getElementById('btn-tab-timeline');
+            if (tabBtn) {
+                // מסתיר או מציג את כפתור הטאב בשורת הניווט העליונה
+                tabBtn.style.display = show ? 'inline-flex' : 'none';
+            }
+
+            // הגנת ממשק: אם הטאב פעיל כרגע והמשתמש כיבה אותו, נעביר אותו אוטומטית לטאב התקציר
+            const content = document.getElementById('content-timeline');
+            if (!show && content && content.classList.contains('active-content')) {
+                switchTab('overview');
             }
         }
 
@@ -1379,7 +1409,6 @@
         }
 
         function closeSettingsModal(event) {
-            // סגירה בלחיצה על X או מחוץ לתיבה
             if (!event || event.target.id === 'settingsModalOverlay') {
                 document.getElementById('settingsModalOverlay').style.display = 'none';
             }
