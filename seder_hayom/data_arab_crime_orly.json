@@ -121,6 +121,128 @@
   },
   "appConfiguration": {
     "mmmSection": {
+      "documents": [
+        {
+          "type": "mmm",
+          "date": "2026-01-19",
+          "relevance": 10,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "ילדים יתומי פשיעה בחברה הערבית - תמונת מצב",
+          "summary": "ילדים יתומי פשיעה בחברה הערבית - תמונת מצב.",
+          "impact": "הדיון מדגיש את ההשלכות ההרסניות של הרציחות באוכלוסייה הערבית על הדור הצעיר ועל משפחות הקורבנות, נוכח אוזלת היד במניעתן.",
+          "mmmRequester": "הוועדה המיוחדת לזכויות הילד",
+          "mmmCategory": "2223",
+          "idCode": "mmm_2239344"
+        },
+        {
+          "type": "mmm",
+          "date": "2024-09-04",
+          "relevance": 10,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "דרישה לכינוס הוועדה בנושא השתוללות הפשיעה בחברה הערבית וחידלון המשטרה",
+          "summary": "דרישה לפי סעיף 111(ה) לכינוס הוועדה בנושא השתוללות הפשיעה בחברה הערבית וחידלון המשטרה, לצד דיון בנתוני הפשיעה הגבוהים.",
+          "impact": "הדיון עוסק באופן ישיר בחידלון ואוזלת ידה של המשטרה אל מול השתוללות הפשיעה, הרציחות ואיומים של משפחות פשע.",
+          "mmmRequester": "הוועדה לביטחון לאומי",
+          "mmmCategory": "2229",
+          "idCode": "mmm_2220072"
+        },
+        {
+          "type": "mmm",
+          "date": "2025-05-27",
+          "relevance": 10,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "מספר הנרצחים בחברה הערבית מאותת על שנה מדממת במיוחד",
+          "summary": "הצעה לדיון מהיר בנושא מספר הנרצחים בחברה הערבית המאותת על שנה מדממת, ופשיעה בחברה הערבית.",
+          "impact": "מיקוד בזינוק במספר הרציחות והיעדר הצלחה באכיפה ומיגור התופעה לאורך השנה.",
+          "mmmRequester": "הוועדה לביטחון לאומי",
+          "mmmCategory": "2229",
+          "idCode": "mmm_2231210"
+        },
+        {
+          "type": "mmm",
+          "date": "2023-02-13",
+          "relevance": 9,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "דיון מעקב אחרי התוכנית הלאומית למיגור הפשיעה בחברה הערבית \"מסלול בטוח\"",
+          "summary": "דיון מעקב אחר יישום ויעילות התוכנית הלאומית 'מסלול בטוח' למיגור הפשיעה והאלימות.",
+          "impact": "הערכת תפקוד הרשויות ומשטרת ישראל במסגרת תוכנית החירום להתמודדות עם רציחות ונשק לא חוקי.",
+          "mmmRequester": "הוועדה לביטחון לאומי",
+          "mmmCategory": "2229",
+          "idCode": "mmm_2201281"
+        },
+        {
+          "type": "mmm",
+          "date": "2024-02-13",
+          "relevance": 10,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "הקיצוץ בתקציב המלחמה בפשיעה בחברה הערבית - דוח שנתי 71ג",
+          "summary": "דיון מעקב - הקיצוץ בתקציב המלחמה בפשיעה בחברה הערבית ודוח ביקורת מיוחד על התמודדות משטרת ישראל עם הפשיעה.",
+          "impact": "מצביע על בעיית משאבים המקשה על המשטרה להתמודד כראוי עם ארגוני הפשיעה הערביים והרציחות בחברה.",
+          "mmmRequester": "הוועדה לענייני ביקורת המדינה",
+          "mmmCategory": "2227",
+          "idCode": "mmm_2214876"
+        },
+        {
+          "type": "mmm",
+          "date": "2024-07-10",
+          "relevance": 10,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "התמודדות משטרת ישראל עם הפשיעה בחברה הערבית - דוח ביקורת שנתי 71 ג׳",
+          "summary": "ישיבת מעקב אודות ממצאי דוח מבקר המדינה בנושא התמודדות המשטרה עם הפשיעה במגזר.",
+          "impact": "מעקב אחר תיקון ליקויים באכיפה, במענה לחידלון המערכתי של המשטרה בהורדת היקף מקרי הרצח.",
+          "mmmRequester": "הוועדה לענייני ביקורת המדינה",
+          "mmmCategory": "2227",
+          "idCode": "mmm_2219788"
+        },
+        {
+          "type": "mmm",
+          "date": "2025-02-18",
+          "relevance": 8,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "כלים טכנולוגיים למיגור הפשיעה והאלימות בחברה הערבית",
+          "summary": "דיון בחינת אמצעים וכלים טכנולוגיים חדשים שיסייעו באכיפה ובמאבק נגד הפשיעה במסגרת יום מיוחד לענייני החברה הערבית.",
+          "impact": "חיפוש פתרונות טכנולוגיים מחפים על החסר בכוח אדם וקושי באכיפה פיזית באזורי פשיעה רוויי אלימות.",
+          "mmmRequester": "ועדת החוקה, חוק ומשפט",
+          "mmmCategory": "2215",
+          "idCode": "mmm_2228496"
+        },
+        {
+          "type": "mmm",
+          "date": "2025-01-21",
+          "relevance": 9,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "השלכות הפשיעה בחברה הערבית על צעירים במערכת החינוך",
+          "summary": "דיון ביום המאבק בפשיעה: השלכות האלימות והפשיעה בחברה הערבית על הנוער ומערכת החינוך.",
+          "impact": "מציג כיצד חוסר הטיפול של המשטרה בפשיעה גולש למוסדות החינוך ומשפיע על תחושת הביטחון של דור העתיד.",
+          "mmmRequester": "ועדת החינוך התרבות והספורט",
+          "mmmCategory": "2212",
+          "idCode": "mmm_2226755"
+        },
+        {
+          "type": "mmm",
+          "date": "2026-06-01",
+          "relevance": 8,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "כשהאלימות הופכת לוויראלית: אחריות חברות הטכנולוגיה ופעילות הרשויות להגנה",
+          "summary": "דיון אודות השפעת הרשתות החברתיות על פשיעה, והאחריות להגנה על החברה הערבית מפני אלימות ויראלית והסתה לרצח.",
+          "impact": "בוחן את זליגת ארגוני הפשיעה למרחב המקוון, ואת קשיי הרשויות למנוע התארגנויות ומעשי רצח המתוכננים ברשת.",
+          "mmmRequester": "ועדת המדע והטכנולוגיה",
+          "mmmCategory": "2218",
+          "idCode": "mmm_2242694"
+        },
+        {
+          "type": "mmm",
+          "date": "2026-06-03",
+          "relevance": 10,
+          "link": "https://main.knesset.gov.il/Activity/committees/Pages/AllCommitteesAgenda.aspx",
+          "title": "החרפה מתמשכת בגל האלימות והפשיעה הקטלנית בישראל",
+          "summary": "דיון מהיר על החרפה בגל האלימות בקרב בני נוער והיעדר מענה ממשלתי מספק אל מול הפשיעה הקטלנית.",
+          "impact": "מצביע ישירות על הכישלון הממשלתי והיעדר המענה המספק כלפי גל הרציחות והאלימות החמורה, במיוחד בקרב צעירים.",
+          "mmmRequester": "הוועדה לביטחון לאומי",
+          "mmmCategory": "2229",
+          "idCode": "mmm_2242992"
+        }
+      ],
       "resources": [
         {
           "type": "button",

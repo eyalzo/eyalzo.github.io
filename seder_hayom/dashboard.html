@@ -314,9 +314,9 @@
                         <div class="relative flex items-center" style="min-width: 170px;">
                             <span style="position: absolute; right: 10px; color: #64748b; pointer-events: none; z-index: 10; font-size: 0.95rem;">🎛️</span>
                             <select id="sortFilterDropdownMmm" class="search-input" style="width: 100%; padding: 0.4rem 2rem 0.4rem 1rem; font-weight: bold; color: #334155; cursor: pointer;" onchange="renderMmmCards()">
-                                <option value="relevant-15" selected>15 הכי רלוונטיים</option>
-                                <option value="latest-15">15 אחרונים</option>
-                                <option value="all">הכל</option>
+                                <option value="latest-15" selected>15 אחרונים (לפי תאריך)</option>
+                                <option value="relevant-15">15 הכי רלוונטיים</option>
+                                <option value="all">הכל (לפי תאריך)</option>
                             </select>
                         </div>
 
@@ -520,6 +520,12 @@
                 const data = await response.json();
 
                 window.appConfiguration = data.appConfiguration;
+
+                // >>>>> התוספת החדשה: מיזוג מסמכי הממ"מ חזרה למאגר הראשי בזיכרון <<<<<
+                // כדי שציר הזמן, רפרנסים בתקציר ופונקציות החיפוש ימשיכו לעבוד חלק מבלי לשנות אותם
+                if (window.appConfiguration.mmmSection && window.appConfiguration.mmmSection.documents) {
+                    window.appConfiguration.items = window.appConfiguration.items.concat(window.appConfiguration.mmmSection.documents);
+                }
 
                 // עיבוד תאריכים מוקדם עבור כל הפריטים
                 // עיבוד תאריכים מוקדם עבור כל הפריטים והוספת מספר סידורי
@@ -885,7 +891,7 @@
 
             const dropdown = document.getElementById('sortFilterDropdownMmm');
             let dropdownVal = dropdown ? dropdown.value : 'relevant-15';
-            let sortMode = dropdownVal === 'all' ? 'all' : dropdownVal.split('-')[0];
+            let sortMode = dropdownVal === 'all' ? 'latest' : dropdownVal.split('-')[0];
             let limit = dropdownVal === 'all' ? null : parseInt(dropdownVal.split('-')[1], 10);
 
             // הפעלת מיון וחיתוך סטנדרטיים לחלוטין, ללא הפרדת השורה הראשונה
