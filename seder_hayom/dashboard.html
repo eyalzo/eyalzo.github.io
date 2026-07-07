@@ -255,9 +255,14 @@
             <div class="flex justify-between items-center w-full" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.75rem;">
                 <h1 class="text-2xl md:text-3xl font-extrabold text-white" id="d-title" style="margin: 0;">בטעינה...</h1>
 
-                <a href="index.html" class="btn-back" style="padding: 6px 14px; font-size: 1rem; flex-shrink: 0;">
-                    ראשי 🏠
-                </a>
+                <div class="flex items-center gap-3">
+                    <button class="btn-back" style="padding: 6px 14px; font-size: 1rem; flex-shrink: 0; background-color: #1e293b; color: #cbd5e1; border-color: #334155;">
+                        מילון מונחים 📖
+                    </button>
+                    <a href="index.html" class="btn-back" style="padding: 6px 14px; font-size: 1rem; flex-shrink: 0;">
+                        ראשי 🏠
+                    </a>
+                </div>
             </div>
         </header>
 
@@ -272,9 +277,9 @@
         <div class="tab-content" id="content-overview">
             <div class="exec-block p-6 rounded-xl shadow-sm mb-6 relative">
                 <div class="flex justify-between items-start mb-4">
-                    <h2 class="font-bold text-xl md:text-3xl" id="d-exec-title">📋 תקציר מנהלים</h2>
+                    <h2 class="font-bold text-xl md:text-3xl" id="d-exec-title">📋 מבט על</h2>
                     <button id="ttsBtn" class="btn-read-aloud shadow-sm" onclick="toggleTTS()">
-                        <span>🔊</span> <span id="tts-text">הקראת התקציר</span>
+                        <span>🔊</span> <span id="tts-text">הקראה</span>
                     </button>
                 </div>
                 <div id="execSummaryWrapper">
@@ -287,11 +292,6 @@
                 <ul class="text-base md:text-lg list-inside flex flex-col gap-2 text-gray-800 font-bold" id="d-whatsnew-list" style="list-style-type: disc; padding-right: 0.5rem;"></ul>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-4 justify-between items-center w-full mb-8">
-                <button class="btn-back w-full text-center justify-center py-3 text-lg font-bold" style="background-color: #f1f5f9; border-color: #cbd5e1;">⚙️ הגדרות</button>
-                <button class="btn-back w-full text-center justify-center py-3 text-lg font-bold" style="background-color: #f1f5f9; border-color: #cbd5e1;">📖 מילון מונחים</button>
-                <button class="btn-back w-full text-center justify-center py-3 text-lg font-bold" style="background-color: #f1f5f9; border-color: #cbd5e1;">🔬 מתודולוגיה</button>
-            </div>
         </div>
 
         <div class="tab-content" id="content-communication">
@@ -482,7 +482,7 @@
         let currentRootId = null;
 
         const tabDefinitions = [
-            { id: 'overview', label: '📋 תקציר' },
+            { id: 'overview', label: '📋 מבט על' },
             { id: 'ecosystem', label: '🏛️ גורמים' },
             { id: 'documents', label: '📄 מסמכים' },
             { id: 'communication', label: '📢 תקשורת' },
@@ -524,7 +524,7 @@
                 // עדכון תוכן מטא-דאטה עליון
                 document.getElementById('d-title').innerText = data.meta.title;
                 document.getElementById('meta-update-label').innerText = `גרסה: ${data.meta.version || '4.0.0'} | עודכן: ${data.meta.lastUpdate}`;
-                document.getElementById('d-exec-title').innerText = "📋 תקציר מנהלים: " + data.execSummary.title;
+                document.getElementById('d-exec-title').innerText = data.execSummary.title;
 
                 // עיבוד והזרקת תקציר מנהלים עם מספור דינמי לפי סדר הופעה
                 if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
@@ -1290,7 +1290,7 @@
                 window.speechSynthesis.cancel();
                 isSpeaking = false;
                 btn.classList.remove('is-reading');
-                textEl.innerText = 'הקראת התקציר';
+                textEl.innerText = 'הקראה';
             } else {
                 const text = document.getElementById('d-exec-text').innerText;
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -1298,7 +1298,7 @@
                 utterance.onend = () => {
                     isSpeaking = false;
                     btn.classList.remove('is-reading');
-                    textEl.innerText = 'הקראת התקציר';
+                    textEl.innerText = 'הקראה';
                 };
                 window.speechSynthesis.speak(utterance);
                 isSpeaking = true;
