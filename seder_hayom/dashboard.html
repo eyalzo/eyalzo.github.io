@@ -107,7 +107,7 @@
         .tab-content { display: none; }
         .tab-content.active-content { display: block; }
 
-        /* חלוקת טקסט התקציר לשתי עמודות במסכים רחבים */
+        /* חלוקת טקסט המבט על לשתי עמודות במסכים רחבים */
         .exec-text-columns { column-count: 1; gap: 2.5rem; }
         @media (min-width: 768px) {
             .exec-text-columns { column-count: 2; }
@@ -482,7 +482,7 @@
         let currentRootId = null;
 
         const tabDefinitions = [
-            { id: 'overview', label: '📋 תקציר' },
+            { id: 'overview', label: '📋 מבט על' },
             { id: 'ecosystem', label: '🏛️ גורמים' },
             { id: 'mmm', label: '<img src="https://main.knesset.gov.il/_layouts/15/images/favicon.ico?rev=23" style="width:18px; height:18px; margin-left:0px; margin-right:0px; display:inline-block; vertical-align:middle; filter: grayscale(100%) brightness(0.4);">תוצרי ממ״מ' },
             { id: 'documents', label: '📄 מסמכים' },
@@ -525,7 +525,7 @@
                 document.getElementById('meta-update-label').innerText = `גרסה: ${data.meta.version || '4.0.0'} | עודכן: ${data.meta.lastUpdate}`;
                 document.getElementById('d-exec-title').innerText = data.execSummary.title;
 
-                // עיבוד והזרקת תקציר מנהלים עם מספור דינמי לפי סדר הופעה
+                // עיבוד והזרקת מבט על מנהלים עם מספור דינמי לפי סדר הופעה
                 if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
                     const sentences = data.execSummary.text.split('. ');
 
@@ -1298,7 +1298,7 @@
         }
 
         // ==========================================
-        // פונקציות המודל (Modal) של מסמכי הרפרנס בתקציר
+        // פונקציות המודל (Modal) של מסמכי הרפרנס במבט על
         // ==========================================
         function openDocModal(idCode) {
             const doc = window.appConfiguration.items.find(d => d.idCode === idCode);
@@ -1397,7 +1397,7 @@
                 tabBtn.style.display = show ? 'inline-flex' : 'none';
             }
 
-            // הגנת ממשק: אם הטאב פעיל כרגע והמשתמש כיבה אותו, נעביר אותו אוטומטית לטאב התקציר
+            // הגנת ממשק: אם הטאב פעיל כרגע והמשתמש כיבה אותו, נעביר אותו אוטומטית לטאב המבט על
             const content = document.getElementById('content-timeline');
             if (!show && content && content.classList.contains('active-content')) {
                 switchTab('overview');
