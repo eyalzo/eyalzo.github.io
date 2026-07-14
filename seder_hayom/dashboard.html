@@ -747,7 +747,7 @@
                 const matchesType = filterType === 'all' || item.type === filterType;
                 let matchesSearch = true;
                 if (searchTerm !== '') {
-                    const searchableText = `${item.title} ${item.summary} ${item.author || ''} ${item.source || ''} ${item.impact || ''} ${(item.keywords || []).join(' ')}`.toLowerCase();
+                    const searchableText = `${item.title} ${item.summary} ${item.author || ''} ${item.source || ''} ${(item.keywords || []).join(' ')}`.toLowerCase();
                     matchesSearch = searchableText.includes(searchTerm);
                 }
                 return matchesType && matchesSearch;
@@ -800,7 +800,6 @@
             }
 
             let metadataHtml = buildMetadataHtml(item, sourceMovedToTitle, sourceOrAuthor);
-            let impactHtml = item.impact ? `<div class="card-impact-box text-sm mb-3"><span style="color: #ef4444; font-weight: 800;">השפעה:</span> ${item.impact}</div>` : '';
 
             return `
                 <div class="doc-item-wrapper" style="border-right: 4px solid ${groupColor};">
@@ -814,7 +813,6 @@
                     <div id="${detailsId}" class="doc-full-details">
                         ${metadataHtml}
                         <p class="card-summary-box font-semibold">${item.summary || ''}</p>
-                        ${impactHtml}
                     </div>
                 </div>
             `;
