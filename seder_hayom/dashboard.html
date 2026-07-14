@@ -510,129 +510,139 @@
                 document.getElementById('loading-message').style.display = 'none';
                 document.getElementById('error-message').style.display = 'block';
                 document.getElementById('error-message').innerText = "שגיאה: לא זוהה קובץ נתונים מבוקש.";
+                console.error("No fileUrl parameter found.");
                 return;
             }
 
+            let data;
             try {
                 const response = await fetch(fileUrl);
-                if (!response.ok) throw new Error("Primary JSON file not found");
-                const data = await response.json();
+                if (!response.ok) throw new Error(`Primary JSON file fetch failed with status: ${response.status}`);
+                data = await response.json();
+            } catch (fetchErr) {
+                console.error("❌ שגיאה קריטית בטעינת קובץ ה-JSON הראשי:", fetchErr);
+                document.getElementById('loading-message').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').innerText = "שגיאה בטעינת נתוני הבסיס. ראה קונסול לפרטים.";
+                return; // אם אי אפשר לטעון את הנתונים, אין טעם להמשיך
+            }
 
-                window.appConfiguration = data.appConfiguration;
+            // ==========================================
+            // שלב 1: בניית הנתונים בזיכרון והגנות (Fallback)
+            // ==========================================
+            try {
+                window.appConfiguration = data.appConfiguration || { items: [] };
+                if (!window.appConfiguration.items) window.appConfiguration.items = [];
 
-                // >>>>> התוספת החדשה: מיזוג מסמכי הממ"מ חזרה למאגר הראשי בזיכרון <<<<<
-                // כדי שציר הזמן, רפרנסים בתקציר ופונקציות החיפוש ימשיכו לעבוד חלק מבלי לשנות אותם
-                if (window.appConfiguration.mmmSection && window.appConfiguration.mmmSection.documents) {
+                // מיזוג מסמכי הממ"מ חזרה למאגר הראשי בזיכרון
+                if (window.appConfiguration.mmmSection?.documents) {
                     window.appConfiguration.items = window.appConfiguration.items.concat(window.appConfiguration.mmmSection.documents);
                 }
 
                 // עיבוד תאריכים מוקדם עבור כל הפריטים
-                // עיבוד תאריכים מוקדם עבור כל הפריטים והוספת מספר סידורי
                 window.appConfiguration.items.forEach((item, index) => {
-                    const parsed = parseFlexibleDate(item.date);
+                    const parsed = typeof parseFlexibleDate === 'function' ? parseFlexibleDate(item.date) : { year: 1970, month: 1, sortValue: 0, hasDate: false };
                     item.parsedDate = parsed;
                     item.year = parsed.year;
                     item.month = parsed.month;
                     item.day = parsed.day;
                     item.sortValue = parsed.sortValue;
-                    item.serialNumber = index + 1; // יצירת מספר רפרנס עוקב
+                    item.serialNumber = index + 1;
                 });
-
-                // עדכון תוכן מטא-דאטה עליון
-                document.getElementById('d-title').innerText = data.meta.title;
-                document.getElementById('meta-update-label').innerText = `גרסה: ${data.meta.version || '4.0.0'} | עודכן: ${data.meta.lastUpdate}`;
-                document.getElementById('d-exec-title').innerText = data.execSummary.title;
-
-                // עיבוד והזרקת מבט על מנהלים עם מספור דינמי לפי סדר הופעה
-                if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
-                    const sentences = data.execSummary.text.split('. ');
-
-                    // מפה שתשמור את המספרים שהוקצו לכל refId
-                    const refMap = {};
-                    let refCounter = 1;
-
-                    const processedText = sentences.map((sentence, index) => {
-                        const sIndex = index + 1;
-                        const refs = data.execSummary.textRefs.filter(r => r.sentenceIndex === sIndex);
-
-                        let textToWrap = sentence.trim();
-                        if (textToWrap.endsWith('.')) {
-                            textToWrap = textToWrap.slice(0, -1);
-                        }
-
-                        if (refs.length > 0) {
-                            let buttonsHtml = '';
-
-                            // לולאה על הרפרנסים במשפט הנוכחי
-                            refs.forEach(r => {
-                                const doc = data.appConfiguration.items.find(d => d.idCode === r.refId);
-                                if (doc) {
-                                    // אם הרפרנס הזה עדיין לא קיבל מספר, נקצה לו אחד חדש
-                                    if (!refMap[r.refId]) {
-                                        refMap[r.refId] = refCounter++;
-                                    }
-
-                                    const entity = (typeof entityMap !== 'undefined' && entityMap[doc.type]) ? entityMap[doc.type] : { color: '#64748b' };
-                                    // שימוש במספר מהמפה במקום ב-doc.serialNumber
-                                    buttonsHtml += `<button class="ref-btn" style="background-color: ${entity.color};" onclick="openDocModal('${doc.idCode}')" title="לפרטי המסמך">${refMap[r.refId]}</button>`;
-                                }
-                            });
-                            return `<span>${textToWrap}${buttonsHtml}.</span> `;
-                        }
-                        return textToWrap ? `${textToWrap}. ` : '';
-                    }).join('').trim();
-                    document.getElementById('d-exec-text').innerHTML = processedText;
-                } else {
-                    document.getElementById('d-exec-text').innerHTML = data.execSummary.text;
-                }
-
-                // הזרקת רשימת "מה התחדש לאחרונה"
-                document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(item => {
-                    if (typeof item === 'string') return `<li style="margin-bottom: 0.5rem;">${item}</li>`;
-                    let doc = data.appConfiguration.items.find(d => d.idCode === item.refId);
-                    let parsedDate = doc ? doc.parsedDate : (item.date ? parseFlexibleDate(item.date) : null);
-                    const dateStr = formatParsedDate(parsedDate);
-                    const dateDisplay = dateStr ? `<strong>${dateStr}</strong> - ` : '';
-
-                    let linkHtml = '';
-                    if (doc && doc.link && doc.link.startsWith('http')) {
-                        linkHtml = ` <a href="${doc.link}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;">🔗 מסמך</a>`;
-                    }
-                    if (item.refId && doc) {
-                        return `<li style="cursor: help; margin-bottom: 0.5rem;" onmousemove="showDocTooltip(event, '${doc.idCode}')" onmouseleave="hideDocTooltip()">
-                            ${dateDisplay}${item.text}${linkHtml}
-                        </li>`;
-                    }
-                    return `<li style="margin-bottom: 0.5rem;">${dateDisplay}${item.text}</li>`;
-                }).join('');
-
-                // אתחול רכיבי משנה של הטאבים הסטטיים
-                setupSearch();
-                renderEcosystem();
-                renderCards();
-                renderMmmCards();
-                renderMmmResources();
-                initTimelineLayout(data.appConfiguration.items);
-
-                // בנייה ורינדור של מערך הטאבים הדינמי (כולל הזרקת ה-externalFrames מתוך ה-JSON)
-                buildTabsInterface(data.appConfiguration.externalFrames, fileUrl);
-
-                // הפעלת העדפות אישיות
-                loadPreferences();
-
-                // הסרת הודעת הטעינה והצגת הקוד הראשי
-                document.getElementById('loading-message').style.display = 'none';
-                document.getElementById('dashboard-content').style.display = 'block';
-
-                // ברירת מחדל - הפעלת טאב ה-Overview וציור הגרף שלו
-                switchTab('overview');
-
-            } catch (e) {
-                console.error("Critical error mapping dynamic tabs dashboard:", e);
-                document.getElementById('loading-message').style.display = 'none';
-                document.getElementById('error-message').style.display = 'block';
-                document.getElementById('error-message').innerText = "שגיאה קריטית בטעינת המערכת או בעיבוד המבנה המרובה.";
+            } catch (err) {
+                console.error("⚠️ שגיאה בעיבוד מערך המסמכים:", err);
             }
+
+            // ==========================================
+            // שלב 2: רינדור המטא-דאטה ומבט על
+            // ==========================================
+            try {
+                document.getElementById('d-title').innerText = data.meta?.title || 'כותרת חסרה';
+                document.getElementById('meta-update-label').innerText = `גרסה: ${data.meta?.version || '1.0.0'} | עודכן: ${data.meta?.lastUpdate || 'לא ידוע'}`;
+
+                if (data.execSummary) {
+                    document.getElementById('d-exec-title').innerText = data.execSummary.title || '📋 מבט על';
+
+                    if (data.execSummary.textRefs && data.execSummary.textRefs.length > 0) {
+                        const sentences = (data.execSummary.text || '').split('. ');
+                        const refMap = {};
+                        let refCounter = 1;
+
+                        const processedText = sentences.map((sentence, index) => {
+                            const sIndex = index + 1;
+                            const refs = data.execSummary.textRefs.filter(r => r.sentenceIndex === sIndex);
+
+                            let textToWrap = sentence.trim();
+                            if (textToWrap.endsWith('.')) textToWrap = textToWrap.slice(0, -1);
+
+                            if (refs.length > 0) {
+                                let buttonsHtml = '';
+                                refs.forEach(r => {
+                                    const doc = window.appConfiguration.items.find(d => d.idCode === r.refId);
+                                    if (doc) {
+                                        if (!refMap[r.refId]) refMap[r.refId] = refCounter++;
+                                        const entity = (typeof entityMap !== 'undefined' && entityMap[doc.type]) ? entityMap[doc.type] : { color: '#64748b' };
+                                        buttonsHtml += `<button class="ref-btn" style="background-color: ${entity.color};" onclick="openDocModal('${doc.idCode}')" title="לפרטי המסמך">${refMap[r.refId]}</button>`;
+                                    }
+                                });
+                                return `<span>${textToWrap}${buttonsHtml}.</span> `;
+                            }
+                            return textToWrap ? `${textToWrap}. ` : '';
+                        }).join('').trim();
+                        document.getElementById('d-exec-text').innerHTML = processedText;
+                    } else {
+                        document.getElementById('d-exec-text').innerHTML = data.execSummary.text || 'אין תקציר מנהלים להצגה.';
+                    }
+
+                    // רינדור מה התחדש
+                    if (data.execSummary.whatsNewItems && Array.isArray(data.execSummary.whatsNewItems)) {
+                        document.getElementById('d-whatsnew-list').innerHTML = data.execSummary.whatsNewItems.map(item => {
+                            if (typeof item === 'string') return `<li style="margin-bottom: 0.5rem;">${item}</li>`;
+                            let doc = window.appConfiguration.items.find(d => d.idCode === item.refId);
+                            let parsedDate = doc ? doc.parsedDate : (item.date ? (typeof parseFlexibleDate === 'function' ? parseFlexibleDate(item.date) : null) : null);
+                            const dateStr = (typeof formatParsedDate === 'function') ? formatParsedDate(parsedDate) : '';
+                            const dateDisplay = dateStr ? `<strong>${dateStr}</strong> - ` : '';
+
+                            let linkHtml = '';
+                            if (doc && doc.link && doc.link.startsWith('http')) {
+                                linkHtml = ` <a href="${doc.link}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.85em;">🔗 מסמך</a>`;
+                            }
+                            if (item.refId && doc) {
+                                return `<li style="cursor: help; margin-bottom: 0.5rem;" onmousemove="showDocTooltip(event, '${doc.idCode}')" onmouseleave="hideDocTooltip()">
+                                    ${dateDisplay}${item.text}${linkHtml}
+                                </li>`;
+                            }
+                            return `<li style="margin-bottom: 0.5rem;">${dateDisplay}${item.text}</li>`;
+                        }).join('');
+                    }
+                }
+            } catch (err) {
+                console.error("⚠️ שגיאה ברינדור מבט-על (Overview):", err);
+            }
+
+            // ==========================================
+            // שלב 3: הפעלת שאר המודולים באופן עצמאי
+            // ==========================================
+            try { setupSearch(); } catch(e) { console.error("⚠️ setupSearch failed:", e); }
+
+            try {
+                if (window.appConfiguration.ecosystem) renderEcosystem();
+                else console.warn("ℹ️ No ecosystem block in JSON, skipping render.");
+            } catch(e) { console.error("⚠️ renderEcosystem failed:", e); }
+
+            try { renderCards(); } catch(e) { console.error("⚠️ renderCards failed:", e); }
+            try { renderMmmCards(); } catch(e) { console.error("⚠️ renderMmmCards failed:", e); }
+            try { renderMmmResources(); } catch(e) { console.error("⚠️ renderMmmResources failed:", e); }
+            try { initTimelineLayout(window.appConfiguration.items); } catch(e) { console.error("⚠️ initTimelineLayout failed:", e); }
+            try { buildTabsInterface(data.appConfiguration.externalFrames, fileUrl); } catch(e) { console.error("⚠️ buildTabsInterface failed:", e); }
+            try { loadPreferences(); } catch(e) { console.error("⚠️ loadPreferences failed:", e); }
+
+            // הסרת הודעת הטעינה והצגת הקוד הראשי (ייקרה גם אם חלק מהמודולים נכשלו)
+            document.getElementById('loading-message').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+
+            // פתיחת הטאב הראשי
+            try { switchTab('overview'); } catch(e) { console.error("⚠️ switchTab failed:", e); }
         };
 
         // ==========================================

@@ -11,6 +11,12 @@
       "title": "פשיעה במגזר הערבי (מורחב)",
       "description": "",
       "file": "data_arab_crime_orly.json"
+    },
+    {
+      "id": "ptsd",
+      "title": "הטיפול בנכי צה״ל בעלי PTSD",
+      "description": "כיצד המדינה מטפלת מבחינה רגשית, מתחשבת מבחינה כלכלית ועוד",
+      "file": "data_ptsd.json"
     }
   ]
 }
